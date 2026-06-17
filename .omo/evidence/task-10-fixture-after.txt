@@ -1,0 +1,14 @@
+d tests/fixtures/android-fs 20
+d tests/fixtures/android-fs/data 8
+d tests/fixtures/android-fs/data/user 2
+d tests/fixtures/android-fs/data/user/0 48
+d tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme 10
+d tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache 40
+d tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card 16
+d tests/fixtures/android-fs/sdcard 14
+d tests/fixtures/android-fs/sdcard/Android 8
+d tests/fixtures/android-fs/sdcard/Android/data 48
+d tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme 22
+d tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache 16
+f tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card/.fixture 30
+f tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache/.fixture 30

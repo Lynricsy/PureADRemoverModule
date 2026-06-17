@@ -1,0 +1,4 @@
+  135 rules/sqlite/app-ad-databases.toml
+  116 rules/sqlite/common-sdk-databases.toml
+  211 rules/sqlite/coolapk-ad-databases.toml
+  462 total

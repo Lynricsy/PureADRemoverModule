@@ -1,0 +1,41 @@
+[[rules]]
+id = "aweme-external-splash-cache"
+category = "file_path"
+package = "com.ss.android.ugc.aweme"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/splashCache"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Douyin stores launch advertising cache below its external app directory."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 41: /data/media/[0-9]*/Android/data/com.ss.android.ugc.aweme/splashCache"
+
+[[rules]]
+id = "aweme-internal-splash-commerce-card"
+category = "file_path"
+package = "com.ss.android.ugc.aweme"
+action = "empty_dir"
+target_template = "/data/user/[0-9]*/<pkg>/cache/splash_commerce_card"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Douyin stores commerce splash card resources in a package-local directory."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record matched directory metadata before replacement; remove the placeholder and restore ledger metadata when available. Converted from package-scoped upstream find expression."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/aweme.sh"
+source_line_or_pattern = "line 9: -iname \"splash_commerce_card\" -type d"

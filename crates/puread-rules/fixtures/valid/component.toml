@@ -1,0 +1,18 @@
+[[rules]]
+id = "coolapk-ad-activity"
+category = "component"
+package = "com.coolapk.market"
+action = "disable_component"
+target_component = "com.coolapk.market/com.coolapk.market.ads.AdActivity"
+risk_level = "high"
+default_enabled = false
+profile = "component"
+observed_behavior = "ad activity component launches local promotional surface"
+rollback_strategy = "reenable_component"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/component_profile.sh"
+source_line_or_pattern = "AdActivity"

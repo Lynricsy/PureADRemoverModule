@@ -1,0 +1,4 @@
+T8 CLI dependency note
+cargo run -p puread-cli -- rules validate rules/common rules/apps => exit 2, unrecognized subcommand rules
+cargo run -p puread-cli -- rules list --kind files => exit 2, unrecognized subcommand rules
+Fallback used: cargo test -p puread-rules plus Python tomllib schema-shape parse and read-only list generation.

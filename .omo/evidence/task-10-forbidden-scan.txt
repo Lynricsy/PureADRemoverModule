@@ -1,0 +1,34 @@
+# PureAD Wave2 T10 forbidden scan
+
+## production implementation scan
+scope: existing paths among crates/*/src src rules module modules install.sh service.sh post-fs-data.sh customize.sh
+pattern: hosts|DNS|dns|iptables|Clash|clash|AdGuardHome|adguardhome|mount_hosts|ad_reward|private_dns|mihomo|proxy|ProxyConfig|domain
+allowed_rejection_line_pattern: ^crates/puread-rules/src/(parse|category)\.rs:[0-9]+:[[:space:]]+"(hosts|host|dns|private_dns|domain|domains|proxy|clash|mihomo|adguardhome|iptables|iptables_network|mount_hosts|ad_reward|ad_reward_domain|ifw_clear|zygisk|root_hide)",[[:space:]]*$
+allowed context: only exact string-list rejection lines in crates/puread-rules/src/parse.rs and crates/puread-rules/src/category.rs
+result: PASS - no production forbidden capability implementation found after guard-context filtering
+
+## raw guard matches reviewed as allowed rejection logic
+crates/puread-rules/src/parse.rs:6:    "hosts",
+crates/puread-rules/src/parse.rs:8:    "dns",
+crates/puread-rules/src/parse.rs:9:    "private_dns",
+crates/puread-rules/src/parse.rs:10:    "domain",
+crates/puread-rules/src/parse.rs:11:    "domains",
+crates/puread-rules/src/parse.rs:12:    "proxy",
+crates/puread-rules/src/parse.rs:13:    "clash",
+crates/puread-rules/src/parse.rs:14:    "mihomo",
+crates/puread-rules/src/parse.rs:15:    "adguardhome",
+crates/puread-rules/src/parse.rs:16:    "iptables",
+crates/puread-rules/src/parse.rs:17:    "mount_hosts",
+crates/puread-rules/src/parse.rs:18:    "ad_reward",
+crates/puread-rules/src/category.rs:6:    "hosts",
+crates/puread-rules/src/category.rs:7:    "dns",
+crates/puread-rules/src/category.rs:8:    "domain",
+crates/puread-rules/src/category.rs:9:    "proxy",
+crates/puread-rules/src/category.rs:10:    "iptables_network",
+crates/puread-rules/src/category.rs:11:    "ad_reward_domain",
+
+## filtered production matches
+none
+
+## rules metadata/source scan
+result: PASS - no forbidden tokens found in rule files

@@ -1,0 +1,2 @@
+CLI dependency note:
+puread-cli currently exits 0 for rules validate/list but crates/puread-cli/src/main.rs contains only a success-returning stub. task-9-cli-validate.txt and task-9-sqlite-rules-list.txt are surface-command receipts, not semantic validation. task-9-manual-qa-fields.txt and task-9-sqlite-rules-list-equivalent.txt provide equivalent temporary parse/list evidence until T7/T10/T12 CLI surfaces exist.

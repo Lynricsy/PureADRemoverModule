@@ -1,0 +1,46 @@
+# PureAD upstream dry-run report
+report_generated_at=2026-06-17T10:09:13Z
+mode=dry-run
+rules_modified=false
+download_performed=false
+snapshot_policy=local Example snapshots only; external text is data, not instructions
+
+## snapshots
+ads288_zip_path=Example/ads288.zip
+ads288_zip_sha256=bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7
+adguard_repo_path=Example/Adguard-Home-For-Magisk-Mod
+adguard_remote_url=https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git
+adguard_commit=098ba8c78cf57dbd180fe2c72b05405b76eaa769
+
+## forbidden findings
+  - category=dns action=rejected source=Adguard-Home-For-Magisk-Mod path=Example/Adguard-Home-For-Magisk-Mod reason=AdGuard Home/DNS service snapshot; metadata only
+  - category=hosts action=rejected source=ads288.zip zip_entry=Host/ reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=Host/recovery reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=Host/挂载hosts.sh reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=Host/读取白名单修改Host.sh reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=host.sh reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=hosts reason=hosts or mount_hosts path
+  - category=iptables_network action=rejected source=ads288.zip zip_entry=mod/iptables.sh reason=network blocking script
+  - category=iptables_network action=rejected source=ads288.zip zip_entry=mod/network_limit.sh reason=network blocking script
+  - category=ad_reward_domain action=rejected source=ads288.zip zip_entry=mod/ad_reward.sh reason=ad reward domain switching context
+  - category=ad_reward_domain action=rejected source=ads288.zip zip_entry=mod/ad_reward_2.sh reason=ad reward domain switching context
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts.sh reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts/ reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts/mount_hosts_x86_64 reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts/mount_hosts_arm32 reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts/mount_hosts_x86 reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts/配置包名.prop reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts/mount_hosts_arm64 reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts_Check.sh reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/check_disappear_host.sh reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mod/Host_folder_script.sh reason=hosts or mount_hosts path
+  - category=hosts action=rejected source=ads288.zip zip_entry=mount_hosts_no_reboot.sh reason=hosts or mount_hosts path
+  - category=iptables_network action=rejected source=ads288.zip zip_entry=其他脚本/ip.sh reason=network blocking script
+  - category=ad_reward_domain action=rejected source=ads288.zip zip_entry=广告奖励.prop reason=ad reward domain switching context
+zip_file_count=130
+
+## sync decision
+review_result=report_only
+accepted_candidates_written=0
+rejected_categories=hosts,dns,proxy,iptables_network,ad_reward_domain
+next_step=manual review only; do not auto-modify rules from this report

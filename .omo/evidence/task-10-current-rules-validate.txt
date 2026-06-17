@@ -1,0 +1,7 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running `target/debug/puread-cli rules validate rules/common rules/apps`
+error: unrecognized subcommand 'rules'
+
+Usage: puread-cli <COMMAND>
+
+For more information, try '--help'.

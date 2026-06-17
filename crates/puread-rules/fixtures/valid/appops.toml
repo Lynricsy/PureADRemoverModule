@@ -1,0 +1,19 @@
+[[rules]]
+id = "coolapk-background-appop"
+category = "appops"
+package = "com.coolapk.market"
+action = "set_appop"
+appop = "RUN_IN_BACKGROUND"
+appop_mode = "ignore"
+risk_level = "high"
+default_enabled = false
+profile = "appops"
+observed_behavior = "background ad refresh is controlled through an explicit AppOps profile"
+rollback_strategy = "restore_appop"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/appops_profile.sh"
+source_line_or_pattern = "RUN_IN_BACKGROUND"

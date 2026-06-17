@@ -1,0 +1,4 @@
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m `target/debug/puread-cli restore --dry-run --ledger tests/fixtures/malformed-ledger.json`
+ledger JSONL line 1 is invalid: key must be a string at line 1 column 2

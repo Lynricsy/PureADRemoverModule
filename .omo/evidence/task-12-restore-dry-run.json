@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "mode": "dry_run",
+  "ledger_path": "tests/fixtures/ledger.json",
+  "action_count": 2,
+  "will_mutate": false,
+  "actions": [
+    {
+      "original_path": "/data/data/com.demo/cache/ad.bin",
+      "profile": "conservative",
+      "source_action": "empty_file",
+      "restore_steps": [
+        {
+          "step": "restore_content",
+          "backup_path": "/data/adb/modules/puread/state/backups/ad.bin"
+        },
+        {
+          "step": "set_mode",
+          "mode": 420
+        },
+        {
+          "step": "set_owner",
+          "uid": 10000,
+          "gid": 10000
+        }
+      ]
+    },
+    {
+      "original_path": "/data/data/com.demo/cache",
+      "profile": "conservative",
+      "source_action": "empty_dir",
+      "restore_steps": [
+        {
+          "step": "recreate_directory"
+        },
+        {
+          "step": "set_mode",
+          "mode": 493
+        },
+        {
+          "step": "set_owner",
+          "uid": 10000,
+          "gid": 10000
+        },
+        {
+          "step": "set_selinux_context",
+          "context": "u:object_r:app_data_file:s0:c111,c222"
+        },
+        {
+          "step": "set_immutable",
+          "immutable": false
+        }
+      ]
+    }
+  ]
+}

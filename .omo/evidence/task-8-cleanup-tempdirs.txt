@@ -1,0 +1,1 @@
+PASS: no /tmp/puread-t8-parse.* smoke-test temp directories remain

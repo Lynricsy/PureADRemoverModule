@@ -1,0 +1,3 @@
+rules/sqlite/app-ad-databases.toml
+rules/sqlite/common-sdk-databases.toml
+rules/sqlite/coolapk-ad-databases.toml

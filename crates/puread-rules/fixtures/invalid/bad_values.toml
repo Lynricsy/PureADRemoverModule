@@ -1,0 +1,37 @@
+[[rules]]
+id = "bad-action"
+category = "file_path"
+package = "com.example.app"
+action = "minimal_sqlite"
+target_template = "/data/data/<pkg>/cache/ad"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "bad action fixture"
+rollback_strategy = "restore_original"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "ad"
+
+[[rules]]
+id = "bad-profile"
+category = "component"
+package = "com.example.app"
+action = "disable_component"
+target_component = "com.example.app/com.example.app.AdActivity"
+risk_level = "high"
+default_enabled = false
+profile = "conservative"
+observed_behavior = "bad profile fixture"
+rollback_strategy = "reenable_component"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/component.sh"
+source_line_or_pattern = "AdActivity"

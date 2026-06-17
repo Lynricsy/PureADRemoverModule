@@ -1,0 +1,25 @@
+sqlite-123pan-gdt-database-minimal	minimal_sqlite	boot_once	/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/files/gdt_database/*db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-123pan-amps-ad-minimal	minimal_sqlite	boot_once	/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/amps_ad.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-123pan-kwai-report-minimal	minimal_sqlite	boot_once	/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadrep.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-123pan-kwai-cache-minimal	minimal_sqlite	boot_once	/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadcache.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-youdao-ad-sdk-minimal	minimal_sqlite	boot_once	/data/user/[0-9]*/com.youdao.dict/databases/ad_sdk_database*	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-netease-mail-ad-sdk-minimal	minimal_sqlite	boot_once	/data/user/[0-9]*/com.netease.mail/databases/ad_sdk_database*	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-tencent-map-splash-minimal	minimal_sqlite	boot_once	/data/user/[0-9]*/com.tencent.map/databases/splash.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-any-beizi-ad-deny-write	deny_write	low_frequency	/data/user/[0-9]*/*/databases/beizi_ad.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-any-pangle-npth-log-deny-write	deny_write	low_frequency	/data/user/[0-9]*/*/databases/pangle_com.byted.pangle_npth_log.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-any-pangle-opensdk-deny-write	deny_write	low_frequency	/data/user/[0-9]*/*/databases/pangle_com.byted.pangle_ttopensdk.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-any-pangle-opensdk2-deny-write	deny_write	low_frequency	/data/user/[0-9]*/*/databases/pangle_com.byted.pangle_ttopensdk2.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-any-tt-mediation-deny-write	deny_write	low_frequency	/data/user/[0-9]*/*/databases/tt_mediation_open_sdk.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-any-pangle-mediation-deny-write	deny_write	low_frequency	/data/user/[0-9]*/*/databases/pangle_com.byted.pangle_tt_mediation_open_sdk.db	source=mod/sqlite_clean_up.sh	default_enabled=false
+sqlite-coolapk-beizi-ad-delete	delete	manual	/data/user/*/com.coolapk.market/databases/beizi_ad.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-kwai-cache-delete	delete	manual	/data/user/*/com.coolapk.market/databases/ksadcache.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-kwai-file-download-delete	delete	manual	/data/user/*/com.coolapk.market/databases/ksad_file_download.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-jad-delete	delete	manual	/data/user/*/com.coolapk.market/databases/jaddb.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-kwai-report-delete	delete	manual	/data/user/*/com.coolapk.market/databases/ksadrep.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-pangle-mediation-deny-write	deny_write	low_frequency	/data/user/*/com.coolapk.market/databases/pangle_com.byted.pangle_tt_mediation_open_sdk.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-pangle-family-deny-write	deny_write	low_frequency	/data/user/*/com.coolapk.market/databases/pangle*.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-gdt-lower-deny-write	deny_write	low_frequency	/data/user/*/com.coolapk.market/databases/gdt_*.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-anythink-deny-write	deny_write	low_frequency	/data/user/*/com.coolapk.market/databases/anythink*.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-gdt-upper-deny-write	deny_write	low_frequency	/data/user/*/com.coolapk.market/databases/GDT*.db	source=mod/coolapk.sh	default_enabled=false
+sqlite-coolapk-open-sdk-deny-write	deny_write	low_frequency	/data/user/*/com.coolapk.market/databases/*open_sdk.db	source=mod/coolapk.sh	default_enabled=false
+exit=0

@@ -1,0 +1,46 @@
+[1m[92m    Updating[0m crates.io index
+[1m[92m     Locking[0m 30 packages to latest Rust 1.96.0 compatible versions
+[1m[92m   Compiling[0m proc-macro2 v1.0.106
+[1m[92m   Compiling[0m unicode-ident v1.0.24
+[1m[92m   Compiling[0m quote v1.0.45
+[1m[92m   Compiling[0m serde_core v1.0.228
+[1m[92m   Compiling[0m serde v1.0.228
+[1m[92m   Compiling[0m zmij v1.0.21
+[1m[92m   Compiling[0m num-conv v0.2.2
+[1m[92m   Compiling[0m hashbrown v0.17.1
+[1m[92m   Compiling[0m thiserror v2.0.18
+[1m[92m   Compiling[0m time-core v0.1.9
+[1m[92m   Compiling[0m equivalent v1.0.2
+[1m[92m   Compiling[0m serde_json v1.0.150
+[1m[92m   Compiling[0m itoa v1.0.18
+[1m[92m   Compiling[0m powerfmt v0.2.0
+[1m[92m   Compiling[0m toml_write v0.1.2
+[1m[92m   Compiling[0m winnow v0.7.15
+[1m[92m   Compiling[0m memchr v2.8.2
+[1m[92m   Compiling[0m time-macros v0.2.29
+[1m[92m   Compiling[0m indexmap v2.14.0
+[1m[92m   Compiling[0m syn v2.0.118
+[1m[92m   Compiling[0m deranged v0.5.8
+[1m[92m   Compiling[0m serde_derive v1.0.228
+[1m[92m   Compiling[0m thiserror-impl v2.0.18
+[1m[92m   Compiling[0m time v0.3.49
+[1m[92m   Compiling[0m serde_spanned v0.6.9
+[1m[92m   Compiling[0m toml_datetime v0.6.11
+[1m[92m   Compiling[0m toml_edit v0.22.27
+[1m[92m   Compiling[0m puread-core v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-core)
+[1m[92m   Compiling[0m toml v0.8.23
+[1m[92m   Compiling[0m puread-rules v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-rules)
+[1m[92m   Compiling[0m puread_t8_parse_smoke v0.1.0 (/tmp/puread-t8-parse.yIWCrC)
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 3.95s
+[1m[92m     Running[0m `/tmp/puread-t8-parse.yIWCrC/target/debug/puread_t8_parse_smoke`
+/root/Projects/Ling/PureADRemoverModule/rules/apps/com.autonavi.minimap.toml	rules=2
+/root/Projects/Ling/PureADRemoverModule/rules/apps/com.coolapk.market.toml	rules=2
+/root/Projects/Ling/PureADRemoverModule/rules/apps/com.netease.cloudmusic.toml	rules=2
+/root/Projects/Ling/PureADRemoverModule/rules/apps/com.ss.android.ugc.aweme.toml	rules=2
+/root/Projects/Ling/PureADRemoverModule/rules/apps/com.taobao.idlefish.toml	rules=1
+/root/Projects/Ling/PureADRemoverModule/rules/apps/com.tencent.mobileqq.toml	rules=2
+/root/Projects/Ling/PureADRemoverModule/rules/apps/com.zhihu.android.toml	rules=2
+/root/Projects/Ling/PureADRemoverModule/rules/apps/ctrip.android.view.toml	rules=2
+/root/Projects/Ling/PureADRemoverModule/rules/apps/tv.danmaku.bili.toml	rules=3
+/root/Projects/Ling/PureADRemoverModule/rules/common/sdk-cache.toml	rules=5
+parse_rules_toml=ok total_rules=23

@@ -1,0 +1,19 @@
+[[rules]]
+id = "idlefish-external-splash-assets"
+category = "file_path"
+package = "com.taobao.idlefish"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/files/splash_ad_assets"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Idlefish stores splash advertising assets below its external app files directory."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 92: block_ad \"/data/media/0/Android/data/com.taobao.idlefish/files/splash_ad_assets\""

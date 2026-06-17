@@ -185,7 +185,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `sh -n scripts/verify-local.sh | tee .omo/evidence/task-6-shell-parse.txt`
   Commit: N | chore(qa): scaffold evidence and verification scripts | Files `.omo/evidence/README.md`, `scripts/verify-local.sh`
 
-- [ ] 7. 实现规则解析和 schema 校验
+- [x] 7. 实现规则解析和 schema 校验
   What to do / Must NOT do: 在 `puread-rules` 解析 TOML 规则，校验 action、profile、包名、路径、风险等级、默认启用状态、source metadata、rollback_strategy。解析边界使用 serde，不在业务层重复字符串验证。
   Parallelization: Can parallel Y | Wave 2 | Blocks T10/T13/T16
   References: T3/T4 outputs; `Example/ads288.zip/配置.prop:25`; `Example/ads288.zip/配置.prop:37`
@@ -193,7 +193,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-rules -- --nocapture | tee .omo/evidence/task-7-rules-tests.txt`
   Commit: N | feat(rules): parse and validate non-domain rules | Files `crates/puread-rules/**`
 
-- [ ] 8. 转换默认文件/SDK 缓存规则库
+- [x] 8. 转换默认文件/SDK 缓存规则库
   What to do / Must NOT do: 从 `NoAdsService.sh` 与 `ads288.zip/mod/ad.sh`、应用专项脚本提取非域名文件规则到 `rules/common/*.toml`、`rules/apps/<package>.toml`。每条规则必须带 source metadata、category、default_enabled、rollback_strategy。不要提取任何域名、hosts、iptables 字符串规则。
   Parallelization: Can parallel Y | Wave 2 | Blocks T13/T14
   References: `Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh:14`; `Example/ads288.zip/mod/ad.sh:27`; `Example/ads288.zip/mod/killpangle.sh`; `AgentLogs/0002-分析-Example-模块去广告能力-阶段2.md`
@@ -201,7 +201,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo run -p puread-cli -- rules list --kind files > .omo/evidence/task-8-file-rules-list.txt`; `rg -n "splash|pangle|GDTDOWNLOAD|TTCache" rules/common rules/apps > .omo/evidence/task-8-rule-sample.txt`
   Commit: N | feat(rules): add file and SDK cache profiles | Files `rules/common/**`, `rules/apps/**`
 
-- [ ] 9. 转换 SQLite 广告库规则
+- [x] 9. 转换 SQLite 广告库规则
   What to do / Must NOT do: 从 `sqlite_clean_up.sh` 和 `coolapk.sh` 提取 SQLite 规则，动作分为 delete、minimal-sqlite、deny-write。默认低频或手动，不加入高频监控。只允许明确广告 SDK DB 路径；每条规则必须带 source metadata 和 rollback_strategy。
   Parallelization: Can parallel Y | Wave 2 | Blocks T15/T16
   References: `Example/ads288.zip/mod/sqlite_clean_up.sh:9`; `Example/ads288.zip/mod/coolapk.sh`
@@ -209,7 +209,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo run -p puread-cli -- rules list --kind sqlite > .omo/evidence/task-9-sqlite-rules-list.txt`
   Commit: N | feat(rules): add SQLite ad database profiles | Files `rules/sqlite/**`
 
-- [ ] 10. 实现 dry-run 执行计划生成
+- [x] 10. 实现 dry-run 执行计划生成
   What to do / Must NOT do: CLI 支持 `scan --dry-run`，读取规则并输出将要处理的路径和动作，不修改文件。不要执行 root 命令。
   Parallelization: Can parallel Y | Wave 2 | Blocks T16/T20
   References: T7/T8/T9 outputs
@@ -217,7 +217,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo run -p puread-cli -- scan --dry-run --rules rules/files --root tests/fixtures/android-fs > .omo/evidence/task-10-dry-run.json`
   Commit: N | feat(cli): generate dry-run action plans | Files `crates/puread-cli/**`, `tests/fixtures/**`
 
-- [ ] 11. 编写上游同步工具骨架
+- [x] 11. 编写上游同步工具骨架
   What to do / Must NOT do: 创建 `scripts/update-upstream.sh` 或 Rust CLI 子命令骨架，用于刷新上游快照到 `upstream/` 或校验本地 `Example/`；输出 diff 报告。记录 AdGuard 嵌套仓库 commit、remote URL、`ads288.zip` SHA256、获取日期。当前 `ads288.zip` 只能视为本地快照；若未来主人提供新版 zip，脚本记录新 SHA256。不要自动改规则，不要自行从非指定来源下载替换 zip。
   Parallelization: Can parallel Y | Wave 2 | Blocks T21
   References: `AGENTS.md`; `Example/ads288.zip`; `Example/Adguard-Home-For-Magisk-Mod`
@@ -225,7 +225,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `scripts/update-upstream.sh --dry-run | tee .omo/evidence/task-11-upstream-dry-run.txt`; `sha256sum Example/ads288.zip > .omo/evidence/task-11-ads288-sha256.txt`; `git -C Example/Adguard-Home-For-Magisk-Mod rev-parse HEAD > .omo/evidence/task-11-adguard-head.txt`
   Commit: N | chore(upstream): add upstream refresh dry-run script | Files `scripts/update-upstream.sh`, `upstream/README.md`
 
-- [ ] 12. 实现恢复账本 CLI
+- [x] 12. 实现恢复账本 CLI
   What to do / Must NOT do: CLI 支持 `ledger show`、`restore --dry-run`，能读取状态账本并输出恢复动作。不要执行真实恢复。
   Parallelization: Can parallel Y | Wave 2 | Blocks T19/T24
   References: T5 output

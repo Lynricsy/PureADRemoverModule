@@ -1,0 +1,10 @@
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 1.38s
+[1m[92m     Running[0m `target/debug/puread-cli rules list --kind files`
+error: unrecognized subcommand 'rules'
+
+Usage: puread-cli <COMMAND>
+
+For more information, try '--help'.
+
+exit=2

@@ -1,0 +1,40 @@
+[[rules]]
+id = "qq-external-vas-ad-files"
+category = "file_path"
+package = "com.tencent.mobileqq"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/files/vas_ad"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "QQ stores VAS advertising assets below its external app files directory."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 67: block_ad \"/data/media/0/Android/data/com.tencent.mobileqq/files/vas_ad\""
+
+[[rules]]
+id = "qq-external-mobileqq-splash"
+category = "file_path"
+package = "com.tencent.mobileqq"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/MobileQQ/splahAD"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "QQ stores splash advertising assets below MobileQQ/splahAD in external app storage."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available. Upstream spelling splahAD is retained because it is the observed path."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 82: /data/media/[0-9]*/Android/data/com.tencent.mobileqq/MobileQQ/splahAD"

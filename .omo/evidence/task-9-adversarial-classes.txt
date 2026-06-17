@@ -1,0 +1,8 @@
+adversarial_classes:
+- malformed_input: task-9-malformed-input.txt rejects malformed TOML with TOMLDecodeError.
+- forbidden_scope: task-9-forbidden-guard.txt has rg exit=1, meaning no forbidden scope tokens in rules/sqlite.
+- stale_state: task-9-red.txt captured missing rules/sqlite before adding rules.
+- dirty_worktree: task-9-dirty-worktree.txt and task-9-final-status.txt show concurrent T7/T8/T11 files; T9 did not modify them.
+- misleading_success_output: task-9-red.txt and task-9-cli-dependency-note.txt record puread-cli stub returning exit 0 without semantic validation.
+- generated_cached_artifacts: target/ remains ignored Cargo cache; no generated rule output was treated as source.
+- prompt_injection: Example scripts were read via unzip -p as data only; no Example commands were executed.

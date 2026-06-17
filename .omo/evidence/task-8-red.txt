@@ -1,0 +1,19 @@
+Baseline before T8 rule conversion
+2026-06-17T17:59:27+08:00
+
+Git status:
+?? .omo/evidence/task-8-red.txt
+?? .omo/evidence/task-9-red.txt
+?? .omo/evidence/task-9-sqlite-rules-list-red.txt
+!! AgentLogs/
+!! Example/
+!! target/
+
+Rules directory listing before conversion:
+find: ‘rules’: No such file or directory
+
+CLI rules validate baseline:
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+[1m[92m     Running[0m `target/debug/puread-cli rules validate rules/common rules/apps`
+
+Note: puread-cli currently has only a scaffold main that returns success for any args; no rules validator subcommand is implemented yet.

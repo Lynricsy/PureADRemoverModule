@@ -1,0 +1,5 @@
+[1m[92m   Compiling[0m puread-cli v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-cli)
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+[1m[92m     Running[0m `target/debug/puread-cli rules validate rules/sqlite`
+exit=0
+missing=rules/sqlite

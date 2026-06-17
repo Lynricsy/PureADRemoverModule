@@ -1,0 +1,1 @@
+PASS: no forbidden network/domain tokens found in rules/common or rules/apps

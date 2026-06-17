@@ -1,0 +1,5 @@
+T11 failing-first baseline
+command: test ! -e scripts/update-upstream.sh
+result: pass; scripts/update-upstream.sh absent before implementation
+command: test ! -e upstream
+result: pass; upstream directory absent before implementation

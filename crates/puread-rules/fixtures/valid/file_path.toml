@@ -1,0 +1,18 @@
+[[rules]]
+id = "coolapk-splash-cache"
+category = "file_path"
+package = "com.coolapk.market"
+action = "empty_file"
+target_template = "/data/data/<pkg>/cache/splash_ad"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "app-local splash ad cache is recreated under private cache"
+rollback_strategy = "restore_original"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "splash_ad"

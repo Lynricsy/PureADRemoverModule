@@ -1,0 +1,25 @@
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m   Compiling[0m puread-rules v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-rules)
+[1m[91merror[E0432][0m[1m: unresolved imports `puread_rules::RuleCategory`, `puread_rules::RuleParseError`, `puread_rules::RuleTarget`, `puread_rules::parse_rules_toml`, `puread_rules::parse_rules_toml_documents`[0m
+ [1m[94m--> [0mcrates/puread-rules/tests/rule_parsing.rs:5:5
+  [1m[94m|[0m
+[1m[94m5[0m [1m[94m|[0m     RuleCategory, RuleParseError, RuleTarget, parse_rules_toml, parse_rules_toml_documents,
+  [1m[94m|[0m     [1m[91m^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mno `parse_rules_toml_documents` in the root[0m
+  [1m[94m|[0m     [1m[91m|[0m             [1m[91m|[0m               [1m[91m|[0m           [1m[91m|[0m
+  [1m[94m|[0m     [1m[91m|[0m             [1m[91m|[0m               [1m[91m|[0m           [1m[91mno `parse_rules_toml` in the root[0m
+  [1m[94m|[0m     [1m[91m|[0m             [1m[91m|[0m               [1m[91mno `RuleTarget` in the root[0m
+  [1m[94m|[0m     [1m[91m|[0m             [1m[91mno `RuleParseError` in the root[0m
+  [1m[94m|[0m     [1m[91mno `RuleCategory` in the root[0m
+
+[1m[91merror[E0433][0m[1m: cannot find `RuleDocument` in `puread_rules`[0m
+  [1m[94m--> [0mcrates/puread-rules/tests/rule_parsing.rs:44:33
+   [1m[94m|[0m
+[1m[94m44[0m [1m[94m|[0m         .flat_map(puread_rules::RuleDocument::rules)
+   [1m[94m|[0m                                 [1m[91m^^^^^^^^^^^^[0m [1m[91mcould not find `RuleDocument` in `puread_rules`[0m
+
+[1mSome errors have detailed explanations: E0432, E0433.[0m
+[1mFor more information about an error, try `rustc --explain E0432`.[0m
+[1m[91merror[0m: could not compile `puread-rules` (test "rule_parsing") due to 2 previous errors
+exit=101

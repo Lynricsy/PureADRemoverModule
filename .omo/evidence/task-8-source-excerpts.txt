@@ -1,0 +1,62 @@
+# T8 source excerpts
+
+## NoAdsService relevant lines
+    14	    # 美团外卖
+    15	    block_ad "/data/data/com.sankuai.meituan.takeoutnew/files/cips/common/waimai/assets/ad"
+    16	    block_ad "/data/media/0/Android/data/com.sankuai.meituan.takeoutnew/files/cips/common/waimai/assets/promotion"
+    17
+    18	    # 知乎App
+    19	    block_ad "/data/data/com.zhihu.android/files/ad"
+    20
+    21	    # 哔哩哔哩
+    22	    block_ad "/data/data/tv.danmaku.bili/files/res_cache"
+    23	    block_ad "/data/data/tv.danmaku.bili/files/update"
+    24	    block_ad "/data/media/0/Android/data/tv.danmaku.bili/cache/default/journal"
+    25	    block_ad "/data/data/tv.danmaku.bili/files/splash2"
+    26	    block_ad "/data/data/tv.danmaku.bili/files/splash_top_view"
+    38	    block_ad "/data/media/0/Android/data/com.netease.cloudmusic/cache/Ad"
+    39	    block_ad "/data/data/com.netease.cloudmusic/cache/MusicWebApp"
+    60	    block_ad "/data/data/com.autonavi.minimap/files/LaunchDynamicResource"
+    61	    block_ad "/data/data/com.autonavi.minimap/files/splash"
+    62
+    63	    # 抖音App
+    64	    block_ad "/data/data/com.ss.android.ugc.aweme/files/im_common_resource/common_resource/scene_strategy/incentive_chat_group_panel_alpha_video_festival"
+    65
+    66	    # 腾讯QQ
+    67	    block_ad "/data/media/0/Android/data/com.tencent.mobileqq/files/vas_ad"
+    92	    block_ad "/data/media/0/Android/data/com.taobao.idlefish/files/splash_ad_assets"
+    93	    block_ad "/data/media/0/Android/data/com.taobao.idlefish/files/ad"
+    94	    block_ad "/data/data/com.taobao.idlefish/cache/beizi"
+    95
+    96	    # 航旅纵横
+    97	    block_ad "/data/data/com.umetrip.android.msky.app/files/ad"
+    98
+    99	    # 携程旅行
+   100	    block_ad "/data/media/0/Android/data/ctrip.android.view/cache/CTADCache"
+   101	    block_ad "/data/data/ctrip.android.view/files/CTAD"
+
+## ads288 mod/ad.sh relevant lines
+    31	#驾考宝典
+    32	/data/user/[0-9]*/com.handsgo.jiakao.android/cache/GDTDOWNLOAD
+    33	/data/media/[0-9]*/Android/data/com.handsgo.jiakao.android/cache/reward_video_cache_*
+    34	/data/media/[0-9]*/Android/data/com.handsgo.jiakao.android/cache/splash_ad_cache
+    35	#百度地图
+    36	/data/user/[0-9]*/com.baidu.BaiduMap/files/AdvertData
+    37
+    38	#抖音
+    39	/data/media/[0-9]*/Android/data/com.ss.android.ugc.aweme/awemeSplashCache
+    40	/data/media/[0-9]*/Android/data/com.ss.android.ugc.aweme/liveSplashCache
+    41	/data/media/[0-9]*/Android/data/com.ss.android.ugc.aweme/splashCache
+    55	#酷安
+    56	/data/media/[0-9]*/Android/data/com.coolapk.market/cachett_ad
+    57	/data/media/[0-9]*/Android/data/com.coolapk.market/cache/splash_image
+    58	/data/media/[0-9]*/Android/data/com.coolapk.market/cache/com_qq_e_download
+    59	/data/media/[0-9]*/Android/data/com.coolapk.market/cache/pangle_com.byted.pangle
+    60	/data/media/[0-9]*/Android/data/com.coolapk.market/cache/tt_tmpl_pkg
+    61	/data/media/[0-9]*/Android/data/com.coolapk.market/files/TTCache
+    62	/data/media/[0-9]*/Android/data/com.coolapk.market/cache/com.jd.jdsdk
+    82	/data/media/[0-9]*/Android/data/com.tencent.mobileqq/MobileQQ/splahAD
+   115	/data/user/[0-9]*/tv.danmaku.bili/files/res_cache
+
+## ads288 mod/aweme.sh relevant lines
+     9	find /data/user/*/com.ss.android.ugc.aweme /data/data/com.ss.android.ugc.aweme /data/media/*/Android/data/com.ss.android.ugc.aweme -iname "offlineX" -type d -o -iname "ALOG" -type d -o -iname "apm6_sdk" -type d -o -iname "apm6" -type d -o -iname "logs" -type d -o -iname "splash_commerce_card" -type d -o -iname "splash_goods_pendant" -type d -o -iname "splash_ad_realtime_model" -type d -o -iname "keva_splash_ad_async_task" -type d -o -iname "AWESOME_SPLASH" -type d -o -iname "file_splash_ad_preload" -type d -o -iname "splash_*" -type d -o -iname "luckycat_gecko_root_dir" -type d 2>/dev/null | while read adfile

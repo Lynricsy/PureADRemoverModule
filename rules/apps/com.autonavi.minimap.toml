@@ -1,0 +1,39 @@
+[[rules]]
+id = "amap-files-splash"
+category = "file_path"
+package = "com.autonavi.minimap"
+action = "empty_dir"
+target_template = "/data/data/<pkg>/files/splash"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Amap stores launch splash assets under files/splash."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 61: block_ad \"/data/data/com.autonavi.minimap/files/splash\""
+
+[[rules]]
+id = "amap-files-launch-dynamic-resource"
+category = "file_path"
+package = "com.autonavi.minimap"
+action = "empty_dir"
+target_template = "/data/data/<pkg>/files/LaunchDynamicResource"
+risk_level = "medium"
+default_enabled = false
+profile = "conservative"
+observed_behavior = "Amap stores launch-time dynamic resources in an app-private directory."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original path metadata before placeholder creation; remove the placeholder and restore ledger metadata when available. Disabled by default because the directory name is broader than an explicit ad cache."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 60: block_ad \"/data/data/com.autonavi.minimap/files/LaunchDynamicResource\""

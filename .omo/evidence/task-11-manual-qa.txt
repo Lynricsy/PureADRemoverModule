@@ -1,0 +1,24 @@
+exit=0
+checks:
+4:rules_modified=false
+5:download_performed=false
+10:ads288_zip_sha256=bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7
+12:adguard_remote_url=https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git
+13:adguard_commit=098ba8c78cf57dbd180fe2c72b05405b76eaa769
+43:review_result=report_only
+44:accepted_candidates_written=0
+45:rejected_categories=hosts,dns,proxy,iptables_network,ad_reward_domain
+46:next_step=manual review only; do not auto-modify rules from this report
+sample forbidden findings:
+16:  - category=dns action=rejected source=Adguard-Home-For-Magisk-Mod path=Example/Adguard-Home-For-Magisk-Mod reason=AdGuard Home/DNS service snapshot; metadata only
+17:  - category=hosts action=rejected source=ads288.zip zip_entry=Host/ reason=hosts or mount_hosts path
+18:  - category=hosts action=rejected source=ads288.zip zip_entry=Host/recovery reason=hosts or mount_hosts path
+19:  - category=hosts action=rejected source=ads288.zip zip_entry=Host/挂载hosts.sh reason=hosts or mount_hosts path
+20:  - category=hosts action=rejected source=ads288.zip zip_entry=Host/读取白名单修改Host.sh reason=hosts or mount_hosts path
+21:  - category=hosts action=rejected source=ads288.zip zip_entry=host.sh reason=hosts or mount_hosts path
+22:  - category=hosts action=rejected source=ads288.zip zip_entry=hosts reason=hosts or mount_hosts path
+23:  - category=iptables_network action=rejected source=ads288.zip zip_entry=mod/iptables.sh reason=network blocking script
+24:  - category=iptables_network action=rejected source=ads288.zip zip_entry=mod/network_limit.sh reason=network blocking script
+25:  - category=ad_reward_domain action=rejected source=ads288.zip zip_entry=mod/ad_reward.sh reason=ad reward domain switching context
+26:  - category=ad_reward_domain action=rejected source=ads288.zip zip_entry=mod/ad_reward_2.sh reason=ad reward domain switching context
+27:  - category=hosts action=rejected source=ads288.zip zip_entry=mod/mount_hosts.sh reason=hosts or mount_hosts path

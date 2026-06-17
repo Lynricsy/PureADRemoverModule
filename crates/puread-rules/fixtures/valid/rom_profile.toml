@@ -1,0 +1,18 @@
+[[rules]]
+id = "miui-system-ad-setting"
+category = "rom_profile"
+package = "com.miui.systemadsolution"
+action = "rom_setting"
+target_template = "/data/system/users/0/settings_secure.xml"
+risk_level = "high"
+default_enabled = false
+profile = "rom"
+observed_behavior = "ROM profile stores local ad service toggles outside network filtering"
+rollback_strategy = "restore_rom_value"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+source_file = "配置.prop"
+source_line_or_pattern = "systemAdSolution"

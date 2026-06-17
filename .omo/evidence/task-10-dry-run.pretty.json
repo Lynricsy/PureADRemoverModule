@@ -1,0 +1,39 @@
+{
+    "schema_version": 1,
+    "mode": "dry_run",
+    "dry_run": true,
+    "root_path": "tests/fixtures/android-fs",
+    "rule_file_count": 10,
+    "action_count": 2,
+    "will_mutate": false,
+    "actions": [
+        {
+            "rule_id": "aweme-internal-splash-commerce-card",
+            "category": "file_path",
+            "package": "com.ss.android.ugc.aweme",
+            "action": "empty_dir",
+            "profile": "conservative",
+            "risk_level": "low",
+            "default_enabled": true,
+            "android_path": "/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+            "host_path": "tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+            "source": "ads288.zip",
+            "source_file": "Example/ads288.zip",
+            "zip_entry": "mod/aweme.sh"
+        },
+        {
+            "rule_id": "aweme-external-splash-cache",
+            "category": "file_path",
+            "package": "com.ss.android.ugc.aweme",
+            "action": "empty_dir",
+            "profile": "conservative",
+            "risk_level": "low",
+            "default_enabled": true,
+            "android_path": "/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+            "host_path": "tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+            "source": "ads288.zip",
+            "source_file": "Example/ads288.zip",
+            "zip_entry": "mod/ad.sh"
+        }
+    ]
+}

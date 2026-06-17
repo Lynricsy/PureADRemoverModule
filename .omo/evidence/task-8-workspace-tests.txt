@@ -1,0 +1,143 @@
+[1m[92m   Compiling[0m toml_datetime v0.6.11
+[1m[92m   Compiling[0m serde_spanned v0.6.9
+[1m[92m   Compiling[0m puread-core v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-core)
+[1m[92m   Compiling[0m puread-daemon v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-daemon)
+[1m[92m   Compiling[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[92m   Compiling[0m toml_edit v0.22.27
+[1m[92m   Compiling[0m toml v0.8.23
+[1m[92m   Compiling[0m puread-rules v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-rules)
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 1.39s
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_android-675a8175a370d52f)
+
+running 1 test
+test tests::crate_name_returns_android_crate_identifier_when_smoke_test_runs ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_cli-69104eb4e351fdbb)
+
+running 1 test
+test tests::crate_name_returns_cli_crate_identifier_when_smoke_test_runs ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/main.rs (target/debug/deps/puread_cli-4d10d02b95be7562)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/ledger.rs (target/debug/deps/ledger-ea5f82bd63a39cdb)
+
+running 6 tests
+test restore_dry_run_fails_cleanly_when_ledger_json_is_malformed ... ok
+test ledger_show_fails_cleanly_when_ledger_path_is_directory ... ok
+test restore_dry_run_fails_cleanly_when_ledger_path_is_missing ... ok
+test restore_dry_run_outputs_restore_actions_when_ledger_exists ... ok
+test restore_dry_run_preserves_ledger_fixture_when_planning_restore ... ok
+test ledger_show_outputs_stable_json_when_ledger_exists ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_core-09a2635e7276374d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/path_expansion.rs (target/debug/deps/path_expansion-dd94f2a05144adcf)
+
+running 5 tests
+test path_expansion_rejects_dangerous_paths_when_boundary_input_is_malformed ... ok
+test path_expansion_expands_android_data_and_package_relative_paths_when_package_exists ... ok
+test path_expansion_rejects_symlink_escape_when_target_points_outside_root ... ok
+test path_expansion_finds_name_matches_only_inside_package_scopes ... ok
+test path_expansion_expands_data_user_numeric_package_glob_when_users_exist ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/restore_ledger.rs (target/debug/deps/restore_ledger-6d1760b17ca1516d)
+
+running 7 tests
+test restore_ledger_builds_fixed_module_state_path_when_module_id_valid ... ok
+test restore_ledger_rejects_malformed_jsonl_and_invalid_fields_when_reading_boundary_input ... ok
+test restore_ledger_dedupes_same_path_action_profile_when_appending_again ... ok
+test restore_ledger_appends_jsonl_record_when_ledger_missing ... ok
+test restore_ledger_preserves_failed_restore_records_when_attempt_recorded ... ok
+test restore_ledger_removes_successful_restore_records_when_attempt_recorded ... ok
+test restore_ledger_sorts_deepest_and_newest_records_first_when_planning_restore ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/rule_model.rs (target/debug/deps/rule_model-3d65d2684b75e480)
+
+running 5 tests
+test rule_model_constructs_valid_values_when_all_invariants_hold ... ok
+test rule_model_parses_action_profile_and_risk_as_typed_enums_when_strings_are_valid ... ok
+test rule_model_rejects_bad_action_profile_and_restore_token_strings_when_parsing_boundary_input ... ok
+test rule_model_rejects_invalid_package_names_when_parsing_boundary_input ... ok
+test rule_model_rejects_invalid_rule_id_and_path_primitives_when_constructing_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_daemon-919ac4bd0a1dbb78)
+
+running 1 test
+test tests::crate_name_returns_daemon_crate_identifier_when_smoke_test_runs ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/main.rs (target/debug/deps/puread_daemon-e8a2a84e35654004)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_rules-1813f366f4b91ea0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/rule_parsing.rs (target/debug/deps/rule_parsing-768aa403e1756eaf)
+
+running 7 tests
+test rule_parser_rejects_malformed_toml_when_input_is_not_a_document ... ok
+test source_metadata_prompt_injection_remains_inert_data_when_rule_is_valid ... ok
+test rule_parser_rejects_unknown_fields_when_schema_contains_typos ... ok
+test rule_parser_rejects_missing_source_and_rollback_metadata_when_required_fields_are_absent ... ok
+test rule_parser_rejects_forbidden_capabilities_when_category_or_field_is_network_scoped ... ok
+test valid_category_marker_file_sqlite_component_appops_rom_parse_to_typed_values ... ok
+test rule_parser_rejects_invalid_action_profile_package_path_risk_default_and_rollback_values ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_android
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_cli
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_daemon
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_rules
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

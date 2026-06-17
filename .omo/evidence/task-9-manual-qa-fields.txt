@@ -1,0 +1,26 @@
+PASS rules/sqlite/app-ad-databases.toml:1 sqlite-123pan-gdt-database-minimal action=minimal_sqlite schedule=boot_once rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/app-ad-databases.toml:2 sqlite-123pan-amps-ad-minimal action=minimal_sqlite schedule=boot_once rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/app-ad-databases.toml:3 sqlite-123pan-kwai-report-minimal action=minimal_sqlite schedule=boot_once rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/app-ad-databases.toml:4 sqlite-123pan-kwai-cache-minimal action=minimal_sqlite schedule=boot_once rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/app-ad-databases.toml:5 sqlite-youdao-ad-sdk-minimal action=minimal_sqlite schedule=boot_once rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/app-ad-databases.toml:6 sqlite-netease-mail-ad-sdk-minimal action=minimal_sqlite schedule=boot_once rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/app-ad-databases.toml:7 sqlite-tencent-map-splash-minimal action=minimal_sqlite schedule=boot_once rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/common-sdk-databases.toml:1 sqlite-any-beizi-ad-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/common-sdk-databases.toml:2 sqlite-any-pangle-npth-log-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/common-sdk-databases.toml:3 sqlite-any-pangle-opensdk-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/common-sdk-databases.toml:4 sqlite-any-pangle-opensdk2-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/common-sdk-databases.toml:5 sqlite-any-tt-mediation-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/common-sdk-databases.toml:6 sqlite-any-pangle-mediation-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/sqlite_clean_up.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:1 sqlite-coolapk-beizi-ad-delete action=delete schedule=manual rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:2 sqlite-coolapk-kwai-cache-delete action=delete schedule=manual rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:3 sqlite-coolapk-kwai-file-download-delete action=delete schedule=manual rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:4 sqlite-coolapk-jad-delete action=delete schedule=manual rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:5 sqlite-coolapk-kwai-report-delete action=delete schedule=manual rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:6 sqlite-coolapk-pangle-mediation-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:7 sqlite-coolapk-pangle-family-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:8 sqlite-coolapk-gdt-lower-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:9 sqlite-coolapk-anythink-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:10 sqlite-coolapk-gdt-upper-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/coolapk.sh
+PASS rules/sqlite/coolapk-ad-databases.toml:11 sqlite-coolapk-open-sdk-deny-write action=deny_write schedule=low_frequency rollback=present source=mod/coolapk.sh
+SUMMARY sqlite_rule_files=3 sqlite_rules=24
+exit=0

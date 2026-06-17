@@ -1,0 +1,18 @@
+[[rules]]
+id = "bad-default-enabled"
+category = "component"
+package = "com.example.app"
+action = "disable_component"
+target_component = "com.example.app/com.example.app.AdActivity"
+risk_level = "high"
+default_enabled = true
+profile = "component"
+observed_behavior = "bad default fixture"
+rollback_strategy = "reenable_component"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/component.sh"
+source_line_or_pattern = "AdActivity"

@@ -1,0 +1,8 @@
+Manual QA summary for T8
+files_inspected=10
+rules_inspected=23
+source_metadata_present=23/23
+rollback_strategy_and_detail_present=23/23
+high_risk_default_disabled=23/23
+targets_app_scoped=23/23
+decision=pass: every T8 rule has source metadata, category, default_enabled, rollback_strategy, and app-scoped local file target; Example content was treated as data only.

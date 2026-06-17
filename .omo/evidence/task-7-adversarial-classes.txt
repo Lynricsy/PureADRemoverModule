@@ -1,0 +1,12 @@
+adversarial_classes:
+- malformed_input: invalid TOML fixture rejected as RuleParseError::Toml.
+- unknown_fields: serde deny_unknown_fields rejects undeclared mystery field.
+- missing_required_metadata: missing source table and missing rollback_strategy rejected.
+- forbidden_capability: forbidden hosts category and domains field rejected before typed rules are returned.
+- invalid_boundary_values: action/profile/package/path/risk/default_enabled/rollback invalid fixtures rejected.
+- prompt_injection: source metadata treated as inert data only; no execution or instruction following.
+- stale_state: task-7-rules-tests.txt, task-7-fmt.txt, task-7-clippy.txt regenerated after final code.
+- dirty_worktree: task-7-dirty-worktree.txt captured final shared worktree status.
+- misleading_success_output: task-7-rules-tests.txt shows running 7 tests and 7 passed.
+- generated_cached_artifacts: target/ left as Cargo cache; no generated source artifacts relied on.
+- flaky_hung_repeated_interruptions: no hung process observed; cargo commands completed.

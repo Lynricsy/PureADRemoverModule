@@ -1,0 +1,4 @@
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m `target/debug/puread-cli restore --dry-run --ledger tests/fixtures/missing-ledger.json`
+ledger file does not exist: tests/fixtures/missing-ledger.json

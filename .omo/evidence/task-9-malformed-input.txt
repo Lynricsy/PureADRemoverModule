@@ -1,0 +1,2 @@
+PASS malformed input rejected: TOMLDecodeError
+exit=0

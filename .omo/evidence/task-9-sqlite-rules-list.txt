@@ -1,0 +1,513 @@
+{
+  "schema_version": 1,
+  "command": "rules_list",
+  "kind": "sqlite",
+  "rule_file_count": 3,
+  "rule_count": 24,
+  "rules": [
+    {
+      "id": "sqlite-123pan-amps-ad-minimal",
+      "category": "sqlite",
+      "package": "com.mfcloudcalculate.networkdisk",
+      "action": "minimal_sqlite",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/amps_ad.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "123 cloud drive keeps an AMPS advertising database in the app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L12 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/amps_ad.db"
+    },
+    {
+      "id": "sqlite-123pan-gdt-database-minimal",
+      "category": "sqlite",
+      "package": "com.mfcloudcalculate.networkdisk",
+      "action": "minimal_sqlite",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/files/gdt_database/*db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "123 cloud drive stores GDT ad SDK database files under its private files directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L9-L12 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/files/gdt_database/*db"
+    },
+    {
+      "id": "sqlite-123pan-kwai-cache-minimal",
+      "category": "sqlite",
+      "package": "com.mfcloudcalculate.networkdisk",
+      "action": "minimal_sqlite",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/ksadcache.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "123 cloud drive keeps a Kwai ad cache database in the app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L14 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadcache.db"
+    },
+    {
+      "id": "sqlite-123pan-kwai-report-minimal",
+      "category": "sqlite",
+      "package": "com.mfcloudcalculate.networkdisk",
+      "action": "minimal_sqlite",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/ksadrep.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "123 cloud drive keeps a Kwai ad reporting database in the app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L13 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadrep.db"
+    },
+    {
+      "id": "sqlite-any-beizi-ad-deny-write",
+      "category": "sqlite",
+      "package": "puread.sqlite.any",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/beizi_ad.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "BeiZi ad SDK may recreate its app-private ad database across packages.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L23-L25 sqlite_disable includes /data/user/[0-9]*/*/databases/beizi_ad.db"
+    },
+    {
+      "id": "sqlite-any-pangle-mediation-deny-write",
+      "category": "sqlite",
+      "package": "puread.sqlite.any",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/pangle_com.byted.pangle_tt_mediation_open_sdk.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Pangle mediation SDK writes an app-private mediation advertising database.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L30 sqlite_disable includes /data/user/[0-9]*/*/databases/pangle_com.byted.pangle_tt_mediation_open_sdk.db"
+    },
+    {
+      "id": "sqlite-any-pangle-npth-log-deny-write",
+      "category": "sqlite",
+      "package": "puread.sqlite.any",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/pangle_com.byted.pangle_npth_log.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Pangle SDK writes a native crash or log database that may grow heavily.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L24-L26 sqlite_disable includes /data/user/[0-9]*/*/databases/pangle_com.byted.pangle_npth_log.db"
+    },
+    {
+      "id": "sqlite-any-pangle-opensdk-deny-write",
+      "category": "sqlite",
+      "package": "puread.sqlite.any",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/pangle_com.byted.pangle_ttopensdk.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Pangle OpenSDK writes an app-private advertising database.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L27 sqlite_disable includes /data/user/[0-9]*/*/databases/pangle_com.byted.pangle_ttopensdk.db"
+    },
+    {
+      "id": "sqlite-any-pangle-opensdk2-deny-write",
+      "category": "sqlite",
+      "package": "puread.sqlite.any",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/pangle_com.byted.pangle_ttopensdk2.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Pangle OpenSDK writes a second app-private advertising database variant.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L28 sqlite_disable includes /data/user/[0-9]*/*/databases/pangle_com.byted.pangle_ttopensdk2.db"
+    },
+    {
+      "id": "sqlite-any-tt-mediation-deny-write",
+      "category": "sqlite",
+      "package": "puread.sqlite.any",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/tt_mediation_open_sdk.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "TT mediation SDK writes an app-private mediation advertising database.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L29 sqlite_disable includes /data/user/[0-9]*/*/databases/tt_mediation_open_sdk.db"
+    },
+    {
+      "id": "sqlite-coolapk-anythink-deny-write",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/anythink*.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep AnyThink advertising database variants in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L59 sqlite_file includes /data/user/*/com.coolapk.market/databases/anythink*.db"
+    },
+    {
+      "id": "sqlite-coolapk-beizi-ad-delete",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "delete",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/beizi_ad.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep a BeiZi advertising database in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L50-L52 sqlite_file includes /data/user/*/com.coolapk.market/databases/beizi_ad.db"
+    },
+    {
+      "id": "sqlite-coolapk-gdt-lower-deny-write",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/gdt_*.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep GDT advertising database variants in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L58 sqlite_file includes /data/user/*/com.coolapk.market/databases/gdt_*.db"
+    },
+    {
+      "id": "sqlite-coolapk-gdt-upper-deny-write",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/GDT*.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep uppercase GDT advertising database variants in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L60 sqlite_file includes /data/user/*/com.coolapk.market/databases/GDT*.db"
+    },
+    {
+      "id": "sqlite-coolapk-jad-delete",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "delete",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/jaddb.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep a JAD advertising database in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L54 sqlite_file includes /data/user/*/com.coolapk.market/databases/jaddb.db"
+    },
+    {
+      "id": "sqlite-coolapk-kwai-cache-delete",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "delete",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/ksadcache.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep a Kwai ad cache database in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L52 sqlite_file includes /data/user/*/com.coolapk.market/databases/ksadcache.db"
+    },
+    {
+      "id": "sqlite-coolapk-kwai-file-download-delete",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "delete",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/ksad_file_download.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep a Kwai ad file download database in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L53 sqlite_file includes /data/user/*/com.coolapk.market/databases/ksad_file_download.db"
+    },
+    {
+      "id": "sqlite-coolapk-kwai-report-delete",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "delete",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/ksadrep.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep a Kwai ad reporting database in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L55 sqlite_file includes /data/user/*/com.coolapk.market/databases/ksadrep.db"
+    },
+    {
+      "id": "sqlite-coolapk-open-sdk-deny-write",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/*open_sdk.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep open SDK advertising database variants in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L61 sqlite_file includes /data/user/*/com.coolapk.market/databases/*open_sdk.db"
+    },
+    {
+      "id": "sqlite-coolapk-pangle-family-deny-write",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/pangle*.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep Pangle advertising database variants in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L57 sqlite_file includes /data/user/*/com.coolapk.market/databases/pangle*.db"
+    },
+    {
+      "id": "sqlite-coolapk-pangle-mediation-deny-write",
+      "category": "sqlite",
+      "package": "com.coolapk.market",
+      "action": "deny_write",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/*/<pkg>/databases/pangle_com.byted.pangle_tt_mediation_open_sdk.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Coolapk may keep a Pangle mediation advertising database in its app-private databases directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/coolapk.sh",
+      "source_line_or_pattern": "L56 sqlite_file includes /data/user/*/com.coolapk.market/databases/pangle_com.byted.pangle_tt_mediation_open_sdk.db"
+    },
+    {
+      "id": "sqlite-netease-mail-ad-sdk-minimal",
+      "category": "sqlite",
+      "package": "com.netease.mail",
+      "action": "minimal_sqlite",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/ad_sdk_database*"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Netease Mail keeps advertising SDK databases with the ad_sdk_database prefix.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L17-L18 sqlite_files includes /data/user/[0-9]*/com.netease.mail/databases/ad_sdk_database*"
+    },
+    {
+      "id": "sqlite-tencent-map-splash-minimal",
+      "category": "sqlite",
+      "package": "com.tencent.map",
+      "action": "minimal_sqlite",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/splash.db"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Tencent Maps keeps splash advertising state in an app-private SQLite database.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L19-L20 sqlite_files includes /data/user/[0-9]*/com.tencent.map/databases/splash.db"
+    },
+    {
+      "id": "sqlite-youdao-ad-sdk-minimal",
+      "category": "sqlite",
+      "package": "com.youdao.dict",
+      "action": "minimal_sqlite",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/databases/ad_sdk_database*"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "sqlite",
+      "observed_behavior": "Youdao Dictionary keeps advertising SDK databases with the ad_sdk_database prefix.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "T9",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "source_line_or_pattern": "L15-L16 sqlite_files includes /data/user/[0-9]*/com.youdao.dict/databases/ad_sdk_database*"
+    }
+  ]
+}

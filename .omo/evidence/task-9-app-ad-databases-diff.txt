@@ -1,0 +1,142 @@
+diff --git a/rules/sqlite/app-ad-databases.toml b/rules/sqlite/app-ad-databases.toml
+new file mode 100644
+index 0000000..06c47b2
+--- /dev/null
++++ b/rules/sqlite/app-ad-databases.toml
+@@ -0,0 +1,135 @@
++schema_version = 1
++kind = "sqlite"
++
++[[rules]]
++id = "sqlite-123pan-gdt-database-minimal"
++category = "sqlite"
++action = "minimal_sqlite"
++schedule = "boot_once"
++target_template = "/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/files/gdt_database/*db"
++risk_level = "medium"
++default_enabled = false
++profile = "sqlite"
++source = "ads288.zip"
++source_file = "Example/ads288.zip"
++zip_entry = "mod/sqlite_clean_up.sh"
++source_line_or_pattern = "L9-L12 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/files/gdt_database/*db"
++observed_behavior = "123 cloud drive stores GDT ad SDK database files under its private files directory."
++rollback_strategy = "Before applying, snapshot the original database path and metadata into the restore ledger. Restore the saved file if present; otherwise remove the generated minimal database placeholder."
++introduced_by = "T9"
++reviewed_at = "2026-06-17"
++notes = "Converted as a boot-time one-shot minimal SQLite replacement, not a watcher."
++
++[[rules]]
++id = "sqlite-123pan-amps-ad-minimal"
++category = "sqlite"
++action = "minimal_sqlite"
++schedule = "boot_once"
++target_template = "/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/amps_ad.db"
++risk_level = "medium"
++default_enabled = false
++profile = "sqlite"
++source = "ads288.zip"
++source_file = "Example/ads288.zip"
++zip_entry = "mod/sqlite_clean_up.sh"
++source_line_or_pattern = "L12 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/amps_ad.db"
++observed_behavior = "123 cloud drive keeps an AMPS advertising database in the app-private databases directory."
++rollback_strategy = "Before applying, snapshot the original database path and metadata into the restore ledger. Restore the saved file if present; otherwise remove the generated minimal database placeholder."
++introduced_by = "T9"
++reviewed_at = "2026-06-17"
++notes = "Converted as a boot-time one-shot minimal SQLite replacement, not a watcher."
++
++[[rules]]
++id = "sqlite-123pan-kwai-report-minimal"
++category = "sqlite"
++action = "minimal_sqlite"
++schedule = "boot_once"
++target_template = "/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadrep.db"
++risk_level = "medium"
++default_enabled = false
++profile = "sqlite"
++source = "ads288.zip"
++source_file = "Example/ads288.zip"
++zip_entry = "mod/sqlite_clean_up.sh"
++source_line_or_pattern = "L13 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadrep.db"
++observed_behavior = "123 cloud drive keeps a Kwai ad reporting database in the app-private databases directory."
++rollback_strategy = "Before applying, snapshot the original database path and metadata into the restore ledger. Restore the saved file if present; otherwise remove the generated minimal database placeholder."
++introduced_by = "T9"
++reviewed_at = "2026-06-17"
++notes = "Converted as a boot-time one-shot minimal SQLite replacement, not a watcher."
++
++[[rules]]
++id = "sqlite-123pan-kwai-cache-minimal"
++category = "sqlite"
++action = "minimal_sqlite"
++schedule = "boot_once"
++target_template = "/data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadcache.db"
++risk_level = "medium"
++default_enabled = false
++profile = "sqlite"
++source = "ads288.zip"
++source_file = "Example/ads288.zip"
++zip_entry = "mod/sqlite_clean_up.sh"
++source_line_or_pattern = "L14 sqlite_files includes /data/user/[0-9]*/com.mfcloudcalculate.networkdisk/databases/ksadcache.db"
++observed_behavior = "123 cloud drive keeps a Kwai ad cache database in the app-private databases directory."
++rollback_strategy = "Before applying, snapshot the original database path and metadata into the restore ledger. Restore the saved file if present; otherwise remove the generated minimal database placeholder."
++introduced_by = "T9"
++reviewed_at = "2026-06-17"
++notes = "Converted as a boot-time one-shot minimal SQLite replacement, not a watcher."
++
++[[rules]]
++id = "sqlite-youdao-ad-sdk-minimal"
++category = "sqlite"
++action = "minimal_sqlite"
++schedule = "boot_once"
++target_template = "/data/user/[0-9]*/com.youdao.dict/databases/ad_sdk_database*"
++risk_level = "medium"
++default_enabled = false
++profile = "sqlite"
++source = "ads288.zip"
++source_file = "Example/ads288.zip"
++zip_entry = "mod/sqlite_clean_up.sh"
++source_line_or_pattern = "L15-L16 sqlite_files includes /data/user/[0-9]*/com.youdao.dict/databases/ad_sdk_database*"
++observed_behavior = "Youdao Dictionary keeps advertising SDK databases with the ad_sdk_database prefix."
++rollback_strategy = "Before applying, snapshot the original database path and metadata into the restore ledger. Restore the saved file if present; otherwise remove the generated minimal database placeholder."
++introduced_by = "T9"
++reviewed_at = "2026-06-17"
++notes = "Converted as a boot-time one-shot minimal SQLite replacement, not a watcher."
++
++[[rules]]
++id = "sqlite-netease-mail-ad-sdk-minimal"
++category = "sqlite"
++action = "minimal_sqlite"
++schedule = "boot_once"
++target_template = "/data/user/[0-9]*/com.netease.mail/databases/ad_sdk_database*"
++risk_level = "medium"
++default_enabled = false
++profile = "sqlite"
++source = "ads288.zip"
++source_file = "Example/ads288.zip"
++zip_entry = "mod/sqlite_clean_up.sh"
++source_line_or_pattern = "L17-L18 sqlite_files includes /data/user/[0-9]*/com.netease.mail/databases/ad_sdk_database*"
++observed_behavior = "Netease Mail keeps advertising SDK databases with the ad_sdk_database prefix."
++rollback_strategy = "Before applying, snapshot the original database path and metadata into the restore ledger. Restore the saved file if present; otherwise remove the generated minimal database placeholder."
++introduced_by = "T9"
++reviewed_at = "2026-06-17"
++notes = "Converted as a boot-time one-shot minimal SQLite replacement, not a watcher."
++
++[[rules]]
++id = "sqlite-tencent-map-splash-minimal"
++category = "sqlite"
++action = "minimal_sqlite"
++schedule = "boot_once"
++target_template = "/data/user/[0-9]*/com.tencent.map/databases/splash.db"
++risk_level = "medium"
++default_enabled = false
++profile = "sqlite"
++source = "ads288.zip"
++source_file = "Example/ads288.zip"
++zip_entry = "mod/sqlite_clean_up.sh"
++source_line_or_pattern = "L19-L20 sqlite_files includes /data/user/[0-9]*/com.tencent.map/databases/splash.db"
++observed_behavior = "Tencent Maps keeps splash advertising state in an app-private SQLite database."
++rollback_strategy = "Before applying, snapshot the original database path and metadata into the restore ledger. Restore the saved file if present; otherwise remove the generated minimal database placeholder."
++introduced_by = "T9"
++reviewed_at = "2026-06-17"
++notes = "Converted as a boot-time one-shot minimal SQLite replacement, not a watcher."
+exit=1

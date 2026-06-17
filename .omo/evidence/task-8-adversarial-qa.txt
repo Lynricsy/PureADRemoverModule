@@ -1,0 +1,7 @@
+# T8 adversarial QA
+untrusted_external_text: PASS - Example scripts were read only as source metadata; no command text imported as executable project logic.
+malformed_input: PASS - cargo test -p puread-rules covers malformed TOML, unknown fields, missing source/rollback, forbidden categories/fields; T8 files also passed tomllib shape check.
+forbidden_scope: PASS - required guard found no 127.0.0.1, 0.0.0.0, iptables, dns, hosts, gdt.qq.com, or doubleclick tokens in rules/common rules/apps.
+stale_state_dirty_worktree: PASS WITH NOTE - git status captured; parallel T7/T9/T11 changes exist outside T8 owned files and were not modified.
+misleading_success_output: PASS - baseline recorded CLI scaffold/CLI rules subcommand gap; no CLI success was claimed.
+generated_artifacts: PASS - only .omo/evidence/task-8-* artifacts were generated for this task.

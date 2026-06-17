@@ -1,0 +1,103 @@
+[[rules]]
+id = "jiakao-sdk-gdtdownload-cache"
+category = "sdk_cache"
+package = "com.handsgo.jiakao.android"
+action = "empty_dir"
+target_template = "/data/user/[0-9]*/<pkg>/cache/GDTDOWNLOAD"
+risk_level = "low"
+default_enabled = true
+profile = "sdk_cache"
+observed_behavior = "Tencent ad SDK download cache directory appears in the app-private cache tree."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available. Converted as a package-scoped local cache rule only."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 32: /data/user/[0-9]*/com.handsgo.jiakao.android/cache/GDTDOWNLOAD"
+
+[[rules]]
+id = "coolapk-sdk-ttcache"
+category = "sdk_cache"
+package = "com.coolapk.market"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/files/TTCache"
+risk_level = "low"
+default_enabled = true
+profile = "sdk_cache"
+observed_behavior = "ByteDance/Pangle SDK TTCache directory is used as a reusable advertising resource cache."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 61: /data/media/[0-9]*/Android/data/com.coolapk.market/files/TTCache"
+
+[[rules]]
+id = "coolapk-sdk-pangle-cache-dir"
+category = "sdk_cache"
+package = "com.coolapk.market"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/cache/pangle_com.byted.pangle"
+risk_level = "low"
+default_enabled = true
+profile = "sdk_cache"
+observed_behavior = "Pangle SDK stores advertising resources in a package-local pangle_com.byted.pangle directory."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record type, mode, ownership, SELinux context, and immutable state before modification; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 59: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/pangle_com.byted.pangle"
+
+[[rules]]
+id = "coolapk-sdk-tt-template-package"
+category = "sdk_cache"
+package = "com.coolapk.market"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/cache/tt_tmpl_pkg"
+risk_level = "low"
+default_enabled = true
+profile = "sdk_cache"
+observed_behavior = "ByteDance template package cache is recreated by SDK code under app-owned storage."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record matched-path metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 60: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/tt_tmpl_pkg"
+
+[[rules]]
+id = "idlefish-sdk-beizi-cache-dir"
+category = "sdk_cache"
+package = "com.taobao.idlefish"
+action = "empty_dir"
+target_template = "/data/data/<pkg>/cache/beizi"
+risk_level = "low"
+default_enabled = true
+profile = "sdk_cache"
+observed_behavior = "BeiZi SDK cache directory is used for app-local advertising resources."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 94: block_ad \"/data/data/com.taobao.idlefish/cache/beizi\""

@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 
-FORBIDDEN_PATTERN='hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward'
+FORBIDDEN_PATTERN='hosts|DNS|dns|iptables|Clash|clash|AdGuardHome|adguardhome|mount_hosts|ad_reward|private_dns|mihomo|proxy|ProxyConfig|domain'
+ALLOWED_FORBIDDEN_GUARD_PATTERN='^crates/puread-rules/src/(parse|category)\.rs:[0-9]+:[[:space:]]+"(hosts|host|dns|private_dns|domain|domains|proxy|clash|mihomo|adguardhome|iptables|iptables_network|mount_hosts|ad_reward|ad_reward_domain|ifw_clear|zygisk|root_hide)",[[:space:]]*$'
 
 info() {
     printf '%s\n' "info: $*"
@@ -24,14 +25,35 @@ scan_forbidden_path() {
     fi
 
     scanned=1
-    if rg -n "$FORBIDDEN_PATTERN" "$path"; then
-        matched=1
+    status=0
+    matches=$(rg -n "$FORBIDDEN_PATTERN" "$path") || status=$?
+    if [ "$status" -eq 0 ]; then
+        filtered_matches=$(printf '%s\n' "$matches" | filter_forbidden_matches)
+        if [ "$filtered_matches" != "" ]; then
+            printf '%s\n' "$filtered_matches"
+            matched=1
+        fi
     else
-        status=$?
         if [ "$status" -ne 1 ]; then
             exit "$status"
         fi
     fi
+}
+
+filter_forbidden_matches() {
+    while IFS= read -r match; do
+        if [ "$match" = "" ]; then
+            continue
+        fi
+        if is_allowed_forbidden_guard_match "$match"; then
+            continue
+        fi
+        printf '%s\n' "$match"
+    done
+}
+
+is_allowed_forbidden_guard_match() {
+    printf '%s\n' "$1" | grep -Eq "$ALLOWED_FORBIDDEN_GUARD_PATTERN"
 }
 
 if [ "${1-}" != "" ]; then

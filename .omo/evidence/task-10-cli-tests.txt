@@ -1,0 +1,53 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/puread_cli-6d47c96070762365)
+
+running 1 test
+test tests::crate_name_returns_cli_crate_identifier_when_smoke_test_runs ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/puread_cli-c9e2d86a64f6c13e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ledger.rs (target/debug/deps/ledger-5b5d9e3e227eda69)
+
+running 7 tests
+test ledger_show_fails_cleanly_when_ledger_path_is_directory ... ok
+test restore_dry_run_fails_cleanly_when_ledger_json_is_malformed ... ok
+test ledger_show_outputs_stable_json_when_ledger_exists ... ok
+test restore_dry_run_fails_cleanly_when_ledger_path_is_missing ... ok
+test restore_without_dry_run_fails_without_mutating_ledger_fixture ... ok
+test restore_dry_run_preserves_ledger_fixture_when_planning_restore ... ok
+test restore_dry_run_outputs_restore_actions_when_ledger_exists ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rules.rs (target/debug/deps/rules-88a2148834d6f649)
+
+running 5 tests
+test rules_validate_fails_cleanly_when_rules_path_is_missing ... ok
+test rules_validate_reports_summary_when_sqlite_rules_are_valid ... ok
+test rules_list_sqlite_outputs_only_sqlite_rules ... ok
+test rules_validate_reports_summary_when_file_rules_are_valid ... ok
+test rules_list_files_outputs_only_file_and_sdk_cache_rules ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/scan_dry_run.rs (target/debug/deps/scan_dry_run-5de91411db6ac119)
+
+running 4 tests
+test cli_dry_run_fails_cleanly_when_root_path_is_missing ... ok
+test cli_dry_run_fails_cleanly_when_rules_path_is_missing ... ok
+test cli_dry_run_preserves_android_fixture_when_planning_scan ... ok
+test cli_dry_run_outputs_stable_json_when_file_rules_match_fixture ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests puread_cli
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

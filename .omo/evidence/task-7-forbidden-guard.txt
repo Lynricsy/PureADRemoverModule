@@ -1,0 +1,27 @@
+crates/puread-rules/tests/rule_parsing.rs:102:        Err(RuleParseError::ForbiddenCategory { category }) if category == "hosts"
+crates/puread-rules/tests/rule_parsing.rs:106:        Err(RuleParseError::ForbiddenField { field }) if field == "domains"
+crates/puread-rules/fixtures/invalid/forbidden_field.toml:14:domains = ["ad.example.invalid"]
+crates/puread-rules/fixtures/invalid/forbidden_category.toml:2:id = "forbidden-hosts"
+crates/puread-rules/fixtures/invalid/forbidden_category.toml:3:category = "hosts"
+crates/puread-rules/fixtures/invalid/forbidden_category.toml:17:zip_entry = "mod/hosts.sh"
+crates/puread-rules/fixtures/invalid/forbidden_category.toml:18:source_line_or_pattern = "hosts"
+crates/puread-rules/src/parse.rs:6:    "hosts",
+crates/puread-rules/src/parse.rs:8:    "dns",
+crates/puread-rules/src/parse.rs:9:    "private_dns",
+crates/puread-rules/src/parse.rs:10:    "domain",
+crates/puread-rules/src/parse.rs:11:    "domains",
+crates/puread-rules/src/parse.rs:12:    "proxy",
+crates/puread-rules/src/parse.rs:13:    "clash",
+crates/puread-rules/src/parse.rs:14:    "mihomo",
+crates/puread-rules/src/parse.rs:15:    "adguardhome",
+crates/puread-rules/src/parse.rs:16:    "iptables",
+crates/puread-rules/src/parse.rs:17:    "mount_hosts",
+crates/puread-rules/src/parse.rs:18:    "ad_reward",
+crates/puread-rules/src/parse.rs:19:    "ifw_clear",
+crates/puread-rules/src/category.rs:6:    "hosts",
+crates/puread-rules/src/category.rs:7:    "dns",
+crates/puread-rules/src/category.rs:8:    "domain",
+crates/puread-rules/src/category.rs:9:    "proxy",
+crates/puread-rules/src/category.rs:10:    "iptables_network",
+crates/puread-rules/src/category.rs:11:    "ad_reward_domain",
+crates/puread-rules/src/category.rs:12:    "ifw_clear",

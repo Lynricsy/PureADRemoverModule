@@ -1,0 +1,60 @@
+[[rules]]
+id = "bili-files-splash2"
+category = "file_path"
+package = "tv.danmaku.bili"
+action = "empty_dir"
+target_template = "/data/data/<pkg>/files/splash2"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Bilibili stores launch splash assets under files/splash2."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original path metadata before replacing the directory with an empty placeholder; remove the placeholder and restore ledger metadata when available. Source script locking is not imported."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 25: block_ad \"/data/data/tv.danmaku.bili/files/splash2\""
+
+[[rules]]
+id = "bili-files-splash-top-view"
+category = "file_path"
+package = "tv.danmaku.bili"
+action = "empty_dir"
+target_template = "/data/data/<pkg>/files/splash_top_view"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Bilibili stores top-view launch advertising assets under files/splash_top_view."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 26: block_ad \"/data/data/tv.danmaku.bili/files/splash_top_view\""
+
+[[rules]]
+id = "bili-files-res-cache"
+category = "file_path"
+package = "tv.danmaku.bili"
+action = "empty_dir"
+target_template = "/data/user/[0-9]*/<pkg>/files/res_cache"
+risk_level = "medium"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Bilibili resource cache contains replaceable launch and advertising assets."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record matched path metadata for each Android user before placeholder creation; remove placeholders and restore ledger metadata when available. Kept as medium risk because the cache may contain non-ad resources."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 115: /data/user/[0-9]*/tv.danmaku.bili/files/res_cache"

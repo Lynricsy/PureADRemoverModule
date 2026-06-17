@@ -1,0 +1,3 @@
+cleanup: no long-running resources started.
+cargo target cache exists and was not cleaned.
+no dev server, watcher, adb session, or background process was started by T7.

@@ -1,22 +1,28 @@
-#![doc = "`PureAD` 规则解析 crate 的最小脚手架。"]
+#![doc = "`PureAD` 非域名规则 TOML 解析与 schema 校验。"]
 
-/// 规则 crate 标识。
-#[must_use]
-pub const fn crate_name() -> &'static str {
-    "puread-rules"
-}
+#[doc(hidden)]
+pub mod category;
+#[doc(hidden)]
+pub mod error;
+#[doc(hidden)]
+pub mod parse;
+#[doc(hidden)]
+pub mod raw;
+#[doc(hidden)]
+pub mod rollback;
+#[doc(hidden)]
+pub mod rule;
+#[doc(hidden)]
+pub mod source;
+#[doc(hidden)]
+pub mod target;
+#[doc(hidden)]
+pub mod validation;
 
-#[cfg(test)]
-mod tests {
-    use super::crate_name;
-
-    #[test]
-    fn crate_name_returns_rules_crate_identifier_when_smoke_test_runs() {
-        // Given: the rules crate is compiled as a workspace member.
-        // When: its smoke-test API is called.
-        let name = crate_name();
-
-        // Then: the observable identifier is stable.
-        assert_eq!(name, "puread-rules");
-    }
-}
+pub use category::RuleCategory;
+pub use error::RuleParseError;
+pub use parse::{parse_rules_toml, parse_rules_toml_documents};
+pub use rollback::RollbackStrategy;
+pub use rule::{RuleDefinition, RuleDocument};
+pub use source::RuleSource;
+pub use target::RuleTarget;

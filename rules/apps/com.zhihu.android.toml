@@ -1,0 +1,40 @@
+[[rules]]
+id = "zhihu-files-ad-dir"
+category = "file_path"
+package = "com.zhihu.android"
+action = "empty_dir"
+target_template = "/data/data/<pkg>/files/ad"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Zhihu keeps advertising assets under the app-private files/ad directory."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before replacement; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "Adguard-Home-For-Magisk-Mod"
+source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+source_line_or_pattern = "line 19: block_ad \"/data/data/com.zhihu.android/files/ad\""
+
+[[rules]]
+id = "zhihu-files-exid-dat"
+category = "file_path"
+package = "com.zhihu.android"
+action = "empty_file"
+target_template = "/data/data/<pkg>/files/exid.dat"
+risk_level = "medium"
+default_enabled = false
+profile = "conservative"
+observed_behavior = "Zhihu script treats exid.dat as a recreated tracking or advertising-related local file."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original file metadata and a ledger-backed copy before writing an empty placeholder; remove the placeholder and restore file metadata/content when available. Disabled by default because the filename is less self-describing than an ad cache directory."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/zhihu.sh"
+source_line_or_pattern = "line 30: mkdir_file \"/data/data/com.zhihu.android/files/exid.dat\""

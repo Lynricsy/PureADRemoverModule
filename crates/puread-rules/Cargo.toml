@@ -9,6 +9,9 @@ description = "Rule loading boundary for the PureAD non-domain Android ad remove
 
 [dependencies]
 puread-core = { path = "../puread-core" }
+serde = { version = "1.0", features = ["derive"] }
+thiserror.workspace = true
+toml = "0.8"
 
 [lints]
 workspace = true

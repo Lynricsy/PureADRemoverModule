@@ -1,0 +1,10 @@
+rules/apps/com.autonavi.minimap.toml
+rules/apps/com.coolapk.market.toml
+rules/apps/com.netease.cloudmusic.toml
+rules/apps/com.ss.android.ugc.aweme.toml
+rules/apps/com.taobao.idlefish.toml
+rules/apps/com.tencent.mobileqq.toml
+rules/apps/com.zhihu.android.toml
+rules/apps/ctrip.android.view.toml
+rules/apps/tv.danmaku.bili.toml
+rules/common/sdk-cache.toml

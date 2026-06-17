@@ -1,0 +1,41 @@
+[[rules]]
+id = "coolapk-external-splash-image"
+category = "file_path"
+package = "com.coolapk.market"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/cache/splash_image"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "Coolapk stores splash image assets in its external app cache."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before placeholder creation; remove the placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 57: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/splash_image"
+
+[[rules]]
+id = "coolapk-external-com-qq-e-download"
+category = "sdk_cache"
+package = "com.coolapk.market"
+action = "empty_dir"
+target_template = "/sdcard/Android/data/<pkg>/cache/com_qq_e_download"
+risk_level = "low"
+default_enabled = true
+profile = "sdk_cache"
+observed_behavior = "Coolapk has a Tencent ad SDK download cache below its external app cache."
+rollback_strategy = "restore_original"
+introduced_by = "task-8"
+reviewed_at = "2026-06-17"
+notes = "Rollback detail: record original directory metadata before replacement; remove the empty placeholder and restore ledger metadata when available."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "line 58: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/com_qq_e_download"

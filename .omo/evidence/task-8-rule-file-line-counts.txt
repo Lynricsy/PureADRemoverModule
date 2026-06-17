@@ -1,0 +1,11 @@
+  103 rules/common/sdk-cache.toml
+   39 rules/apps/com.autonavi.minimap.toml
+   41 rules/apps/com.coolapk.market.toml
+   39 rules/apps/com.netease.cloudmusic.toml
+   41 rules/apps/com.ss.android.ugc.aweme.toml
+   19 rules/apps/com.taobao.idlefish.toml
+   40 rules/apps/com.tencent.mobileqq.toml
+   40 rules/apps/com.zhihu.android.toml
+   39 rules/apps/ctrip.android.view.toml
+   60 rules/apps/tv.danmaku.bili.toml
+  461 total

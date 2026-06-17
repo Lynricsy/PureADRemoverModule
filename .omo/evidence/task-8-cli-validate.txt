@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "command": "rules_validate",
+  "valid": true,
+  "error_count": 0,
+  "rule_file_count": 10,
+  "rule_count": 23
+}

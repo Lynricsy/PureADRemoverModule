@@ -1,0 +1,18 @@
+[[rules]]
+id = "gdt-ad-database"
+category = "sqlite"
+package = "com.example.video"
+action = "minimal_sqlite"
+target_template = "/data/data/<pkg>/databases/gdt_ad.db"
+risk_level = "medium"
+default_enabled = false
+profile = "sqlite"
+observed_behavior = "GDT SDK persists ad placement state in a private SQLite database"
+rollback_strategy = "restore_original"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/sqlite_clean_up.sh"
+source_line_or_pattern = "gdt_ad.db"

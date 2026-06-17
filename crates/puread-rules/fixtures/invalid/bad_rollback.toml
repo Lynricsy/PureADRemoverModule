@@ -1,0 +1,18 @@
+[[rules]]
+id = "bad-rollback"
+category = "file_path"
+package = "com.example.app"
+action = "delete"
+target_template = "/data/data/<pkg>/cache/ad"
+risk_level = "low"
+default_enabled = true
+profile = "conservative"
+observed_behavior = "bad rollback fixture"
+rollback_strategy = "unrecoverable"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/ad.sh"
+source_line_or_pattern = "ad"

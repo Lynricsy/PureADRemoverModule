@@ -8,7 +8,12 @@ repository.workspace = true
 description = "CLI entrypoint scaffold for the PureAD non-domain ad remover module."
 
 [dependencies]
+clap = { version = "4.5", features = ["derive"] }
 puread-core = { path = "../puread-core" }
+puread-rules = { path = "../puread-rules" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror.workspace = true
 
 [lints]
 workspace = true

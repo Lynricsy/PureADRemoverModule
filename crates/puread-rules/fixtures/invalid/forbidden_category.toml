@@ -1,0 +1,18 @@
+[[rules]]
+id = "forbidden-hosts"
+category = "hosts"
+package = "com.example.app"
+action = "delete"
+target_template = "/data/data/<pkg>/cache/ad"
+risk_level = "low"
+default_enabled = false
+profile = "conservative"
+observed_behavior = "forbidden category fixture"
+rollback_strategy = "restore_original"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/hosts.sh"
+source_line_or_pattern = "hosts"

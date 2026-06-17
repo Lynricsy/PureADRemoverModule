@@ -1,0 +1,492 @@
+{
+  "schema_version": 1,
+  "command": "rules_list",
+  "kind": "files",
+  "rule_file_count": 10,
+  "rule_count": 23,
+  "rules": [
+    {
+      "id": "amap-files-launch-dynamic-resource",
+      "category": "file_path",
+      "package": "com.autonavi.minimap",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/files/LaunchDynamicResource"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "conservative",
+      "observed_behavior": "Amap stores launch-time dynamic resources in an app-private directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 60: block_ad \"/data/data/com.autonavi.minimap/files/LaunchDynamicResource\""
+    },
+    {
+      "id": "amap-files-splash",
+      "category": "file_path",
+      "package": "com.autonavi.minimap",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/files/splash"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Amap stores launch splash assets under files/splash.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 61: block_ad \"/data/data/com.autonavi.minimap/files/splash\""
+    },
+    {
+      "id": "aweme-external-splash-cache",
+      "category": "file_path",
+      "package": "com.ss.android.ugc.aweme",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/splashCache"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Douyin stores launch advertising cache below its external app directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 41: /data/media/[0-9]*/Android/data/com.ss.android.ugc.aweme/splashCache"
+    },
+    {
+      "id": "aweme-internal-splash-commerce-card",
+      "category": "file_path",
+      "package": "com.ss.android.ugc.aweme",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/cache/splash_commerce_card"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Douyin stores commerce splash card resources in a package-local directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/aweme.sh",
+      "source_line_or_pattern": "line 9: -iname \"splash_commerce_card\" -type d"
+    },
+    {
+      "id": "bili-files-res-cache",
+      "category": "file_path",
+      "package": "tv.danmaku.bili",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/files/res_cache"
+      },
+      "risk_level": "medium",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Bilibili resource cache contains replaceable launch and advertising assets.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 115: /data/user/[0-9]*/tv.danmaku.bili/files/res_cache"
+    },
+    {
+      "id": "bili-files-splash-top-view",
+      "category": "file_path",
+      "package": "tv.danmaku.bili",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/files/splash_top_view"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Bilibili stores top-view launch advertising assets under files/splash_top_view.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 26: block_ad \"/data/data/tv.danmaku.bili/files/splash_top_view\""
+    },
+    {
+      "id": "bili-files-splash2",
+      "category": "file_path",
+      "package": "tv.danmaku.bili",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/files/splash2"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Bilibili stores launch splash assets under files/splash2.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 25: block_ad \"/data/data/tv.danmaku.bili/files/splash2\""
+    },
+    {
+      "id": "coolapk-external-com-qq-e-download",
+      "category": "sdk_cache",
+      "package": "com.coolapk.market",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/cache/com_qq_e_download"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "sdk_cache",
+      "observed_behavior": "Coolapk has a Tencent ad SDK download cache below its external app cache.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 58: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/com_qq_e_download"
+    },
+    {
+      "id": "coolapk-external-splash-image",
+      "category": "file_path",
+      "package": "com.coolapk.market",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/cache/splash_image"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Coolapk stores splash image assets in its external app cache.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 57: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/splash_image"
+    },
+    {
+      "id": "coolapk-sdk-pangle-cache-dir",
+      "category": "sdk_cache",
+      "package": "com.coolapk.market",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/cache/pangle_com.byted.pangle"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "sdk_cache",
+      "observed_behavior": "Pangle SDK stores advertising resources in a package-local pangle_com.byted.pangle directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 59: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/pangle_com.byted.pangle"
+    },
+    {
+      "id": "coolapk-sdk-tt-template-package",
+      "category": "sdk_cache",
+      "package": "com.coolapk.market",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/cache/tt_tmpl_pkg"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "sdk_cache",
+      "observed_behavior": "ByteDance template package cache is recreated by SDK code under app-owned storage.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 60: /data/media/[0-9]*/Android/data/com.coolapk.market/cache/tt_tmpl_pkg"
+    },
+    {
+      "id": "coolapk-sdk-ttcache",
+      "category": "sdk_cache",
+      "package": "com.coolapk.market",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/files/TTCache"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "sdk_cache",
+      "observed_behavior": "ByteDance/Pangle SDK TTCache directory is used as a reusable advertising resource cache.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 61: /data/media/[0-9]*/Android/data/com.coolapk.market/files/TTCache"
+    },
+    {
+      "id": "ctrip-external-ctad-cache",
+      "category": "file_path",
+      "package": "ctrip.android.view",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/cache/CTADCache"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Ctrip stores CTAD advertising cache below its external app cache directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 100: block_ad \"/data/media/0/Android/data/ctrip.android.view/cache/CTADCache\""
+    },
+    {
+      "id": "ctrip-internal-ctad-files",
+      "category": "file_path",
+      "package": "ctrip.android.view",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/files/CTAD"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Ctrip stores CTAD advertising data below its app-private files directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 101: block_ad \"/data/data/ctrip.android.view/files/CTAD\""
+    },
+    {
+      "id": "idlefish-external-splash-assets",
+      "category": "file_path",
+      "package": "com.taobao.idlefish",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/files/splash_ad_assets"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Idlefish stores splash advertising assets below its external app files directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 92: block_ad \"/data/media/0/Android/data/com.taobao.idlefish/files/splash_ad_assets\""
+    },
+    {
+      "id": "idlefish-sdk-beizi-cache-dir",
+      "category": "sdk_cache",
+      "package": "com.taobao.idlefish",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/cache/beizi"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "sdk_cache",
+      "observed_behavior": "BeiZi SDK cache directory is used for app-local advertising resources.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 94: block_ad \"/data/data/com.taobao.idlefish/cache/beizi\""
+    },
+    {
+      "id": "jiakao-sdk-gdtdownload-cache",
+      "category": "sdk_cache",
+      "package": "com.handsgo.jiakao.android",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/user/[0-9]*/<pkg>/cache/GDTDOWNLOAD"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "sdk_cache",
+      "observed_behavior": "Tencent ad SDK download cache directory appears in the app-private cache tree.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 32: /data/user/[0-9]*/com.handsgo.jiakao.android/cache/GDTDOWNLOAD"
+    },
+    {
+      "id": "netease-cloudmusic-external-ad-cache",
+      "category": "file_path",
+      "package": "com.netease.cloudmusic",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/cache/Ad"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "NetEase Cloud Music stores advertising assets in the package-owned external cache/Ad directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 38: block_ad \"/data/media/0/Android/data/com.netease.cloudmusic/cache/Ad\""
+    },
+    {
+      "id": "netease-cloudmusic-internal-musicwebapp",
+      "category": "file_path",
+      "package": "com.netease.cloudmusic",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/cache/MusicWebApp"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "conservative",
+      "observed_behavior": "NetEase Cloud Music stores replaceable web app promotional cache under cache/MusicWebApp.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 39: block_ad \"/data/data/com.netease.cloudmusic/cache/MusicWebApp\""
+    },
+    {
+      "id": "qq-external-mobileqq-splash",
+      "category": "file_path",
+      "package": "com.tencent.mobileqq",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/MobileQQ/splahAD"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "QQ stores splash advertising assets below MobileQQ/splahAD in external app storage.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh",
+      "source_line_or_pattern": "line 82: /data/media/[0-9]*/Android/data/com.tencent.mobileqq/MobileQQ/splahAD"
+    },
+    {
+      "id": "qq-external-vas-ad-files",
+      "category": "file_path",
+      "package": "com.tencent.mobileqq",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/sdcard/Android/data/<pkg>/files/vas_ad"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "QQ stores VAS advertising assets below its external app files directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 67: block_ad \"/data/media/0/Android/data/com.tencent.mobileqq/files/vas_ad\""
+    },
+    {
+      "id": "zhihu-files-ad-dir",
+      "category": "file_path",
+      "package": "com.zhihu.android",
+      "action": "empty_dir",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/files/ad"
+      },
+      "risk_level": "low",
+      "default_enabled": true,
+      "profile": "conservative",
+      "observed_behavior": "Zhihu keeps advertising assets under the app-private files/ad directory.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "source_file": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "source_line_or_pattern": "line 19: block_ad \"/data/data/com.zhihu.android/files/ad\""
+    },
+    {
+      "id": "zhihu-files-exid-dat",
+      "category": "file_path",
+      "package": "com.zhihu.android",
+      "action": "empty_file",
+      "target": {
+        "type": "path_template",
+        "target_template": "/data/data/<pkg>/files/exid.dat"
+      },
+      "risk_level": "medium",
+      "default_enabled": false,
+      "profile": "conservative",
+      "observed_behavior": "Zhihu script treats exid.dat as a recreated tracking or advertising-related local file.",
+      "rollback_strategy": "restore_original",
+      "introduced_by": "task-8",
+      "reviewed_at": "2026-06-17",
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/zhihu.sh",
+      "source_line_or_pattern": "line 30: mkdir_file \"/data/data/com.zhihu.android/files/exid.dat\""
+    }
+  ]
+}

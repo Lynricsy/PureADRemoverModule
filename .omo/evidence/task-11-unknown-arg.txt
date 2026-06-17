@@ -1,0 +1,6 @@
+error: unknown argument: --bogus
+Usage: scripts/update-upstream.sh --dry-run
+
+Generate a report-only upstream snapshot audit from local Example/ files.
+The tool does not download, replace, or modify upstream snapshots or rules.
+exit=2

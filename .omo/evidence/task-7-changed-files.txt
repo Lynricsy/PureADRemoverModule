@@ -1,0 +1,15 @@
+owned_changes:
+ M Cargo.lock
+ M crates/puread-rules/Cargo.toml
+ M crates/puread-rules/src/lib.rs
+?? crates/puread-rules/fixtures/
+?? crates/puread-rules/src/category.rs
+?? crates/puread-rules/src/error.rs
+?? crates/puread-rules/src/parse.rs
+?? crates/puread-rules/src/raw.rs
+?? crates/puread-rules/src/rollback.rs
+?? crates/puread-rules/src/rule.rs
+?? crates/puread-rules/src/source.rs
+?? crates/puread-rules/src/target.rs
+?? crates/puread-rules/src/validation.rs
+?? crates/puread-rules/tests/

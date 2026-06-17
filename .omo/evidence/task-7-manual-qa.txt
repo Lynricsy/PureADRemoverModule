@@ -1,0 +1,3 @@
+manual_qa: cargo test -p puread-rules -- --nocapture drove parser through public API parse_rules_toml and parse_rules_toml_documents.
+marker: valid_category_marker_file_sqlite_component_appops_rom_parse_to_typed_values parsed file_path/sdk_cache/sqlite/component/appops/rom_profile fixtures into RuleCategory/RuleAction/ProfileKind/RiskLevel/RuleTarget typed values.
+source_prompt_is_data: source_line_or_pattern containing hostile instruction-like text remained inert metadata and did not alter RuleAction::Delete.

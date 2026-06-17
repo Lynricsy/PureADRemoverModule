@@ -1,0 +1,18 @@
+[[rules]]
+id = "pangle-cache-dir"
+category = "sdk_cache"
+package = "com.example.news"
+action = "empty_dir"
+target_template = "/data/user/[0-9]*/<pkg>/cache/pangle"
+risk_level = "low"
+default_enabled = true
+profile = "sdk_cache"
+observed_behavior = "Pangle SDK writes reusable video ad cache files"
+rollback_strategy = "restore_original"
+introduced_by = "task-7"
+reviewed_at = "2026-06-17"
+
+[rules.source]
+source = "ads288.zip"
+zip_entry = "mod/killpangle.sh"
+source_line_or_pattern = "pangle cache"
