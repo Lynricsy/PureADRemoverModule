@@ -1,0 +1,3 @@
+Command: if [ -e scripts/verify-local.sh ]; then test -x scripts/verify-local.sh; else absent; fi
+Context: T6 failing-first baseline captured before creating scripts/verify-local.sh
+Result: scripts/verify-local.sh absent

@@ -1,0 +1,32 @@
+[package]
+name = "puread-core"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Core typed model for the PureAD non-domain Android ad remover module."
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror.workspace = true
+time = { version = "0.3", features = ["formatting", "macros", "parsing", "serde", "serde-well-known"] }
+
+[features]
+default = ["path-expansion", "restore-ledger"]
+path-expansion = []
+restore-ledger = []
+
+[[test]]
+name = "path_expansion"
+path = "tests/path_expansion.rs"
+required-features = ["path-expansion"]
+
+[[test]]
+name = "restore_ledger"
+path = "tests/restore_ledger.rs"
+required-features = ["restore-ledger"]
+
+[lints]
+workspace = true

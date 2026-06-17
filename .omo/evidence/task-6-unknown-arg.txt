@@ -1,0 +1,2 @@
+error: unknown argument: --unexpected
+Exit status: 2

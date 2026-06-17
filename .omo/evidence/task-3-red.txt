@@ -1,0 +1,22 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling thiserror v2.0.18
+   Compiling syn v2.0.118
+   Compiling thiserror-impl v2.0.18
+   Compiling puread-core v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-core)
+error[E0432]: unresolved imports `puread_core::model::PackageName`, `puread_core::model::ProfileKind`, `puread_core::model::RestoreToken`, `puread_core::model::RiskLevel`, `puread_core::model::RootPath`, `puread_core::model::RuleAction`, `puread_core::model::RuleId`
+ --> crates/puread-core/tests/rule_model.rs:2:5
+  |
+2 |     PackageName, ProfileKind, RestoreToken, RiskLevel, RootPath, RuleAction, RuleId,
+  |     ^^^^^^^^^^^  ^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^^^  ^^^^^^^^  ^^^^^^^^^^  ^^^^^^ no `RuleId` in `model`
+  |     |            |            |             |          |         |
+  |     |            |            |             |          |         no `RuleAction` in `model`
+  |     |            |            |             |          no `RootPath` in `model`
+  |     |            |            |             no `RiskLevel` in `model`
+  |     |            |            no `RestoreToken` in `model`
+  |     |            no `ProfileKind` in `model`
+  |     no `PackageName` in `model`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `puread-core` (test "rule_model") due to 1 previous error

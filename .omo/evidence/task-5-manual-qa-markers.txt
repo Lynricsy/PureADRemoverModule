@@ -1,0 +1,6 @@
+18:restore_ledger_append_record_count=1
+19:restore_ledger_failure_preserved_count=1
+22:restore_ledger_dedupe_record_count=1
+25:restore_ledger_success_removed_count=0
+27:restore_ledger_sort_order=["/data/data/com.demo/files/ad.bin", "/data/data/com.demo/cache/ad.bin", "/data/data/com.demo/cache"]
+30:test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

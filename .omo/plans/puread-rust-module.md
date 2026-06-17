@@ -137,7 +137,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
 ## Todos
 > Implementation + Test = ONE todo. Never separate.
 
-- [ ] 1. 建立 Rust workspace 与 strict 工具链
+- [x] 1. 建立 Rust workspace 与 strict 工具链
   What to do / Must NOT do: 创建 `Cargo.toml` workspace、`.cargo/config.toml`、`rustfmt.toml`、基础 crate 目录和最小可编译入口；设置 clippy 严格门禁。不要写业务逻辑，不要超过 250 pure LOC。
   Parallelization: Can parallel Y | Wave 1 | Blocks T3/T4/T5/T7
   References: `.omo/drafts/puread-rust-module.md`; `/root/.codex/plugins/cache/sisyphuslabs/omo/4.10.0/skills/programming/references/rust/README.md`
@@ -145,7 +145,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo metadata --format-version 1 > .omo/evidence/task-1-workspace-metadata.json`; `cargo test --workspace | tee .omo/evidence/task-1-cargo-test.txt`
   Commit: N | build(rust): scaffold strict workspace | Files `Cargo.toml`, `.cargo/config.toml`, `crates/*`, `rustfmt.toml`
 
-- [ ] 2. 编写根目录 `AGENTS.md` 上游同步指南
+- [x] 2. 编写根目录 `AGENTS.md` 上游同步指南
   What to do / Must NOT do: 创建根目录 `AGENTS.md`，说明项目边界、禁止能力、上游源清单、当前快照记录字段、获取方法、规则 diff、同步流程、规则分类矩阵、禁止引入 DNS/hosts/domain/proxy/iptables 能力、验证命令和日志记录规则。声明项目 Git 上游远端为 `git@github.com:Lynricsy/PureADRemoverModule.git`，开发中需要及时提交并推送，且不得设置 local git 身份信息。声明 `Example/` 是只读参考/上游快照，除同步快照步骤外不得改写，并且必须位于 `.gitignore`。不要创建或编辑 AgentLogs 文件；日志必须继续使用 MCP。
   Parallelization: Can parallel Y | Wave 1 | Blocks T11/T21/T29
   References: `.omo/drafts/puread-rust-module.md`; `AgentLogs/0003-纯净非域名去广告模块合入建议.md`; `Example/ads288.zip`; `Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh:7`
@@ -153,7 +153,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `sed -n '1,320p' AGENTS.md > .omo/evidence/task-2-agents-content.txt`; `rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward" AGENTS.md > .omo/evidence/task-2-forbidden-docs.txt`; `rg -n "只读|不得改写|快照|SHA256|commit|git@github.com:Lynricsy/PureADRemoverModule.git|及时提交|推送" AGENTS.md > .omo/evidence/task-2-upstream-policy.txt`; `rg -n "^Example/$" .gitignore > .omo/evidence/task-2-gitignore-example.txt`
   Commit: Y | docs(project): 📝 add agent upstream sync guide | Files `AGENTS.md`, `.gitignore`
 
-- [ ] 3. 定义规则数据模型和 typed invariants
+- [x] 3. 定义规则数据模型和 typed invariants
   What to do / Must NOT do: 在 `puread-core` 定义 `RuleId`、`PackageName`、`RootPath`、`RuleAction`、`ProfileKind`、`RiskLevel`、`RestoreToken` 等类型；用 enum 表达动作，不用字符串散落。不要接触 Android 命令执行。
   Parallelization: Can parallel Y | Wave 1 | Blocks T7/T8/T9/T10
   References: `Example/ads288.zip/mod/util_functions.sh:16`; `Example/ads288.zip/mod/util_functions.sh:52`; `/root/.codex/plugins/cache/sisyphuslabs/omo/4.10.0/skills/programming/references/rust/type-state.md`
@@ -161,7 +161,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-core -- --nocapture | tee .omo/evidence/task-3-core-tests.txt`
   Commit: N | feat(core): model non-domain rule primitives | Files `crates/puread-core/**`
 
-- [ ] 4. 实现路径展开和危险路径拒绝
+- [x] 4. 实现路径展开和危险路径拒绝
   What to do / Must NOT do: 支持 exact/glob/package-relative/name-match 规则展开；硬拒绝 `/`、`/data`、`/sdcard`、`/storage`、`/system`、`/vendor`、`/data/adb` 非本模块目录、空路径、`..`、符号链接逃逸、根级通配删除等危险路径。只允许受控模板如 `/data/user/*/<pkg>`、`/data/data/<pkg>`、`/sdcard/Android/data/<pkg>`。不要执行删除。
   Parallelization: Can parallel Y | Wave 1 | Blocks T7/T13/T14
   References: `Example/ads288.zip/mod/util_functions.sh:18`; `Example/ads288.zip/mod/util_functions.sh:53`; `Example/ads288.zip/mod/ad.sh:27`
@@ -169,7 +169,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-core path_expansion -- --nocapture | tee .omo/evidence/task-4-path-tests.txt`
   Commit: N | feat(core): add safe path expansion | Files `crates/puread-core/**`
 
-- [ ] 5. 建立状态记录与恢复账本模型
+- [x] 5. 建立状态记录与恢复账本模型
   What to do / Must NOT do: 定义 JSONL 或 SQLite 状态账本格式，路径固定为 `/data/adb/modules/<id>/state/actions.*`；记录原路径、动作、原文件类型、mode、uid、gid、SELinux context、immutable 状态、时间戳、profile、恢复步骤。恢复失败必须保留原记录。不要把状态存在临时目录。
   Parallelization: Can parallel Y | Wave 1 | Blocks T12/T19/T27
   References: `Example/ads288.zip/mod/util_functions.sh:34`; `Example/Adguard-Home-For-Magisk-Mod/Adguardhome/uninstall.sh`
@@ -177,7 +177,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-core restore_ledger -- --nocapture | tee .omo/evidence/task-5-ledger-tests.txt`
   Commit: N | feat(core): add reversible state ledger | Files `crates/puread-core/**`
 
-- [ ] 6. 建立 `.omo/evidence` 和验证脚本骨架
+- [x] 6. 建立 `.omo/evidence` 和验证脚本骨架
   What to do / Must NOT do: 创建 evidence 目录占位说明、验证脚本骨架和 README 中的 QA 约定。不要伪造 evidence 内容。
   Parallelization: Can parallel Y | Wave 1 | Blocks T21/T29
   References: `.omo/drafts/puread-rust-module.md`

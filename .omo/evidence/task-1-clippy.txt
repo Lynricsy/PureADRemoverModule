@@ -1,0 +1,6 @@
+[1m[92m    Checking[0m puread-core v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-core)
+[1m[92m    Checking[0m puread-cli v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-cli)
+[1m[92m    Checking[0m puread-daemon v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-daemon)
+[1m[92m    Checking[0m puread-rules v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-rules)
+[1m[92m    Checking[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.40s

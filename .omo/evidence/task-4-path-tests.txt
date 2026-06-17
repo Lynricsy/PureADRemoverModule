@@ -1,0 +1,47 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_core-f588b479068cb9c0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/path_expansion.rs (target/debug/deps/path_expansion-61ed6fa5329162fe)
+
+running 5 tests
+rejected_path= result=Err(EmptyPath)
+rejected_path=/ result=Err(ProtectedRoot { path: "/" })
+rejected_path=/data result=Err(ProtectedRoot { path: "/data" })
+rejected_path=/sdcard result=Err(ProtectedRoot { path: "/sdcard" })
+rejected_path=/storage result=Err(ProtectedRoot { path: "/storage" })
+rejected_path=/system result=Err(ProtectedRoot { path: "/system" })
+rejected_path=/vendor result=Err(ProtectedRoot { path: "/vendor" })
+rejected_path=/data/adb result=Err(ProtectedRoot { path: "/data/adb" })
+rejected_path=/data/adb/other-module/cache result=Err(DataAdbOutsideModule { path: "/data/adb/other-module/cache", module_dir: "/data/adb/modules/puread" })
+rejected_path=/data/data/com.example.app/../com.android.systemui result=Err(TraversalSegment { path: "/data/data/com.example.app/../com.android.systemui" })
+rejected_path=data/data/com.example.app result=Err(RelativePath { path: "data/data/com.example.app" })
+rejected_path=/*/data/com.example.app result=Err(RootLevelWildcard { template: "/*/data/com.example.app" })
+rejected_path=/data/*/com.example.app result=Err(UnsupportedWildcard { template: "/data/*/com.example.app" })
+expanded_android_data=["/sdcard/Android/data/com.example.app"] package_relative=["/sdcard/Android/data/com.example.app/cache/splash_ad"]
+symlink_escape_result=Err(SymlinkEscape { android_path: "/data/data/com.example.app/cache/escape", host_path: "/tmp/puread-path-expansion-2926660-4/data/data/com.example.app/cache/escape", root: "/tmp/puread-path-expansion-2926660-4" })
+expanded_data_user=["/data/user/0/com.example.app/cache", "/data/user/10/com.example.app/cache"]
+test path_expansion_rejects_dangerous_paths_when_boundary_input_is_malformed ... ok
+name_matches=["/data/data/com.example.app/cache/GDTDOWNLOAD"]
+test path_expansion_expands_android_data_and_package_relative_paths_when_package_exists ... ok
+test path_expansion_rejects_symlink_escape_when_target_points_outside_root ... ok
+test path_expansion_finds_name_matches_only_inside_package_scopes ... ok
+test path_expansion_expands_data_user_numeric_package_glob_when_users_exist ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/restore_ledger.rs (target/debug/deps/restore_ledger-c828837424c7f4ea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/rule_model.rs (target/debug/deps/rule_model-48c7f66127a79ee3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+

@@ -1,0 +1,31 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_core-f588b479068cb9c0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/path_expansion.rs (target/debug/deps/path_expansion-61ed6fa5329162fe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/restore_ledger.rs (target/debug/deps/restore_ledger-c828837424c7f4ea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/rule_model.rs (target/debug/deps/rule_model-48c7f66127a79ee3)
+
+running 5 tests
+valid_rule_fixture=Ok(RuleId("coolapk-splash-cache")) Ok(PackageName("com.coolapk.market")) Ok(RootPath("/data/data/com.coolapk.market/cache")) Ok(RestoreToken("restore-20260617-coolapk-splash"))
+test rule_model_rejects_bad_action_profile_and_restore_token_strings_when_parsing_boundary_input ... ok
+test rule_model_parses_action_profile_and_risk_as_typed_enums_when_strings_are_valid ... ok
+test rule_model_constructs_valid_values_when_all_invariants_hold ... ok
+test rule_model_rejects_invalid_package_names_when_parsing_boundary_input ... ok
+test rule_model_rejects_invalid_rule_id_and_path_primitives_when_constructing_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,5 @@
+# Task 2 baseline before AGENTS.md
+timestamp=2026-06-17T17:08:06+08:00
+command=test -f AGENTS.md
+status=1
+result=AGENTS.md absent before task, expected failing-first baseline captured.

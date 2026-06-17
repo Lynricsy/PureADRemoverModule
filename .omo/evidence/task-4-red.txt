@@ -1,0 +1,35 @@
+   Compiling puread-core v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-core)
+error[E0432]: unresolved imports `super::AppendOutcome`, `super::LedgerAction`, `super::LedgerError`, `super::LedgerRecord`, `super::OriginalFileType`, `super::RestoreAttempt`, `super::RestoreLedger`, `super::RestoreStatus`, `super::RestoreStep`
+  --> crates/puread-core/src/restore_ledger.rs:9:9
+   |
+ 9 |         AppendOutcome, LedgerAction, LedgerError, LedgerRecord, OriginalFileType, RestoreAttempt,
+   |         ^^^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^ no `RestoreAttempt` in `restore_ledger`
+   |         |              |             |            |             |
+   |         |              |             |            |             no `OriginalFileType` in `restore_ledger`
+   |         |              |             |            no `LedgerRecord` in `restore_ledger`
+   |         |              |             no `LedgerError` in `restore_ledger`
+   |         |              no `LedgerAction` in `restore_ledger`
+   |         no `AppendOutcome` in `restore_ledger`
+10 |         RestoreLedger, RestoreStatus, RestoreStep,
+   |         ^^^^^^^^^^^^^  ^^^^^^^^^^^^^  ^^^^^^^^^^^ no `RestoreStep` in `restore_ledger`
+   |         |              |
+   |         |              no `RestoreStatus` in `restore_ledger`
+   |         no `RestoreLedger` in `restore_ledger`
+
+warning: fields `filesystem_root` and `module_android_dir` are never read
+  --> crates/puread-core/src/path_expansion.rs:52:5
+   |
+51 | pub struct PathExpander {
+   |            ------------ fields in this struct
+52 |     filesystem_root: PathBuf,
+   |     ^^^^^^^^^^^^^^^
+53 |     module_android_dir: PathBuf,
+   |     ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `PathExpander` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `puread-core` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+warning: `puread-core` (lib) generated 1 warning

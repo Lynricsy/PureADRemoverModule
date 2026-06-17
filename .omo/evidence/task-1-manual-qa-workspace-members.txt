@@ -1,0 +1,5 @@
+path+file:///root/Projects/Ling/PureADRemoverModule/crates/puread-android#0.1.0
+path+file:///root/Projects/Ling/PureADRemoverModule/crates/puread-core#0.1.0
+path+file:///root/Projects/Ling/PureADRemoverModule/crates/puread-cli#0.1.0
+path+file:///root/Projects/Ling/PureADRemoverModule/crates/puread-daemon#0.1.0
+path+file:///root/Projects/Ling/PureADRemoverModule/crates/puread-rules#0.1.0

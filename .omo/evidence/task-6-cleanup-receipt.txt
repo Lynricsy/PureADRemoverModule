@@ -1,0 +1,24 @@
+T6 cleanup receipt
+==================
+
+Changed within task scope:
+- scripts/verify-local.sh
+- .omo/evidence/task-6-shell-parse.txt
+- .omo/evidence/task-6-unknown-arg.txt
+- .omo/evidence/task-6-verify-local-run.txt
+- .omo/evidence/task-6-verify-script.txt
+- .omo/evidence/task-6-manual-qa.txt
+- .omo/evidence/task-6-cleanup-receipt.txt
+
+Generated/cached artifacts:
+- .omo/evidence/task-6-verify-script.txt was regenerated from the current scripts/verify-local.sh.
+- cmp -s scripts/verify-local.sh .omo/evidence/task-6-verify-script.txt returned exit 0.
+- Cargo reused existing target/ cache during verification; target/ was not edited manually or cleaned.
+
+Debug artifacts:
+- No .debug-journal.md was created because the task scope only allowed scripts/verify-local.sh and .omo/evidence/task-6-* files.
+- No tmux sessions, debugger sessions, temporary scripts, or background processes were created for this task.
+
+Dirty worktree note:
+- Pre-existing or unrelated dirty state remains outside this task scope, including .omo/plans/puread-rust-module.md, .cargo/, .omo/boulder.json, .omo/start-work/, AGENTS.md, Cargo.toml/Cargo.lock, clippy.toml, crates/, rustfmt.toml, target/, ignored AgentLogs/, and ignored Example/.
+- These files and directories were not restored, removed, formatted, or otherwise edited by this task.

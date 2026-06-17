@@ -1,0 +1,25 @@
+T6 manual QA
+=============
+
+Scenario:
+- Run ./scripts/verify-local.sh after narrowing forbidden-token scan to production paths.
+
+Observed:
+- .omo/evidence/task-6-verify-local-run.txt includes:
+  - info: run: cargo fmt --check
+  - info: run: cargo check --workspace --locked
+  - info: run: cargo test --workspace --locked
+  - info: forbidden-token scan found no production-path matches
+  - Exit status: 0
+
+Scan path inspection:
+- scripts/verify-local.sh scans crates/*/src, src, rules, module, modules, and known shell lifecycle scripts.
+- It no longer scans the whole crates tree, so crates/*/tests parser fixtures containing negative examples such as iptables and disable_dns are outside the production forbidden-token scan.
+- The scan is still active for production source paths; rg exit status 0 records a forbidden match and fails the script, exit status 1 means no match, and any other rg failure is propagated.
+
+Unknown argument QA:
+- .omo/evidence/task-6-unknown-arg.txt records "error: unknown argument: --unexpected" and "Exit status: 2".
+
+Hung command check:
+- verify-local runs finite commands only: test, sh -n, cargo fmt/check/test, and rg scans.
+- No loops, watchers, background jobs, daemons, or long-running sessions were started.

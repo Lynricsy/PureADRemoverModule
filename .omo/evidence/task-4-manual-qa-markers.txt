@@ -1,0 +1,19 @@
+11:rejected_path= result=Err(EmptyPath)
+12:rejected_path=/ result=Err(ProtectedRoot { path: "/" })
+13:rejected_path=/data result=Err(ProtectedRoot { path: "/data" })
+14:rejected_path=/sdcard result=Err(ProtectedRoot { path: "/sdcard" })
+15:rejected_path=/storage result=Err(ProtectedRoot { path: "/storage" })
+16:rejected_path=/system result=Err(ProtectedRoot { path: "/system" })
+17:rejected_path=/vendor result=Err(ProtectedRoot { path: "/vendor" })
+18:rejected_path=/data/adb result=Err(ProtectedRoot { path: "/data/adb" })
+19:rejected_path=/data/adb/other-module/cache result=Err(DataAdbOutsideModule { path: "/data/adb/other-module/cache", module_dir: "/data/adb/modules/puread" })
+20:rejected_path=/data/data/com.example.app/../com.android.systemui result=Err(TraversalSegment { path: "/data/data/com.example.app/../com.android.systemui" })
+21:rejected_path=data/data/com.example.app result=Err(RelativePath { path: "data/data/com.example.app" })
+22:rejected_path=/*/data/com.example.app result=Err(RootLevelWildcard { template: "/*/data/com.example.app" })
+23:rejected_path=/data/*/com.example.app result=Err(UnsupportedWildcard { template: "/data/*/com.example.app" })
+24:expanded_android_data=["/sdcard/Android/data/com.example.app"] package_relative=["/sdcard/Android/data/com.example.app/cache/splash_ad"]
+25:symlink_escape_result=Err(SymlinkEscape { android_path: "/data/data/com.example.app/cache/escape", host_path: "/tmp/puread-path-expansion-2926660-4/data/data/com.example.app/cache/escape", root: "/tmp/puread-path-expansion-2926660-4" })
+26:expanded_data_user=["/data/user/0/com.example.app/cache", "/data/user/10/com.example.app/cache"]
+28:name_matches=["/data/data/com.example.app/cache/GDTDOWNLOAD"]
+31:test path_expansion_finds_name_matches_only_inside_package_scopes ... ok
+34:test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

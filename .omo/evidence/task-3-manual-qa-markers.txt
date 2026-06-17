@@ -1,0 +1,3 @@
+22:running 5 tests
+23:valid_rule_fixture=Ok(RuleId("coolapk-splash-cache")) Ok(PackageName("com.coolapk.market")) Ok(RootPath("/data/data/com.coolapk.market/cache")) Ok(RestoreToken("restore-20260617-coolapk-splash"))
+30:test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

@@ -1,0 +1,14 @@
+[package]
+name = "puread-cli"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CLI entrypoint scaffold for the PureAD non-domain ad remover module."
+
+[dependencies]
+puread-core = { path = "../puread-core" }
+
+[lints]
+workspace = true
