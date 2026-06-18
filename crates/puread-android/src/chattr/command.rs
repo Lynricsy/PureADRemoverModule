@@ -1,7 +1,9 @@
-use std::process::Command;
-
 use crate::chattr::contains_failure_marker;
 use crate::chattr::error::ImmutableError;
+use crate::command_runner::{
+    AndroidCommandRunner, CommandInvocation as AndroidCommandInvocation, CommandRunnerError,
+    RealAndroidCommandRunner,
+};
 
 /// 可观察的命令调用。
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -104,18 +106,30 @@ pub struct RealCommandRunner;
 
 impl CommandRunner for RealCommandRunner {
     fn run(&self, invocation: &CommandInvocation) -> Result<CommandOutput, ImmutableError> {
-        let output = Command::new(invocation.program())
-            .args(invocation.args())
-            .output()
-            .map_err(|source| ImmutableError::CommandUnavailable {
-                program: invocation.program().to_owned(),
-                detail: source.to_string(),
-            })?;
-        let status = output.status.code().map_or(1, |code| code);
+        let android_invocation =
+            AndroidCommandInvocation::new(invocation.program(), invocation.args());
+        let output = RealAndroidCommandRunner
+            .run(&android_invocation)
+            .map_err(|source| immutable_runner_error(invocation, source))?;
         Ok(CommandOutput {
-            status,
-            stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
-            stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
+            status: output.status(),
+            stdout: output.stdout().to_owned(),
+            stderr: output.stderr().to_owned(),
         })
+    }
+}
+
+fn immutable_runner_error(
+    invocation: &CommandInvocation,
+    source: CommandRunnerError,
+) -> ImmutableError {
+    let detail = match source {
+        CommandRunnerError::NotFound { detail } | CommandRunnerError::Unavailable { detail } => {
+            detail
+        }
+    };
+    ImmutableError::CommandUnavailable {
+        program: invocation.program().to_owned(),
+        detail,
     }
 }

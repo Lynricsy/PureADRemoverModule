@@ -1,10 +1,12 @@
-use std::io::ErrorKind;
 use std::path::Path;
-use std::process::Command;
 
 use puread_core::model::RiskLevel;
 use puread_core::restore_ledger::OriginalFileType;
 
+use crate::command_runner::{
+    AndroidCommandRunner, CommandInvocation, CommandOutput, CommandRunnerError,
+    RealAndroidCommandRunner,
+};
 use crate::file_actions::error::FileActionError;
 use crate::file_actions::metadata::{MetadataChange, MetadataOperation};
 use crate::file_actions::mutate::guards::{
@@ -152,25 +154,39 @@ fn run_trusted_chcon(
     context: &str,
     fd_path: &Path,
 ) -> Result<(), FileActionError> {
+    run_trusted_chcon_with(&RealAndroidCommandRunner, candidates, context, fd_path)
+}
+
+fn run_trusted_chcon_with<R>(
+    runner: &R,
+    candidates: &[&str],
+    context: &str,
+    fd_path: &Path,
+) -> Result<(), FileActionError>
+where
+    R: AndroidCommandRunner,
+{
+    let fd_path_text = fd_path.to_string_lossy();
     for candidate in candidates {
-        let output = match Command::new(candidate).arg(context).arg(fd_path).output() {
+        let invocation = CommandInvocation::new(candidate, [context, fd_path_text.as_ref()]);
+        let output = match runner.run(&invocation) {
             Ok(output) => output,
-            Err(source) if source.kind() == ErrorKind::NotFound => continue,
-            Err(source) => {
+            Err(CommandRunnerError::NotFound { .. }) => continue,
+            Err(CommandRunnerError::Unavailable { detail }) => {
                 return Err(FileActionError::Metadata {
                     operation: "chcon",
                     path: fd_path.to_path_buf(),
-                    detail: source.to_string(),
+                    detail,
                 });
             }
         };
-        if output.status.success() {
+        if output.status() == 0 {
             return Ok(());
         }
         return Err(FileActionError::Metadata {
             operation: "chcon",
             path: fd_path.to_path_buf(),
-            detail: String::from_utf8_lossy(&output.stderr).into_owned(),
+            detail: command_failure_detail(&output),
         });
     }
     Err(FileActionError::Metadata {
@@ -178,6 +194,13 @@ fn run_trusted_chcon(
         path: fd_path.to_path_buf(),
         detail: "trusted chcon command unavailable".to_owned(),
     })
+}
+
+fn command_failure_detail(output: &CommandOutput) -> String {
+    if output.stderr().is_empty() {
+        return output.stdout().to_owned();
+    }
+    output.stderr().to_owned()
 }
 
 #[cfg(test)]
@@ -207,7 +230,8 @@ mod tests {
         std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755))
             .expect("test chcon script should be executable");
 
-        run_trusted_chcon(
+        run_trusted_chcon_with(
+            &RealAndroidCommandRunner,
             &[script.to_str().expect("test path should be utf-8")],
             "u:object_r:cache_file:s0",
             Path::new("/proc/self/fd/0"),

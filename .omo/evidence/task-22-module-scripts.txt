@@ -1,0 +1,79 @@
+$ find module -maxdepth 3 -type f | sort | tee .omo/evidence/task-22-module-files.txt
+module/action.sh
+module/bin/README.md
+module/customize.sh
+module/module.prop
+module/rules/README.md
+module/scripts/puread-module-lib.sh
+module/service.sh
+module/uninstall.sh
+
+$ sh -n module/customize.sh module/service.sh module/uninstall.sh module/action.sh module/scripts/puread-module-lib.sh
+rc=0
+
+$ rg -n 'MODDIR="\$\{0%/\*\}"' module | tee .omo/evidence/task-22-shell-parse.txt
+module/uninstall.sh:3:MODDIR="${0%/*}"
+module/service.sh:3:MODDIR="${0%/*}"
+module/customize.sh:3:MODDIR="${0%/*}"
+module/scripts/puread-module-lib.sh:4:    MODDIR="${0%/*}"
+module/action.sh:3:MODDIR="${0%/*}"
+
+$ PUREAD_MODULE_STATE_DIR=/tmp/puread-review-state PUREAD_MODULE_LOG_DIR=/tmp/puread-review-logs PUREAD_DAEMON_DISABLE=1 sh module/service.sh
+PureAD service host dry-run
+status=host_dry_run
+runtime=unknown
+abi=x86_64
+daemon=module/bin/x86_64/puread-daemon
+state=/tmp/puread-review-state/status.env
+log=/tmp/puread-review-logs/puread.log
+rc=0
+-- redirected status --
+module_id=PureAD
+status=host_dry_run
+detail=service skipped outside Android;runtime=unknown;abi=x86_64
+runtime=unknown
+abi=x86_64
+daemon=module/bin/x86_64/puread-daemon
+cli=module/bin/x86_64/puread-cli
+state_dir=/tmp/puread-review-state
+run_dir=/tmp/puread-review-state/run
+log_path=/tmp/puread-review-logs/puread.log
+lock_path=/tmp/puread-review-state/run/puread.lock
+updated_at=2026-06-18T14:56:26+0800
+-- redirected log --
+2026-06-18T14:56:26+0800 service: host dry-run, Android-only daemon launch skipped
+
+$ sh module/action.sh status
+PureAD status
+runtime=unknown
+abi=x86_64
+module_dir=module
+state=module/state/status.env
+log=module/logs/puread.log
+daemon=module/bin/x86_64/puread-daemon
+cli=module/bin/x86_64/puread-cli
+status_file=missing
+native_binary=missing_until_T25
+rc=0
+
+$ PUREAD_DAEMON_DISABLE=1 sh module/service.sh
+PureAD service host dry-run
+status=host_dry_run
+runtime=unknown
+abi=x86_64
+daemon=module/bin/x86_64/puread-daemon
+state=module/state/status.env
+log=module/logs/puread.log
+rc=0
+
+$ find module -maxdepth 3 -type f | sort
+module/action.sh
+module/bin/README.md
+module/customize.sh
+module/module.prop
+module/rules/README.md
+module/scripts/puread-module-lib.sh
+module/service.sh
+module/uninstall.sh
+
+$ find module -maxdepth 3 \( -path 'module/logs*' -o -path 'module/state*' -o -path 'module/run*' \) -print | sort

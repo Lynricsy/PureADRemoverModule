@@ -1,0 +1,854 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-18T07:12:14.328353925Z",
+  "mode": "report-only",
+  "input": {
+    "path": "Example/Adguard-Home-For-Magisk-Mod",
+    "kind": "directory"
+  },
+  "policy": {
+    "download_performed": false,
+    "rules_modified": false,
+    "snapshots_modified": false,
+    "report_only": true,
+    "auto_import_allowed": false
+  },
+  "summary": {
+    "sources": 4,
+    "accepted": 0,
+    "rejected": 33,
+    "ignored": 4
+  },
+  "sources": [
+    {
+      "source_id": "Adguard-Home-For-Magisk-Mod",
+      "type": "directory",
+      "path": "Example/Adguard-Home-For-Magisk-Mod",
+      "sha256": "n/a",
+      "size_bytes": 3901656,
+      "file_count": 21,
+      "remote_url": "https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git",
+      "commit": "098ba8c78cf57dbd180fe2c72b05405b76eaa769",
+      "executable_upstream_code": true,
+      "auto_import_allowed": false
+    },
+    {
+      "source_id": ".git",
+      "type": "directory",
+      "path": "Example/Adguard-Home-For-Magisk-Mod/.git",
+      "sha256": "n/a",
+      "size_bytes": 0,
+      "file_count": 0,
+      "remote_url": "https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git",
+      "commit": "098ba8c78cf57dbd180fe2c72b05405b76eaa769",
+      "executable_upstream_code": false,
+      "auto_import_allowed": false
+    },
+    {
+      "source_id": ".github",
+      "type": "directory",
+      "path": "Example/Adguard-Home-For-Magisk-Mod/.github",
+      "sha256": "n/a",
+      "size_bytes": 2304,
+      "file_count": 2,
+      "remote_url": "https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git",
+      "commit": "098ba8c78cf57dbd180fe2c72b05405b76eaa769",
+      "executable_upstream_code": false,
+      "auto_import_allowed": false
+    },
+    {
+      "source_id": "Adguardhome",
+      "type": "directory",
+      "path": "Example/Adguard-Home-For-Magisk-Mod/Adguardhome",
+      "sha256": "n/a",
+      "size_bytes": 3888839,
+      "file_count": 14,
+      "remote_url": "https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git",
+      "commit": "098ba8c78cf57dbd180fe2c72b05405b76eaa769",
+      "executable_upstream_code": true,
+      "auto_import_allowed": false
+    }
+  ],
+  "accepted": [],
+  "rejected": [
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": ".github/ISSUE_TEMPLATE/bug-report.yml",
+      "zip_entry": null,
+      "sha256": "f26ec321318cf58fde88fcb4c64c7ee9505a28ffb12781a003c8ca9276bd0c99",
+      "size_bytes": 2004,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/action.sh",
+      "zip_entry": null,
+      "sha256": "ccb6932104c1d3b10bb33954c77017e415f72525b6d10a8b511cfff2fe41537c",
+      "size_bytes": 436,
+      "categories": [
+        "dns"
+      ],
+      "signals": [
+        "content_dns",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/bin/AdGuardHome.yaml",
+      "zip_entry": null,
+      "sha256": "4df24b90fc1314e7e86becad37692a87538d22c414fa5b0d4984388cdea8c874",
+      "size_bytes": 48023,
+      "categories": [
+        "dns",
+        "domain",
+        "ifw_clear",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_ifw",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/bin/data/filters/1721861844.txt",
+      "zip_entry": null,
+      "sha256": "65e4ded39ffb9b5a5546248c9811e6b1bf591b2d7dc7acc0d6bbfed82182ec08",
+      "size_bytes": 847812,
+      "categories": [
+        "dns",
+        "domain",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_network_blocking",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/bin/data/filters/1721861846.txt",
+      "zip_entry": null,
+      "sha256": "eff30e26366940a4debb017d2c2ad812b221d7a76bfeb5cdaabe0947a6fd965d",
+      "size_bytes": 2814434,
+      "categories": [
+        "dns",
+        "domain",
+        "ifw_clear",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_ifw",
+        "content_network_blocking",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/bin/data/filters/1735560833.txt",
+      "zip_entry": null,
+      "sha256": "3b9a6e348badba474fff0e243f87e644a42060f9f54228d871092a248bd7f92f",
+      "size_bytes": 154882,
+      "categories": [
+        "dns",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_network_blocking",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/customize.sh",
+      "zip_entry": null,
+      "sha256": "4a8e9aafcfaf43604598bea8d116f1e092a9a0e77cc895eb23e534b30221d3f0",
+      "size_bytes": 4628,
+      "categories": [
+        "dns",
+        "hosts",
+        "ifw_clear",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_hosts",
+        "content_ifw",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/module.prop",
+      "zip_entry": null,
+      "sha256": "65ce7e2a0af7ec448132a65acdcf4c0e2513eec7f967ae4e48da487194caa051",
+      "size_bytes": 365,
+      "categories": [
+        "dns"
+      ],
+      "signals": [
+        "content_dns",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/scripts/ModuleMOD.sh",
+      "zip_entry": null,
+      "sha256": "fee24e7d0bdcaae362afe0ee22a832488c0826563a113d7d9c70ef83800677f3",
+      "size_bytes": 1208,
+      "categories": [
+        "dns"
+      ],
+      "signals": [
+        "content_dns",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "sha256": "1e1aa2c650d02dac0a4d5e23db28ecf1b6a5a8c0a6350cbb78512be5e2d95e38",
+      "size_bytes": 7348,
+      "categories": [
+        "dns",
+        "ifw_clear"
+      ],
+      "signals": [
+        "content_dns",
+        "content_ifw",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/scripts/ProxyConfig.sh",
+      "zip_entry": null,
+      "sha256": "3c2e583fa6d5832bafaf0d102e8fc18a51a891d9b91046d4d6c9f470bcb65497",
+      "size_bytes": 4065,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy",
+        "path_dns",
+        "path_proxy"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/scripts/config.prop",
+      "zip_entry": null,
+      "sha256": "6362cef7b7ff4cdf4c597eed9014b404a5287374abe5726777fa1b9bea7070e8",
+      "size_bytes": 253,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/scripts/iptables.sh",
+      "zip_entry": null,
+      "sha256": "0e06e80f560c883670e796fea432d5020284e9d23d308a14e0fb552d6ad8f033",
+      "size_bytes": 1920,
+      "categories": [
+        "dns",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_dns",
+        "content_network_blocking",
+        "path_dns",
+        "path_network_blocking"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/service.sh",
+      "zip_entry": null,
+      "sha256": "6f3dfe21dd43d2b15c30a55180ed6e91bbf047fdba8fb4502e8152dc9e625a4c",
+      "size_bytes": 2588,
+      "categories": [
+        "dns",
+        "hosts",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_hosts",
+        "content_network_blocking",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Adguardhome/uninstall.sh",
+      "zip_entry": null,
+      "sha256": "a9743618980c48a6f1150317a0bd233afeee9c951f900a85154feb6ee34e545d",
+      "size_bytes": 877,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "README.en.md",
+      "zip_entry": null,
+      "sha256": "b95ce7cb0b5c4b8a44fbf5895501b9bb6f5f6648d594f2ee681c4fc25ff0c0e2",
+      "size_bytes": 3072,
+      "categories": [
+        "dns",
+        "domain",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "README.md",
+      "zip_entry": null,
+      "sha256": "ad31958a48f1ddf3f8936ff9f11d8d411b8c9e6d555f86b9c9397f4e6ccefe1d",
+      "size_bytes": 5601,
+      "categories": [
+        "dns",
+        "domain",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "changelog.md",
+      "zip_entry": null,
+      "sha256": "55e402ba2cce636963feb91a293682e4e8434805917aa1f7f21fe617da7721fc",
+      "size_bytes": 402,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": ".github",
+      "kind": "file",
+      "path": "ISSUE_TEMPLATE/bug-report.yml",
+      "zip_entry": null,
+      "sha256": "f26ec321318cf58fde88fcb4c64c7ee9505a28ffb12781a003c8ca9276bd0c99",
+      "size_bytes": 2004,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "action.sh",
+      "zip_entry": null,
+      "sha256": "ccb6932104c1d3b10bb33954c77017e415f72525b6d10a8b511cfff2fe41537c",
+      "size_bytes": 436,
+      "categories": [
+        "dns"
+      ],
+      "signals": [
+        "content_dns"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "bin/AdGuardHome.yaml",
+      "zip_entry": null,
+      "sha256": "4df24b90fc1314e7e86becad37692a87538d22c414fa5b0d4984388cdea8c874",
+      "size_bytes": 48023,
+      "categories": [
+        "dns",
+        "domain",
+        "ifw_clear",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_ifw",
+        "content_proxy",
+        "path_dns"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "bin/data/filters/1721861844.txt",
+      "zip_entry": null,
+      "sha256": "65e4ded39ffb9b5a5546248c9811e6b1bf591b2d7dc7acc0d6bbfed82182ec08",
+      "size_bytes": 847812,
+      "categories": [
+        "dns",
+        "domain",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "bin/data/filters/1721861846.txt",
+      "zip_entry": null,
+      "sha256": "eff30e26366940a4debb017d2c2ad812b221d7a76bfeb5cdaabe0947a6fd965d",
+      "size_bytes": 2814434,
+      "categories": [
+        "dns",
+        "domain",
+        "ifw_clear",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_ifw",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "bin/data/filters/1735560833.txt",
+      "zip_entry": null,
+      "sha256": "3b9a6e348badba474fff0e243f87e644a42060f9f54228d871092a248bd7f92f",
+      "size_bytes": 154882,
+      "categories": [
+        "dns",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "customize.sh",
+      "zip_entry": null,
+      "sha256": "4a8e9aafcfaf43604598bea8d116f1e092a9a0e77cc895eb23e534b30221d3f0",
+      "size_bytes": 4628,
+      "categories": [
+        "dns",
+        "hosts",
+        "ifw_clear",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_hosts",
+        "content_ifw",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "module.prop",
+      "zip_entry": null,
+      "sha256": "65ce7e2a0af7ec448132a65acdcf4c0e2513eec7f967ae4e48da487194caa051",
+      "size_bytes": 365,
+      "categories": [
+        "dns"
+      ],
+      "signals": [
+        "content_dns"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "scripts/ModuleMOD.sh",
+      "zip_entry": null,
+      "sha256": "fee24e7d0bdcaae362afe0ee22a832488c0826563a113d7d9c70ef83800677f3",
+      "size_bytes": 1208,
+      "categories": [
+        "dns"
+      ],
+      "signals": [
+        "content_dns"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "scripts/NoAdsService.sh",
+      "zip_entry": null,
+      "sha256": "1e1aa2c650d02dac0a4d5e23db28ecf1b6a5a8c0a6350cbb78512be5e2d95e38",
+      "size_bytes": 7348,
+      "categories": [
+        "dns",
+        "ifw_clear"
+      ],
+      "signals": [
+        "content_dns",
+        "content_ifw"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "scripts/ProxyConfig.sh",
+      "zip_entry": null,
+      "sha256": "3c2e583fa6d5832bafaf0d102e8fc18a51a891d9b91046d4d6c9f470bcb65497",
+      "size_bytes": 4065,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy",
+        "path_proxy"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "scripts/config.prop",
+      "zip_entry": null,
+      "sha256": "6362cef7b7ff4cdf4c597eed9014b404a5287374abe5726777fa1b9bea7070e8",
+      "size_bytes": 253,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "scripts/iptables.sh",
+      "zip_entry": null,
+      "sha256": "0e06e80f560c883670e796fea432d5020284e9d23d308a14e0fb552d6ad8f033",
+      "size_bytes": 1920,
+      "categories": [
+        "dns",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_dns",
+        "content_network_blocking",
+        "path_network_blocking"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "service.sh",
+      "zip_entry": null,
+      "sha256": "6f3dfe21dd43d2b15c30a55180ed6e91bbf047fdba8fb4502e8152dc9e625a4c",
+      "size_bytes": 2588,
+      "categories": [
+        "dns",
+        "hosts",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_hosts",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "Adguardhome",
+      "kind": "file",
+      "path": "uninstall.sh",
+      "zip_entry": null,
+      "sha256": "a9743618980c48a6f1150317a0bd233afeee9c951f900a85154feb6ee34e545d",
+      "size_bytes": 877,
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    }
+  ],
+  "ignored": [
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "zip_entry": null,
+      "sha256": "a689908a3c1ad05fbf889739123e4ac94fdfac7a21beca79548bdca3c3113edc",
+      "size_bytes": 300,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "LICENSE",
+      "zip_entry": null,
+      "sha256": "15e28937a4942eb415c131e1c6cd2fa9c74936f18dfa5c43328f636742a5c51b",
+      "size_bytes": 1066,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "kind": "file",
+      "path": "Update.json",
+      "zip_entry": null,
+      "sha256": "1bb4a00e9206a0adb4b7386f8b7b5b17c0590e2ec8daeaff9d49fb54fa1d09d6",
+      "size_bytes": 372,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": ".github",
+      "kind": "file",
+      "path": "ISSUE_TEMPLATE/config.yml",
+      "zip_entry": null,
+      "sha256": "a689908a3c1ad05fbf889739123e4ac94fdfac7a21beca79548bdca3c3113edc",
+      "size_bytes": 300,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    }
+  ]
+}

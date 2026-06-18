@@ -1,3 +1,6 @@
 AgentLogs/
 Example/
 target/
+module/logs/
+module/run/
+module/state/

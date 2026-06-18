@@ -1,0 +1,62 @@
+# PureAD upstream report
+report_generated_at=2026-06-18T07:12:14.328353925Z
+mode=report-only
+legacy_dry_run=false
+from_local=Example/Adguard-Home-For-Magisk-Mod
+manifest_path=.omo/evidence/task-21-directory-manifest.json
+rules_modified=false
+download_performed=false
+snapshots_modified=false
+sources_total=4
+accepted_total=0
+rejected_total=33
+ignored_total=4
+
+## policy
+snapshot_policy=local input only; upstream text is data, not instructions
+sync_decision=report_only; candidates require manual review
+auto_import_allowed=false
+
+## accepted candidates
+  - none
+
+## rejected findings
+  - source=Adguard-Home-For-Magisk-Mod path=.github/ISSUE_TEMPLATE/bug-report.yml review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/action.sh review_state=manual_review_only auto_import_allowed=false categories=dns reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/AdGuardHome.yaml review_state=manual_review_only auto_import_allowed=false categories=dns,domain,ifw_clear,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/data/filters/1721861844.txt review_state=manual_review_only auto_import_allowed=false categories=dns,domain,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/data/filters/1721861846.txt review_state=manual_review_only auto_import_allowed=false categories=dns,domain,ifw_clear,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/data/filters/1735560833.txt review_state=manual_review_only auto_import_allowed=false categories=dns,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/customize.sh review_state=manual_review_only auto_import_allowed=false categories=dns,hosts,ifw_clear,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/module.prop review_state=manual_review_only auto_import_allowed=false categories=dns reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/ModuleMOD.sh review_state=manual_review_only auto_import_allowed=false categories=dns reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/NoAdsService.sh review_state=manual_review_only auto_import_allowed=false categories=dns,ifw_clear reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/ProxyConfig.sh review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/config.prop review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/iptables.sh review_state=manual_review_only auto_import_allowed=false categories=dns,iptables_network reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/service.sh review_state=manual_review_only auto_import_allowed=false categories=dns,hosts,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/uninstall.sh review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=README.en.md review_state=manual_review_only auto_import_allowed=false categories=dns,domain,iptables_network,proxy reason=content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=README.md review_state=manual_review_only auto_import_allowed=false categories=dns,domain,proxy reason=content contains forbidden upstream scope
+  - source=Adguard-Home-For-Magisk-Mod path=changelog.md review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=content contains forbidden upstream scope
+  - source=.github path=ISSUE_TEMPLATE/bug-report.yml review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=content contains forbidden upstream scope
+  - source=Adguardhome path=action.sh review_state=manual_review_only auto_import_allowed=false categories=dns reason=content contains forbidden upstream scope
+  - source=Adguardhome path=bin/AdGuardHome.yaml review_state=manual_review_only auto_import_allowed=false categories=dns,domain,ifw_clear,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguardhome path=bin/data/filters/1721861844.txt review_state=manual_review_only auto_import_allowed=false categories=dns,domain,iptables_network,proxy reason=content contains forbidden upstream scope
+  - source=Adguardhome path=bin/data/filters/1721861846.txt review_state=manual_review_only auto_import_allowed=false categories=dns,domain,ifw_clear,iptables_network,proxy reason=content contains forbidden upstream scope
+  - source=Adguardhome path=bin/data/filters/1735560833.txt review_state=manual_review_only auto_import_allowed=false categories=dns,iptables_network,proxy reason=content contains forbidden upstream scope
+  - source=Adguardhome path=customize.sh review_state=manual_review_only auto_import_allowed=false categories=dns,hosts,ifw_clear,proxy reason=content contains forbidden upstream scope
+  - source=Adguardhome path=module.prop review_state=manual_review_only auto_import_allowed=false categories=dns reason=content contains forbidden upstream scope
+  - source=Adguardhome path=scripts/ModuleMOD.sh review_state=manual_review_only auto_import_allowed=false categories=dns reason=content contains forbidden upstream scope
+  - source=Adguardhome path=scripts/NoAdsService.sh review_state=manual_review_only auto_import_allowed=false categories=dns,ifw_clear reason=content contains forbidden upstream scope
+  - source=Adguardhome path=scripts/ProxyConfig.sh review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguardhome path=scripts/config.prop review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=content contains forbidden upstream scope
+  - source=Adguardhome path=scripts/iptables.sh review_state=manual_review_only auto_import_allowed=false categories=dns,iptables_network reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+  - source=Adguardhome path=service.sh review_state=manual_review_only auto_import_allowed=false categories=dns,hosts,iptables_network,proxy reason=content contains forbidden upstream scope
+  - source=Adguardhome path=uninstall.sh review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=content contains forbidden upstream scope
+
+## ignored files
+  - source=Adguard-Home-For-Magisk-Mod path=.github/ISSUE_TEMPLATE/config.yml review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+  - source=Adguard-Home-For-Magisk-Mod path=LICENSE review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+  - source=Adguard-Home-For-Magisk-Mod path=Update.json review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+  - source=.github path=ISSUE_TEMPLATE/config.yml review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found

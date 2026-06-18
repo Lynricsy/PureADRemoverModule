@@ -1,0 +1,5 @@
+module/uninstall.sh:3:MODDIR="${0%/*}"
+module/service.sh:3:MODDIR="${0%/*}"
+module/customize.sh:3:MODDIR="${0%/*}"
+module/scripts/puread-module-lib.sh:4:    MODDIR="${0%/*}"
+module/action.sh:3:MODDIR="${0%/*}"

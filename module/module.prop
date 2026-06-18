@@ -1,0 +1,6 @@
+id=PureAD
+name=PureAD Remover
+version=0.1.0-t22
+versionCode=22
+author=Wine Fox and contributors
+description=Local Android root ad-artifact cleanup module template; T22 ships lifecycle scripts only.

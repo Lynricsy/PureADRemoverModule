@@ -1,0 +1,17 @@
+scripts/update-upstream.sh 74
+xtask/upstream-report/src/classifier.rs 73
+xtask/upstream-report/src/cli.rs 20
+xtask/upstream-report/src/error.rs 54
+xtask/upstream-report/src/main.rs 38
+xtask/upstream-report/src/manifest.rs 106
+xtask/upstream-report/src/report.rs 103
+xtask/upstream-report/src/scanner.rs 237
+xtask/upstream-report/src/classifier/executable.rs 22
+xtask/upstream-report/src/classifier/forbidden.rs 139
+xtask/upstream-report/src/classifier/useful.rs 128
+xtask/upstream-report/src/scanner/fs_walk.rs 46
+xtask/upstream-report/src/scanner/source_meta.rs 49
+xtask/upstream-report/src/scanner/zip_read.rs 14
+xtask/upstream-report/tests/args.rs 14
+xtask/upstream-report/tests/directory_report.rs 146
+xtask/upstream-report/tests/zip_report.rs 204

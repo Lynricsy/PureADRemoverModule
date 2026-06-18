@@ -281,7 +281,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-daemon scheduler -- --nocapture | tee .omo/evidence/task-18-scheduler.txt`
   Commit: N | feat(daemon): add low-power maintenance scheduler | Files `crates/puread-daemon/**`
 
-- [ ] 19. 实现 Android 命令适配层
+- [x] 19. 实现 Android 命令适配层
   What to do / Must NOT do: 封装 `pm`、`cmd appops`、`settings`、`getprop`、`chcon`、`chattr`、`lsattr` 命令，所有调用可 dry-run、可记录输出、可注入 fake runner。每个 adapter 必须有 `probe`、`apply`、`restore`、`dry_run`。`settings` 只允许 ROM profile 白名单键，禁止 `private_dns_mode`、`private_dns_specifier`、DNS/hosts/proxy 相关键。不要散落 shell 字符串。
   Parallelization: Can parallel Y | Wave 4 | Blocks T24/T25
   References: `Example/ads288.zip/mod/disable_app.sh:16`; `Example/ads288.zip/mod/APPOPS.sh:1`; `Example/ads288.zip/mod/miui_ad.sh:3`
@@ -297,15 +297,15 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo run -p puread-cli -- scan --dry-run --root tests/fixtures/android-fs > .omo/evidence/task-20-cli-scan.json`
   Commit: N | feat(cli): manage scans and profiles safely | Files `crates/puread-cli/**`
 
-- [ ] 21. 上游规则同步流程实现
+- [x] 21. 上游规则同步流程实现
   What to do / Must NOT do: 完成 `scripts/update-upstream.sh` 和/或 CLI 子命令，能刷新上游压缩包与 AdGuard 示例、解包到 `upstream/`、生成 `upstream_manifest.json` 和非域名规则候选 diff。同步快照可以包含上游文件用于审查，但规则导入只允许 `file_path`、`sdk_cache`、`sqlite`、`component`、`appops`、`rom_profile` 候选。硬拒绝 `hosts`、`Host/`、`host.sh`、`mount_hosts*`、`iptables.sh`、`ad_reward*`、DNS/代理配置文件。不要自动合并候选规则。
   Parallelization: Can parallel Y | Wave 4 | Blocks T26/T29
   References: `AGENTS.md`; `Example/ads288.zip`; `Example/Adguard-Home-For-Magisk-Mod`
   Acceptance criteria (agent-executable): `scripts/update-upstream.sh --dry-run` 和 `scripts/update-upstream.sh --from-local Example --report-only` 生成报告；报告包含 accepted/rejected 分类，任何命中 hosts/DNS/proxy/iptables/network/ad_reward 关键词的条目必须进入 rejected 或导致失败。
   QA scenarios (name the exact tool + invocation): `scripts/update-upstream.sh --from-local Example --report-only | tee .omo/evidence/task-21-upstream-report.txt`; `jq '.rejected' upstream/upstream_manifest.json > .omo/evidence/task-21-rejected.json`
-  Commit: N | chore(upstream): report non-domain rule update candidates | Files `scripts/update-upstream.sh`, `upstream/**`
+  Commit: N | chore(upstream): report non-domain rule update candidates | Files `scripts/update-upstream.sh`, `xtask/upstream-report/**`, `upstream/**`
 
-- [ ] 22. 编写模块模板和生命周期脚本
+- [x] 22. 编写模块模板和生命周期脚本
   What to do / Must NOT do: 在 `module/` 创建 `module.prop`、`customize.sh`、`service.sh`、`uninstall.sh`、`action.sh`、`scripts/`；使用 `MODDIR=${0%/*}`；按 ARCH 选择 binary；适配 Magisk/APatch 环境变量。不要硬编码 `/data/adb/modules/PureAD` 为唯一来源。
   Parallelization: Can parallel Y | Wave 4 | Blocks T25/T28
   References: Magisk 官方约束; APatch 官方约束; `Example/ads288.zip/service.sh:1`; `Example/Adguard-Home-For-Magisk-Mod/Adguardhome/service.sh`

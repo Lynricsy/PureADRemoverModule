@@ -1,0 +1,35 @@
+T19 command runner security regression evidence
+
+Red evidence:
+- Initial target test failed before implementation with missing CommandOutput::from_status (E0599), proving constructor naming fix was not present.
+- After partial implementation, target tests failed because getprop/lsattr read-only semantics changed and token validation initially rejected valid $ component names; this drove the final contract.
+
+Green evidence:
+- cargo test -p puread-android command_runner -- --nocapture | tee .omo/evidence/task-19-command-runner.txt: passed, 6 command_runner tests passed.
+- cargo fmt --check: passed.
+- cargo clippy -p puread-android --all-targets -- -D warnings: passed.
+- rg command boundary scan: only crates/puread-android/src/command_runner/runner.rs contains std::process::Command / Command::new.
+
+Security cases covered:
+- chcon/chattr/lsattr reject option-like targets beginning with -.
+- pm components, appops package/op, and getprop property reject option-looking tokens, path traversal, whitespace, NUL, and CLI metacharacters.
+- Valid Android names still pass: package with underscore, relative and fully qualified components including $, foreground AppOps mode, vendor property names.
+- getprop and lsattr apply/restore return UnsupportedReadOnlyPhase and do not call the runner.
+- RealAndroidCommandRunner constructs output with CommandOutput::from_status instead of failure().
+
+LOC check:
+crates/puread-android/tests/command_runner.rs:248
+crates/puread-android/src/command_runner.rs:21
+crates/puread-android/src/command_runner/adapter.rs:123
+crates/puread-android/src/command_runner/appops.rs:67
+crates/puread-android/src/command_runner/error.rs:45
+crates/puread-android/src/command_runner/invocation.rs:31
+crates/puread-android/src/command_runner/metadata.rs:128
+crates/puread-android/src/command_runner/output.rs:40
+crates/puread-android/src/command_runner/pm.rs:56
+crates/puread-android/src/command_runner/property.rs:43
+crates/puread-android/src/command_runner/runner.rs:40
+crates/puread-android/src/command_runner/settings.rs:120
+crates/puread-android/src/command_runner/validation.rs:109
+crates/puread-android/src/chattr/command.rs:96
+crates/puread-android/src/file_actions/mutate/metadata_ops.rs:238

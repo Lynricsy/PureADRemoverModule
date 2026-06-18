@@ -1,0 +1,8 @@
+module/action.sh
+module/bin/README.md
+module/customize.sh
+module/module.prop
+module/rules/README.md
+module/scripts/puread-module-lib.sh
+module/service.sh
+module/uninstall.sh

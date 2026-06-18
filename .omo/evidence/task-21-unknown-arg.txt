@@ -1,0 +1,9 @@
+error: unknown argument: --unknown
+Usage:
+  scripts/update-upstream.sh --from-local PATH --report-only
+  scripts/update-upstream.sh --dry-run [--from-local PATH]
+
+Create a report-only upstream audit from a local directory or zip file.
+The tool never downloads upstream files, rewrites rules, or extracts snapshots
+into the repository.
+exit_status=2

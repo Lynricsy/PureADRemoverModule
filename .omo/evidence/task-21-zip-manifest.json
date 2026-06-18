@@ -1,0 +1,2200 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-18T07:12:12.822457444Z",
+  "mode": "report-only",
+  "input": {
+    "path": "Example/ads288.zip",
+    "kind": "zip"
+  },
+  "policy": {
+    "download_performed": false,
+    "rules_modified": false,
+    "snapshots_modified": false,
+    "report_only": true,
+    "auto_import_allowed": false
+  },
+  "summary": {
+    "sources": 1,
+    "accepted": 46,
+    "rejected": 50,
+    "ignored": 19
+  },
+  "sources": [
+    {
+      "source_id": "ads288.zip",
+      "type": "zip",
+      "path": "Example/ads288.zip",
+      "sha256": "bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7",
+      "size_bytes": 430199,
+      "file_count": 115,
+      "remote_url": "n/a",
+      "commit": "n/a",
+      "executable_upstream_code": true,
+      "auto_import_allowed": false
+    }
+  ],
+  "accepted": [
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "META-INF/com/google/android/update-binary",
+      "zip_entry": "META-INF/com/google/android/update-binary",
+      "sha256": "bf78d6f5651859a7ef94b7b57df1be403257afe3002cbae55539febd68a84d02",
+      "size_bytes": 3507,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "key.sh",
+      "zip_entry": "key.sh",
+      "sha256": "151f4c13b5e2eae9c630e0e8c99c93720e3d2de97da16288be6949c19cc480ba",
+      "size_bytes": 6177,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ad.sh",
+      "zip_entry": "mod/ad.sh",
+      "sha256": "96c60ccb728fcbf96069177841e23f7f2b26a80027fdce457e0070dafd042ad7",
+      "size_bytes": 5051,
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/aweme.sh",
+      "zip_entry": "mod/aweme.sh",
+      "sha256": "fdda012a74decb26d5ab5fb3f9830f8de91f4a951c81a6e8d2d02b27d2f1bf6a",
+      "size_bytes": 1210,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/alicloud.sh",
+      "zip_entry": "mod/alicloud.sh",
+      "sha256": "8a52c4eb158af50ba0145201057eb9ea264f89181e152b0a1e7587935be0dc9b",
+      "size_bytes": 737,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/bilibili.sh",
+      "zip_entry": "mod/bilibili.sh",
+      "sha256": "27dffdf68e63797dfeabc21c9a96ae06566f9568d1e8d34fdb98b2f3937e71ba",
+      "size_bytes": 1686,
+      "categories": [
+        "file_path",
+        "sqlite"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sqlite"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/browser.sh",
+      "zip_entry": "mod/browser.sh",
+      "sha256": "09a64049cd42db52644c97df02b3a7a4af1094a1b89fd85e9d5bf33ec084cad0",
+      "size_bytes": 1330,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/chattr_file.sh",
+      "zip_entry": "mod/chattr_file.sh",
+      "sha256": "6252abd6387eaf6c88e3c7fc408395a8501aa442e8945b787c32763fd4be3611",
+      "size_bytes": 1370,
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/coolapk.sh",
+      "zip_entry": "mod/coolapk.sh",
+      "sha256": "e2579fdb097533e98259f88e3b72640ece8f2ef2ba2b7307db191a88f71bec0c",
+      "size_bytes": 2741,
+      "categories": [
+        "appops",
+        "file_path",
+        "sdk_cache",
+        "sqlite"
+      ],
+      "signals": [
+        "content_appops",
+        "content_local_paths",
+        "content_sdk_cache",
+        "content_sqlite"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/dragon.sh",
+      "zip_entry": "mod/dragon.sh",
+      "sha256": "29a93387c74a56a8a80d0424c48b62e45342d9c6d5ec2a0c3054c21209b79157",
+      "size_bytes": 1193,
+      "categories": [
+        "appops",
+        "file_path"
+      ],
+      "signals": [
+        "content_appops",
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/kill_Analysis.sh",
+      "zip_entry": "mod/kill_Analysis.sh",
+      "sha256": "5ea7e807692104413d6bf21830b17bf310aa61785e50736872480c1ecc83f33e",
+      "size_bytes": 1840,
+      "categories": [
+        "component",
+        "file_path"
+      ],
+      "signals": [
+        "content_component",
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/killpangle.sh",
+      "zip_entry": "mod/killpangle.sh",
+      "sha256": "09ae18e9524f0b05c97809411279b3c75db7f1cb7930dc388a6cbf2cce5df00b",
+      "size_bytes": 3391,
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache",
+        "path_local_ad_material",
+        "path_sdk_cache"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/miui_ad.sh",
+      "zip_entry": "mod/miui_ad.sh",
+      "sha256": "c2dd5d0e1158ef21d7c2792404535985655a5b56f9d0b8072053cc1a974f2c52",
+      "size_bytes": 383,
+      "categories": [
+        "component",
+        "file_path",
+        "rom_profile"
+      ],
+      "signals": [
+        "content_component",
+        "content_rom_profile",
+        "path_local_ad_material",
+        "path_rom_profile"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/util_functions.sh",
+      "zip_entry": "mod/util_functions.sh",
+      "sha256": "39424a29c977ed22bfccbf33c5ae97bbbd6c9a5087435c0f7ac0690a080e7be4",
+      "size_bytes": 6199,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/zhihu.sh",
+      "zip_entry": "mod/zhihu.sh",
+      "sha256": "a38ffda99b7fe57d7082fe272d9843638b3309a1cde7e2b66d56b4b1dee817ee",
+      "size_bytes": 1427,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.UCMobile.sh",
+      "zip_entry": "mod/com.UCMobile.sh",
+      "sha256": "b4416746586d529dc82ae5ef3ebdd19d89def1ea5d98b9b1ea81e645acb55ac2",
+      "size_bytes": 915,
+      "categories": [
+        "file_path",
+        "sdk_cache",
+        "sqlite"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache",
+        "content_sqlite"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ximalaya.sh",
+      "zip_entry": "mod/ximalaya.sh",
+      "sha256": "41d6a71cf17b5392e57e4d3d33c12f7e99f09854da51851a0eca1793c03439f6",
+      "size_bytes": 496,
+      "categories": [
+        "appops"
+      ],
+      "signals": [
+        "content_appops"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.baidu.tieba.sh",
+      "zip_entry": "mod/com.baidu.tieba.sh",
+      "sha256": "b5d1eb84fdb768cc7a1217e58fbec0f33f60d5e1782ad8cb62f65b1d8cb28c2c",
+      "size_bytes": 1485,
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.smile.gifmaker.sh",
+      "zip_entry": "mod/com.smile.gifmaker.sh",
+      "sha256": "100f736712661eda8d6204325b722683b0466960efc0000405310dcb1c96b21a",
+      "size_bytes": 658,
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/sqlite_clean_up.sh",
+      "zip_entry": "mod/sqlite_clean_up.sh",
+      "sha256": "d63a3195beb13b9bee9fdbccfadf6c50582ef8ac342c096b3e27b4cc98eee26e",
+      "size_bytes": 5496,
+      "categories": [
+        "file_path",
+        "sdk_cache",
+        "sqlite"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache",
+        "content_sqlite",
+        "path_sqlite"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_monitor/ads_monitor_x86",
+      "zip_entry": "mod/ads_monitor/ads_monitor_x86",
+      "sha256": "d6f5db892cef54e7ded510923d9fba07aa1f114ac3cab0539c3f91be8d7d791e",
+      "size_bytes": 16036,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_monitor/ads_monitor.prop",
+      "zip_entry": "mod/ads_monitor/ads_monitor.prop",
+      "sha256": "9e55b166c449a49035c0a21d3569f112f9f4e077aa02e9464ca1322f134127d2",
+      "size_bytes": 1535,
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_monitor/ads_monitor_arm32",
+      "zip_entry": "mod/ads_monitor/ads_monitor_arm32",
+      "sha256": "dd21a9649eb2d2b048dd85d78b1f0d1ba9da558b38b03181b8bf050c9543eea4",
+      "size_bytes": 15028,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_monitor/ads_monitor_arm64",
+      "zip_entry": "mod/ads_monitor/ads_monitor_arm64",
+      "sha256": "86bac854ca8ec20c91acdbf3b66cdab8be2bbdbcf92d6366556649ec190b4bd9",
+      "size_bytes": 18176,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_monitor/ads_monitor_x86_64",
+      "zip_entry": "mod/ads_monitor/ads_monitor_x86_64",
+      "sha256": "e370cf99ba1d617a4ca1ebc79088632e78b4796a420f6b10b85aadb0f4ad56ca",
+      "size_bytes": 18136,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_monitor.sh",
+      "zip_entry": "mod/ads_monitor.sh",
+      "sha256": "34e321e04844e078eb46418b3f23d3c4b63a69c44288b1ec4e36344589096319",
+      "size_bytes": 814,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.baidu.netdisk.sh",
+      "zip_entry": "mod/com.baidu.netdisk.sh",
+      "sha256": "bdc584e1930a91923c7dd2d15779728421b460d30053786de04175a60f9468cc",
+      "size_bytes": 58,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/disable_app.sh",
+      "zip_entry": "mod/disable_app.sh",
+      "sha256": "a88ba06efe0e71d258ad52432f94fd00a56b15eefe9f5ce24d0218ad6dad98bf",
+      "size_bytes": 907,
+      "categories": [
+        "component"
+      ],
+      "signals": [
+        "content_component",
+        "path_component"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/APPOPS.sh",
+      "zip_entry": "mod/APPOPS.sh",
+      "sha256": "15d8c1b28ec32fa8ff50ebea66071066d51a6cae12c40179a7446d18baa4d1e1",
+      "size_bytes": 907,
+      "categories": [
+        "appops"
+      ],
+      "signals": [
+        "content_appops",
+        "path_appops"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/modtify_xml.sh",
+      "zip_entry": "mod/modtify_xml.sh",
+      "sha256": "95800f758cd46201536e1f485d4d5c37eb904ff97657b5517a64f48b21343ecb",
+      "size_bytes": 923,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.taobao.trip.sh",
+      "zip_entry": "mod/com.taobao.trip.sh",
+      "sha256": "8d9609a90a05dd9c13ffe5767d45aa63531a42f491e8a36bff4b96a3b920fb3d",
+      "size_bytes": 533,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_file.sh",
+      "zip_entry": "mod/ads_file.sh",
+      "sha256": "8ae41eb9de76db15d060b418a50e8cc6c1aded826319c9a296633e15977bd576",
+      "size_bytes": 619,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.luna.music.sh",
+      "zip_entry": "mod/com.luna.music.sh",
+      "sha256": "c8054d64c094205eca09a81453d449390f5ad75443288f2bb420036c933f7f42",
+      "size_bytes": 1519,
+      "categories": [
+        "appops",
+        "component",
+        "file_path"
+      ],
+      "signals": [
+        "content_appops",
+        "content_component",
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/kernel_su.sh",
+      "zip_entry": "mod/kernel_su.sh",
+      "sha256": "f695dd005509c71c494083f03b0feb130a395a52d431bb21200fcc816cee1701",
+      "size_bytes": 1463,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ads_monitor_Check.sh",
+      "zip_entry": "mod/ads_monitor_Check.sh",
+      "sha256": "68661e237c12e5d840a40c0071c69ac05cb207f4635647047a21ae7f27725567",
+      "size_bytes": 1443,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/protect_information.sh",
+      "zip_entry": "mod/protect_information.sh",
+      "sha256": "a718438a92dcd5b2886d005d35627cf3991e0af92cd5706d535dc366caab5bb4",
+      "size_bytes": 1397,
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "signals": [
+        "content_local_paths",
+        "content_sdk_cache"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.ss.android.auto.sh",
+      "zip_entry": "mod/com.ss.android.auto.sh",
+      "sha256": "20bfad3a4f22a1c9d924f3becf2450b5cee968f0c750e673716a62d0d12269fa",
+      "size_bytes": 1244,
+      "categories": [
+        "appops",
+        "file_path"
+      ],
+      "signals": [
+        "content_appops",
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ctrip.android.view.sh",
+      "zip_entry": "mod/ctrip.android.view.sh",
+      "sha256": "9a5a30ed8c699b31ec27830be9ea9a8511a579fbef69eeeaa2d3d0a39f38fe3c",
+      "size_bytes": 965,
+      "categories": [
+        "appops",
+        "file_path"
+      ],
+      "signals": [
+        "content_appops",
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.jingdong.app.mall.sh",
+      "zip_entry": "mod/com.jingdong.app.mall.sh",
+      "sha256": "1be7dd03e2c5851498d0e53abc5184274c3546204dd948467212d9484fa85542",
+      "size_bytes": 1054,
+      "categories": [
+        "appops",
+        "file_path"
+      ],
+      "signals": [
+        "content_appops",
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/app_prem_fixes.sh",
+      "zip_entry": "mod/app_prem_fixes.sh",
+      "sha256": "abbd6bf2506ec6d8c80551d1e1d86238343a4a0c1b439b1bf3cf7375875ce6bc",
+      "size_bytes": 1840,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/QQ_high_version_fixes.sh",
+      "zip_entry": "mod/QQ_high_version_fixes.sh",
+      "sha256": "e6ca444b3d48a2e854ff6b0ef8974a83c198ff33fd9e334a024da2c297d5f761",
+      "size_bytes": 1257,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "package_extra.sh",
+      "zip_entry": "package_extra.sh",
+      "sha256": "0f8e7d4d54eb22733c7a604e4b510dacc7df32ec5fc75b88797553c894305893",
+      "size_bytes": 3243,
+      "categories": [
+        "component",
+        "file_path"
+      ],
+      "signals": [
+        "content_component",
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "update.sh",
+      "zip_entry": "update.sh",
+      "sha256": "e31ee241c1e792851878be0b0e2e891ffcb15c52ea5c9cec005af469044bf08e",
+      "size_bytes": 2521,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths"
+      ],
+      "reason": "content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/APPOPS.sh",
+      "zip_entry": "其他脚本/APPOPS.sh",
+      "sha256": "efd19178e8b4489acbec94b0ada0b376441ddf6913132158daa41e690d4ac843",
+      "size_bytes": 529,
+      "categories": [
+        "appops"
+      ],
+      "signals": [
+        "content_appops",
+        "path_appops"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/源码/ads_monitor.cpp",
+      "zip_entry": "其他脚本/源码/ads_monitor.cpp",
+      "sha256": "3a1505ef65e6983343e5d4b229bea21684042f3a520531a600be97b70d8c8d31",
+      "size_bytes": 8337,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/源码/ads_monitor.c",
+      "zip_entry": "其他脚本/源码/ads_monitor.c",
+      "sha256": "1ca6ca2afaf881a1d657d1841f00904a0d77a8fcc0d98c0eab2c2f2b4d447e1e",
+      "size_bytes": 24125,
+      "categories": [
+        "file_path"
+      ],
+      "signals": [
+        "content_local_paths",
+        "path_local_ad_material"
+      ],
+      "reason": "path suggests local ad material; content suggests local ad material",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    }
+  ],
+  "rejected": [
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "Host/挂载hosts.sh",
+      "zip_entry": "Host/挂载hosts.sh",
+      "sha256": "4fad66c339dcf1e3cdf7b767331aa5eda50dfd2f0c673ccd88b09add83555480",
+      "size_bytes": 2163,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "Host/读取白名单修改Host.sh",
+      "zip_entry": "Host/读取白名单修改Host.sh",
+      "sha256": "d1843141a4b42482d21aa18c1cc4a8879c58bc845a4d9f21e80a9793a0b81341",
+      "size_bytes": 3140,
+      "categories": [
+        "ad_reward_domain",
+        "domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_domain",
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "README.md",
+      "zip_entry": "README.md",
+      "sha256": "eb8597d096e8ab220412e7045629a6d989f890d5f7cbbed3619ff01bb168777c",
+      "size_bytes": 29264,
+      "categories": [
+        "ad_reward_domain",
+        "dns",
+        "domain",
+        "hosts",
+        "ifw_clear",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_dns",
+        "content_domain",
+        "content_hosts",
+        "content_ifw",
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "action.sh",
+      "zip_entry": "action.sh",
+      "sha256": "88af50cc5fa56e1f3ad64b68a6673b234f6b4c0e20529d5a5d2f4e44c76e6397",
+      "size_bytes": 7988,
+      "categories": [
+        "ad_reward_domain",
+        "domain",
+        "hosts",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_domain",
+        "content_hosts",
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "check_bin.sh",
+      "zip_entry": "check_bin.sh",
+      "sha256": "e5dccad2918751618873fe7efe4605fdb7e429df37c39ae7049c76870fad75c3",
+      "size_bytes": 1640,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "customize.sh",
+      "zip_entry": "customize.sh",
+      "sha256": "e74928b7a92b2bb10e208f95f3e720bd31ad7ed36d8f18a1ebb1a679205e5595",
+      "size_bytes": 774,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "host.sh",
+      "zip_entry": "host.sh",
+      "sha256": "566170ca3ea417c18c515e6eb3a92b538672c99965e31378eaa2f04b839e3a5e",
+      "size_bytes": 9606,
+      "categories": [
+        "ad_reward_domain",
+        "domain",
+        "hosts",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_domain",
+        "content_hosts",
+        "content_network_blocking",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "hosts",
+      "zip_entry": "hosts",
+      "sha256": "bad48bddfc91f192c4ab92ee6cdb5efbda0f7abfbc5e247e51610fb479e4a15b",
+      "size_bytes": 496195,
+      "categories": [
+        "dns",
+        "domain",
+        "hosts",
+        "ifw_clear",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_hosts",
+        "content_ifw",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.dragon.read.xml",
+      "zip_entry": "mod/com.dragon.read.xml",
+      "sha256": "ca40225c30a24e2f5e52b30b0ca96b0cebcb7f83f19e2d6ef197ca311f89df30",
+      "size_bytes": 10097,
+      "categories": [
+        "domain",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_domain",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.ss.android.ugc.aweme$.xml",
+      "zip_entry": "mod/com.ss.android.ugc.aweme$.xml",
+      "sha256": "bf84bf9b9b27c72496ae538334e0b5a5a38db22dbf3106a9d740ad66aad477c1",
+      "size_bytes": 7231,
+      "categories": [
+        "proxy"
+      ],
+      "signals": [
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/com.sup.android.superb$.xml",
+      "zip_entry": "mod/com.sup.android.superb$.xml",
+      "sha256": "7235ba807a902013ddda25011fef746e3d5f2393cd3ff0a8a20c23448e63257e",
+      "size_bytes": 4483,
+      "categories": [
+        "proxy"
+      ],
+      "signals": [
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/disable_other_module_hosts.sh",
+      "zip_entry": "mod/disable_other_module_hosts.sh",
+      "sha256": "04a1f82f6dc61be6e8d65392eb23a63fdddce52272a18fb44ea629653477a554",
+      "size_bytes": 2778,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/disable_other_module_hosts2.sh",
+      "zip_entry": "mod/disable_other_module_hosts2.sh",
+      "sha256": "151ae315b9c6e714d005aef68be4f943e1674feb574c79012630250310506f81",
+      "size_bytes": 2859,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/iptables.sh",
+      "zip_entry": "mod/iptables.sh",
+      "sha256": "da0ec1a9a53a0ac39771e3ef4dbaf42d251ebb36a6e1a1e0cdc889a23b8e36ca",
+      "size_bytes": 1108,
+      "categories": [
+        "dns",
+        "domain",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_network_blocking",
+        "path_network_blocking"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/kiwi.sh",
+      "zip_entry": "mod/kiwi.sh",
+      "sha256": "5e85dc58d09cc3fde7c3416b338c15a5bfaac2f6508812c61fa9f019bff0dbac",
+      "size_bytes": 239,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mi_market.sh",
+      "zip_entry": "mod/mi_market.sh",
+      "sha256": "2a245e8e328f7d2c2a975eedd9d4ba18c0ad8392c1aa7ec8af4ab8c3aef52080",
+      "size_bytes": 1190,
+      "categories": [
+        "domain"
+      ],
+      "signals": [
+        "content_domain"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/network_limit.sh",
+      "zip_entry": "mod/network_limit.sh",
+      "sha256": "15f7ac5ec33644f762c89276b85f9f723a03e9567da2b8dca1fda66cb4581089",
+      "size_bytes": 1422,
+      "categories": [
+        "dns",
+        "domain",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_dns",
+        "content_domain",
+        "content_network_blocking",
+        "path_network_blocking"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/notification.sh",
+      "zip_entry": "mod/notification.sh",
+      "sha256": "0687dca10f6817755e729b8da25c619e6fd5c2e8379478ea8dad999a34196d85",
+      "size_bytes": 3339,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/rm_hosts.sh",
+      "zip_entry": "mod/rm_hosts.sh",
+      "sha256": "1c50b0e7c6790ffed5684a13c27ab9f98cda1ddf5964d8bd77d00fe001dee117",
+      "size_bytes": 582,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/123pan.sh",
+      "zip_entry": "mod/123pan.sh",
+      "sha256": "66a566fbe0ff61714cc87b6f5592fc3b3fc18a831d8751a17ff37490b4c0cef2",
+      "size_bytes": 8017,
+      "categories": [
+        "domain",
+        "proxy"
+      ],
+      "signals": [
+        "content_domain",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/a0.app.xiaomi.com.sh",
+      "zip_entry": "mod/a0.app.xiaomi.com.sh",
+      "sha256": "d661b48b9f5fca977cf24845ae6956d9cf56792dda1e900092e62ca54c768027",
+      "size_bytes": 629,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ad_reward.sh",
+      "zip_entry": "mod/ad_reward.sh",
+      "sha256": "26f0551bfe616d5e0f57fc74cd4def2a08f610506508b893593a9e04c7671740",
+      "size_bytes": 1150,
+      "categories": [
+        "ad_reward_domain",
+        "domain",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_domain",
+        "content_network_blocking",
+        "path_ad_reward"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/ad_reward_2.sh",
+      "zip_entry": "mod/ad_reward_2.sh",
+      "sha256": "272c48d0b85be7110ab44999cb696865f976154f185e64e6087a79ce32e74807",
+      "size_bytes": 114,
+      "categories": [
+        "ad_reward_domain"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "path_ad_reward"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mount_hosts.sh",
+      "zip_entry": "mod/mount_hosts.sh",
+      "sha256": "c3524b80e795ff6e34826b0a72431a26f19c4d6635c4487203a2d35991a1fe93",
+      "size_bytes": 879,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/kii_fdkss.sbs.sh",
+      "zip_entry": "mod/kii_fdkss.sbs.sh",
+      "sha256": "1d0fff16fbc72891e7006d7eb2981a1b53b6db184adbf5ce8e2d0f0deeda1343",
+      "size_bytes": 1403,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mount_hosts/mount_hosts_x86_64",
+      "zip_entry": "mod/mount_hosts/mount_hosts_x86_64",
+      "sha256": "b6f1f890d1557bc14a332125301c7631ebcbfbbd0a71bf1ec3bd1efa16a2810f",
+      "size_bytes": 12344,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mount_hosts/mount_hosts_arm32",
+      "zip_entry": "mod/mount_hosts/mount_hosts_arm32",
+      "sha256": "859857969fbe1dfe6ccdb61e9f835bb9a27c355e21d2c83fba9b02eae21e9ca3",
+      "size_bytes": 10464,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mount_hosts/mount_hosts_x86",
+      "zip_entry": "mod/mount_hosts/mount_hosts_x86",
+      "sha256": "5c89f656eabbc49b700cd3d8238635fdd9ff6baf536f7b7f38d0f6756ce990c9",
+      "size_bytes": 10644,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mount_hosts/配置包名.prop",
+      "zip_entry": "mod/mount_hosts/配置包名.prop",
+      "sha256": "37d711d25cf86fcdaddf4bee3b29e49ccf58f99d63ca047f4b08f6742147f6b0",
+      "size_bytes": 948,
+      "categories": [
+        "ad_reward_domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mount_hosts/mount_hosts_arm64",
+      "zip_entry": "mod/mount_hosts/mount_hosts_arm64",
+      "sha256": "0f82ce5dece80eb32d999d32466414a8f8b73acc80f7e62430fab896babdafe3",
+      "size_bytes": 12328,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/mount_hosts_Check.sh",
+      "zip_entry": "mod/mount_hosts_Check.sh",
+      "sha256": "d8d9b47c290c59aca817a96536c2a834b6b484b7df58d24a9dd4ccec2681c146",
+      "size_bytes": 1509,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/check_disappear_host.sh",
+      "zip_entry": "mod/check_disappear_host.sh",
+      "sha256": "0996338227c5cbe138c4003abcf8a9facee0c366e522f119044d25651cd0a1ea",
+      "size_bytes": 1053,
+      "categories": [
+        "ad_reward_domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "module.prop",
+      "zip_entry": "module.prop",
+      "sha256": "1381e12b2ef96ab03be9a95c7cb0cb00a8cec7d33d375f00c94d8266bcd17125",
+      "size_bytes": 604,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mount_bind_update.sh",
+      "zip_entry": "mount_bind_update.sh",
+      "sha256": "1873aa961fc7bba95eedda83e9683545dfac06ef9e514d3b4716d45f65e01d47",
+      "size_bytes": 1644,
+      "categories": [
+        "ad_reward_domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mount_hosts_no_reboot.sh",
+      "zip_entry": "mount_hosts_no_reboot.sh",
+      "sha256": "951231d814fad0cad2d66bcc9c9bb6df696dbd8d9e8b329c432e40b9ba51dffc",
+      "size_bytes": 2824,
+      "categories": [
+        "ad_reward_domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_hosts",
+        "path_hosts"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "post-fs-data.sh",
+      "zip_entry": "post-fs-data.sh",
+      "sha256": "25fe7a6c3347d135688f2004f8be202d8102892cd09615db994689525b262fdf",
+      "size_bytes": 1381,
+      "categories": [
+        "ad_reward_domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "uninstall.sh",
+      "zip_entry": "uninstall.sh",
+      "sha256": "d8c1d1c80515bdfabf715449148514f9d36446e9e5a18b331137377a4c96c5d8",
+      "size_bytes": 4454,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/废弃脚本/WeChat.sh",
+      "zip_entry": "其他脚本/废弃脚本/WeChat.sh",
+      "sha256": "9d2c4a13e86c1df4ce63fdb501a884968e18a766daaa66f5a1434871cbc81214",
+      "size_bytes": 107,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/废弃脚本/miui_control.sh",
+      "zip_entry": "其他脚本/废弃脚本/miui_control.sh",
+      "sha256": "dc4810ba4c93b51ff19d4dfe6996e89dd976da4ddb2410efe69bd836541ff6bc",
+      "size_bytes": 1006,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/废弃脚本/file_list.sha256",
+      "zip_entry": "其他脚本/废弃脚本/file_list.sha256",
+      "sha256": "6904acd4b9e69e6a2bb4846817b51151315a3c8065d50c17d3b441af6fd32007",
+      "size_bytes": 6027,
+      "categories": [
+        "ad_reward_domain",
+        "hosts",
+        "iptables_network"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_hosts",
+        "content_network_blocking"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/IFW规则转PM命令.sh",
+      "zip_entry": "其他脚本/IFW规则转PM命令.sh",
+      "sha256": "23583bda4c3be1e401cb82778e3683cf96efff4b15bad9aa0a631efb94475319",
+      "size_bytes": 1719,
+      "categories": [
+        "ifw_clear"
+      ],
+      "signals": [
+        "path_ifw"
+      ],
+      "reason": "path matches forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/com.dragon.read.xml",
+      "zip_entry": "其他脚本/com.dragon.read.xml",
+      "sha256": "a45588a70380334a9e58d1eb3ba222858eae9a3ffe85ed694bbe798e0116e8c9",
+      "size_bytes": 10913,
+      "categories": [
+        "domain",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_domain",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/com.dragon.read.xml.script.sh",
+      "zip_entry": "其他脚本/com.dragon.read.xml.script.sh",
+      "sha256": "22a261a20960db080c2530777350f8ad6ff81abdb5fb01233eeb4b4149b92eb6",
+      "size_bytes": 7464,
+      "categories": [
+        "domain",
+        "iptables_network",
+        "proxy"
+      ],
+      "signals": [
+        "content_domain",
+        "content_network_blocking",
+        "content_proxy"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/ip.sh",
+      "zip_entry": "其他脚本/ip.sh",
+      "sha256": "1230c861259354485358559bdb04821df00c6edec286af03f63591bed2faeab5",
+      "size_bytes": 1547,
+      "categories": [
+        "iptables_network"
+      ],
+      "signals": [
+        "path_network_blocking"
+      ],
+      "reason": "path matches forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/源码/mount_bind.cpp",
+      "zip_entry": "其他脚本/源码/mount_bind.cpp",
+      "sha256": "8ab4b24bbd6de91e630acb9d4becc3b33eaf0b994369ac8d6e11767289442a79",
+      "size_bytes": 5556,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/源码/mount_bind.c",
+      "zip_entry": "其他脚本/源码/mount_bind.c",
+      "sha256": "b9502bb2533fcc9d6ce0cbb938fd7af1e02f1e6d04b758f183a8f22de44fed56",
+      "size_bytes": 12263,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "广告奖励.prop",
+      "zip_entry": "广告奖励.prop",
+      "sha256": "c07efbe702c78390e01c14fe1c8118a482af9e96b5119531ed0e68355c89a42c",
+      "size_bytes": 1982,
+      "categories": [
+        "ad_reward_domain",
+        "domain"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_domain",
+        "path_ad_reward"
+      ],
+      "reason": "path matches forbidden upstream scope; content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "放行白名单.prop",
+      "zip_entry": "放行白名单.prop",
+      "sha256": "7abefd1f01186e5afc859930f7905c26c0c46e2c95d7318d89bc92317f2ca6f0",
+      "size_bytes": 617,
+      "categories": [
+        "domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_domain",
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "自定义.prop",
+      "zip_entry": "自定义.prop",
+      "sha256": "a8a61a53b88eccb785142b48f4c3cff29279ba44073afaa199a24747433d6869",
+      "size_bytes": 290,
+      "categories": [
+        "hosts"
+      ],
+      "signals": [
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "配置.prop",
+      "zip_entry": "配置.prop",
+      "sha256": "852d18fea304d69e2fac640e33eb4801b7ec326c51609859f84638283e7bd647",
+      "size_bytes": 2562,
+      "categories": [
+        "ad_reward_domain",
+        "hosts"
+      ],
+      "signals": [
+        "content_ad_reward",
+        "content_hosts"
+      ],
+      "reason": "content contains forbidden upstream scope",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    }
+  ],
+  "ignored": [
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "Host/recovery",
+      "zip_entry": "Host/recovery",
+      "sha256": "5b482934e815684756d8d7e395c954a688b4d5c0089332d0dee7ff70014b7b90",
+      "size_bytes": 34,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "META-INF/com/google/android/updater-script",
+      "zip_entry": "META-INF/com/google/android/updater-script",
+      "sha256": "2b2ddc9774e53c2eb69975c5a59b883e85b6a570d531f10414c697bc703461c5",
+      "size_bytes": 12,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "busybox.sh",
+      "zip_entry": "busybox.sh",
+      "sha256": "b39f5280922bb8abc93f782b64cd8a8c7e0e1d4598a45ef26f2f0268ae655fa4",
+      "size_bytes": 677,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/apps.conf",
+      "zip_entry": "mod/apps.conf",
+      "sha256": "fca4e254acd809aacf1bef6ecf5c389870fc8c30ee1dd61367f59ea9a0a8b331",
+      "size_bytes": 136,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/tencent.sh",
+      "zip_entry": "mod/tencent.sh",
+      "sha256": "f5a48105f693365f01e42d14813b6b87cb07e31124ce728759aa4c6a4897d36c",
+      "size_bytes": 936,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/webview_clean.sh",
+      "zip_entry": "mod/webview_clean.sh",
+      "sha256": "6be48743d8046c6ad1fcabc209be0dfb01d95fb262321cd5ede9545e999ef47a",
+      "size_bytes": 1580,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/a0.app.xiaomi.com2.sh",
+      "zip_entry": "mod/a0.app.xiaomi.com2.sh",
+      "sha256": "8d1bffe3568db2a9124403038809611093941de4734c06b382f05d665783d9d3",
+      "size_bytes": 160,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "mod/Host_folder_script.sh",
+      "zip_entry": "mod/Host_folder_script.sh",
+      "sha256": "40420377627eede22f4f495d3ddb3af1548fbf7bc52213738e5e1a5791a7dfe7",
+      "size_bytes": 363,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "service.sh",
+      "zip_entry": "service.sh",
+      "sha256": "f2e00750f24227f3662eb59aafdb3321924576b284a120efa1820aab3e7ecd47",
+      "size_bytes": 455,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "system/app/AnalyticsCore/.replace",
+      "zip_entry": "system/app/AnalyticsCore/.replace",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "system/app/AnalyticsCore/Analytics.apk",
+      "zip_entry": "system/app/AnalyticsCore/Analytics.apk",
+      "sha256": "2f8ac82a204440270f0afb46fb861c402fa0498012e7923f003de39ba02489ca",
+      "size_bytes": 168733,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "tools/notification_arm32",
+      "zip_entry": "tools/notification_arm32",
+      "sha256": "55825c74d27ce981c4c3c083cbf8241768c3829ba4e7bd5b968e7346a42d67eb",
+      "size_bytes": 8876,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "tools/notification_arm64",
+      "zip_entry": "tools/notification_arm64",
+      "sha256": "4e3a00444cfd364b57cb8a5931a509eaecbcf51013aecf6ca7b57e9a880d4459",
+      "size_bytes": 10600,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "tools/notification_x86",
+      "zip_entry": "tools/notification_x86",
+      "sha256": "d0ac8af89b208e08e2a545af360a0498d1c8e7391a9539efbf675d6a27a7c279",
+      "size_bytes": 8988,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "tools/notification_x86_64",
+      "zip_entry": "tools/notification_x86_64",
+      "sha256": "fbe0a1db24aa37ced5641321d26e528e8ebec80772b8d7f68f83f7f2b3cd068b",
+      "size_bytes": 10456,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "update.json",
+      "zip_entry": "update.json",
+      "sha256": "d625017dd45f5cf7d44f30e40b9e1c353319d56f1ca0cb5f1e57c96c90c58133",
+      "size_bytes": 187,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "verify.sh",
+      "zip_entry": "verify.sh",
+      "sha256": "9ed5876956c0181a2b05b64020524aef8063286293a04952d9701e02a38053c9",
+      "size_bytes": 1461,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/自定义.sh",
+      "zip_entry": "其他脚本/自定义.sh",
+      "sha256": "85ceb0fe2fae3ecfd66397ac326a7a869bdcead1de8543c4a009c49f5562bdf8",
+      "size_bytes": 1821,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": true
+    },
+    {
+      "source": "ads288.zip",
+      "kind": "zip_entry",
+      "path": "其他脚本/源码/notification.c",
+      "zip_entry": "其他脚本/源码/notification.c",
+      "sha256": "88bc36268912a204ba6c26f2dffbc1f31414fab3bf1f6c5e3f8aed9229c4ff10",
+      "size_bytes": 1828,
+      "categories": [],
+      "signals": [],
+      "reason": "no local non-domain ad signal found",
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false,
+      "executable_upstream_code": false
+    }
+  ]
+}

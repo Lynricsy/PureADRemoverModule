@@ -2,6 +2,8 @@
 
 /// `chattr +i` 强力 profile 适配层。
 pub mod chattr;
+/// 可注入的 Android 命令适配层。
+pub mod command_runner;
 /// 可恢复文件动作执行器。
 pub mod file_actions;
 /// `SQLite` 广告库动作执行器。
