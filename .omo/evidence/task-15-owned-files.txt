@@ -1,0 +1,27 @@
+T15 files
+crates/puread-android/Cargo.toml
+crates/puread-android/src/lib.rs
+crates/puread-android/src/sqlite_actions.rs
+crates/puread-android/src/sqlite_actions/backup.rs
+crates/puread-android/src/sqlite_actions/error.rs
+crates/puread-android/src/sqlite_actions/ledger.rs
+crates/puread-android/src/sqlite_actions/metadata.rs
+crates/puread-android/src/sqlite_actions/minimal.rs
+crates/puread-android/src/sqlite_actions/runner.rs
+crates/puread-android/src/sqlite_actions/types.rs
+crates/puread-android/src/sqlite_actions/validate.rs
+crates/puread-android/tests/sqlite_actions.rs
+Cargo.lock
+
+Evidence
+.omo/evidence/task-15-adversarial-qa.txt
+.omo/evidence/task-15-changed-files.txt
+.omo/evidence/task-15-clippy.txt
+.omo/evidence/task-15-final-status.txt
+.omo/evidence/task-15-fmt.txt
+.omo/evidence/task-15-forbidden-scan.txt
+.omo/evidence/task-15-line-counts.txt
+.omo/evidence/task-15-manual-qa-markers.txt
+.omo/evidence/task-15-process-check.txt
+.omo/evidence/task-15-red.txt
+.omo/evidence/task-15-sqlite-actions.txt

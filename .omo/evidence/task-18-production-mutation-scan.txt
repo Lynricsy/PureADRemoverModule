@@ -1,0 +1,11 @@
+crates/puread-android/src/file_actions/backup.rs:68:        File::create(target).map_err(|error| FileActionError::io(target, error))?;
+crates/puread-android/src/file_actions/mutate/guards.rs:123:        options.create_new(true);
+crates/puread-android/src/file_actions/mutate/primary.rs:151:    fs::rename(path, backup_path).map_err(|source| FileActionError::io(path, source))?;
+crates/puread-android/src/file_actions/mutate/primary.rs:153:        if let Err(source) = fs::rename(backup_path, path) {
+crates/puread-android/src/sqlite_actions/backup.rs:35:    let mut backup = File::create_new(backup_path).map_err(|source| SqliteActionError::Io {
+crates/puread-android/src/sqlite_actions/runner/backup_ops.rs:32:        let _ignored = fs::remove_file(path);
+crates/puread-android/src/sqlite_actions/runner/delete.rs:29:    fs::rename(path, backup_path).map_err(|source| SqliteActionError::Io {
+crates/puread-android/src/sqlite_actions/runner/delete.rs:34:        if let Err(source) = fs::rename(backup_path, path) {
+crates/puread-android/src/sqlite_actions/runner/write_ops.rs:16:    create_new: bool,
+crates/puread-android/src/sqlite_actions/runner/write_ops.rs:20:    if create_new {
+crates/puread-android/src/sqlite_actions/runner/write_ops.rs:21:        options.create_new(true);

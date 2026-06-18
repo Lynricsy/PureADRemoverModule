@@ -1,0 +1,18 @@
+[1m[92m   Compiling[0m puread-daemon v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-daemon)
+[1m[91merror[E0432][0m[1m: unresolved imports `puread_daemon::BackoffOutcome`, `puread_daemon::JitterSource`, `puread_daemon::MaintenanceJobKind`, `puread_daemon::MaintenanceScheduler`, `puread_daemon::ScheduleDecision`, `puread_daemon::SchedulePolicy`, `puread_daemon::SchedulerConfig`[0m
+ [1m[94m--> [0mcrates/puread-daemon/tests/scheduler.rs:6:5
+  [1m[94m|[0m
+[1m[94m6[0m [1m[94m|[0m     BackoffOutcome, JitterSource, MaintenanceJobKind, MaintenanceScheduler, ScheduleDecision,
+  [1m[94m|[0m     [1m[91m^^^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^^[0m [1m[91mno `ScheduleDecision` in the root[0m
+  [1m[94m|[0m     [1m[91m|[0m               [1m[91m|[0m             [1m[91m|[0m                   [1m[91m|[0m
+  [1m[94m|[0m     [1m[91m|[0m               [1m[91m|[0m             [1m[91m|[0m                   [1m[91mno `MaintenanceScheduler` in the root[0m
+  [1m[94m|[0m     [1m[91m|[0m               [1m[91m|[0m             [1m[91mno `MaintenanceJobKind` in the root[0m
+  [1m[94m|[0m     [1m[91m|[0m               [1m[91mno `JitterSource` in the root[0m
+  [1m[94m|[0m     [1m[91mno `BackoffOutcome` in the root[0m
+[1m[94m7[0m [1m[94m|[0m     SchedulePolicy, SchedulerConfig,
+  [1m[94m|[0m     [1m[91m^^^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^[0m [1m[91mno `SchedulerConfig` in the root[0m
+  [1m[94m|[0m     [1m[91m|[0m
+  [1m[94m|[0m     [1m[91mno `SchedulePolicy` in the root[0m
+
+[1mFor more information about this error, try `rustc --explain E0432`.[0m
+[1m[91merror[0m: could not compile `puread-daemon` (test "scheduler") due to 1 previous error

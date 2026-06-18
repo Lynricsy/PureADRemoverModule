@@ -8,7 +8,11 @@ repository.workspace = true
 description = "Android adapter boundary for the PureAD non-domain ad remover module."
 
 [dependencies]
+fs2 = "0.4"
 puread-core = { path = "../puread-core" }
+rustix = { version = "1.1.4", features = ["fs"] }
+thiserror.workspace = true
+time = { version = "0.3", features = ["formatting", "macros", "parsing", "serde", "serde-well-known"] }
 
 [lints]
 workspace = true

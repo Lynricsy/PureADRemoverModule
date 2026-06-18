@@ -1,0 +1,36 @@
+    Blocking waiting for file lock on build directory
+   Compiling puread-daemon v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-daemon)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.97s
+     Running unittests src/lib.rs (target/debug/deps/puread_daemon-c053fbbc55baeff7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/puread_daemon-78eb4a595cb4b665)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/event_loop.rs (target/debug/deps/event_loop-67395eb80a378fe3)
+
+running 4 tests
+test event_loop_emits_reload_event_when_reload_signal_arrives ... ok
+test event_loop_stops_when_shutdown_signal_arrives ... ok
+test event_loop_drains_reload_and_shutdown_during_debounce ... ok
+test event_loop_emits_debounced_file_event_when_file_is_created ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/file_rule_integration.rs (target/debug/deps/file_rule_integration-b09ea912bb0d0d7f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/scheduler.rs (target/debug/deps/scheduler-1b9090f2a17a6092)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s

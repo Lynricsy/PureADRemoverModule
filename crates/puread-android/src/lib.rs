@@ -1,5 +1,15 @@
 #![doc = "`PureAD` Android 适配 crate 的最小脚手架。"]
 
+/// `chattr +i` 强力 profile 适配层。
+pub mod chattr;
+/// 可恢复文件动作执行器。
+pub mod file_actions;
+/// `SQLite` 广告库动作执行器。
+pub mod sqlite_actions;
+
+#[doc(hidden)]
+pub mod secure_fs;
+
 /// Android 适配 crate 标识。
 #[must_use]
 pub const fn crate_name() -> &'static str {

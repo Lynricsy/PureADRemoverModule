@@ -1,0 +1,60 @@
+ M Cargo.lock
+ M crates/puread-android/Cargo.toml
+ M crates/puread-android/src/lib.rs
+ M crates/puread-daemon/Cargo.toml
+ M crates/puread-daemon/src/lib.rs
+?? .omo/evidence/task-13-adversarial-qa.txt
+?? .omo/evidence/task-13-clippy.txt
+?? .omo/evidence/task-13-file-actions.txt
+?? .omo/evidence/task-13-fmt.txt
+?? .omo/evidence/task-13-red.txt
+?? .omo/evidence/task-14-chattr-rules-note.txt
+?? .omo/evidence/task-14-chattr-rules.txt
+?? .omo/evidence/task-14-chattr-test-target.txt
+?? .omo/evidence/task-14-chattr-tests-target-green.txt
+?? .omo/evidence/task-14-chattr-tests.txt
+?? .omo/evidence/task-14-clippy-target.txt
+?? .omo/evidence/task-14-clippy.txt
+?? .omo/evidence/task-14-fmt-initial.txt
+?? .omo/evidence/task-14-fmt-pre.txt
+?? .omo/evidence/task-14-fmt-target.txt
+?? .omo/evidence/task-14-fmt.txt
+?? .omo/evidence/task-14-forbidden-scan.txt
+?? .omo/evidence/task-14-red.txt
+?? .omo/evidence/task-15-adversarial-qa.txt
+?? .omo/evidence/task-15-changed-files.txt
+?? .omo/evidence/task-15-clippy.txt
+?? .omo/evidence/task-15-diff-preview.txt
+?? .omo/evidence/task-15-final-status.txt
+?? .omo/evidence/task-15-fmt.txt
+?? .omo/evidence/task-15-forbidden-scan.txt
+?? .omo/evidence/task-15-line-counts.txt
+?? .omo/evidence/task-15-manual-qa-markers.txt
+?? .omo/evidence/task-15-owned-files.txt
+?? .omo/evidence/task-15-process-check.txt
+?? .omo/evidence/task-15-red.txt
+?? .omo/evidence/task-15-sqlite-actions.txt
+?? .omo/evidence/task-16-adversarial-qa.txt
+?? .omo/evidence/task-16-clippy.txt
+?? .omo/evidence/task-16-daemon-event-loop.txt
+?? .omo/evidence/task-16-fmt.txt
+?? .omo/evidence/task-16-forbidden-scan.txt
+?? .omo/evidence/task-16-loop-grep.txt
+?? .omo/evidence/task-16-red.txt
+?? crates/puread-android/src/chattr.rs
+?? crates/puread-android/src/chattr/
+?? crates/puread-android/src/file_actions.rs
+?? crates/puread-android/src/file_actions/
+?? crates/puread-android/src/sqlite_actions.rs
+?? crates/puread-android/src/sqlite_actions/
+?? crates/puread-android/tests/
+?? crates/puread-daemon/src/config.rs
+?? crates/puread-daemon/src/error.rs
+?? crates/puread-daemon/src/event.rs
+?? crates/puread-daemon/src/event_loop.rs
+?? crates/puread-daemon/src/signals.rs
+?? crates/puread-daemon/src/watcher.rs
+?? crates/puread-daemon/tests/
+!! AgentLogs/
+!! Example/
+!! target/

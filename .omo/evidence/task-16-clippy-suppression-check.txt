@@ -1,0 +1,2 @@
+watcher clippy suppression grep
+grep exit is intentionally masked; no matches above means pass.

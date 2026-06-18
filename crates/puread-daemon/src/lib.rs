@@ -1,4 +1,26 @@
-#![doc = "`PureAD` daemon crate 的最小脚手架。"]
+#![doc = "`PureAD` daemon crate。"]
+
+mod config;
+mod error;
+mod event;
+mod event_loop;
+mod file_rule_integration;
+mod scheduler;
+mod signals;
+
+pub use config::EventLoopConfig;
+pub use error::DaemonError;
+pub use event::DaemonEvent;
+pub use event_loop::{EventLoop, EventLoopHandle};
+pub use file_rule_integration::{
+    ApplyFileAction, DryRunFileAction, FileRuleApplyOutcome, FileRuleDaemonConfig,
+    FileRuleDaemonMode, FileRuleDaemonRuntime,
+};
+pub use scheduler::{
+    BackoffOutcome, JitterSource, MaintenanceJobKind, MaintenanceSchedule, MaintenanceScheduler,
+    ScheduleDecision, SchedulePolicy, SchedulerConfig, SystemJitter,
+};
+pub use signals::SignalForwarder;
 
 /// Daemon crate 标识。
 #[must_use]

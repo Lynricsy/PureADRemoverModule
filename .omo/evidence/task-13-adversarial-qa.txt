@@ -1,0 +1,34 @@
+Task 13 adversarial QA and cleanup receipt
+
+危险路径:
+- Covered by `file_actions_rejects_dangerous_android_paths_before_execution`.
+- Rejected `/`, `/data`, `/sdcard`, `/system`, `/vendor`, `/data/adb` before executor construction.
+
+符号链接逃逸:
+- Covered by `file_actions_delete_rejects_symlink_targets_before_backup_or_mutation`.
+- A package-local symlink to `/tmp` outside the fake Android root is rejected before backup or mutation.
+
+权限失败:
+- The executor records typed `FileActionError::Io` and `FileActionError::Metadata` for filesystem/chown/chcon failures.
+- Real mutation tests run only in `/tmp/puread-file-actions-*` temporary roots.
+
+恢复顺序和账本:
+- `empty-file` and `chmod-000` write `RestoreContent`, `SetMode`, and `SetOwner` ledger steps before mutation.
+- Existing core ledger tests still own restore ordering; T13 writes compatible `LedgerRecord` rows.
+
+dirty worktree:
+- T14/T15/T16 files and evidence are present in the same worktree.
+- T13 did not revert them. Mechanical lint-only fixes were applied where needed so the requested `puread-android` package clippy command can pass.
+
+stale evidence:
+- Initial red command used `tee` without `2>&1`, so stderr was not captured.
+- `.omo/evidence/task-13-red.txt` is a receipt of the observed first missing-API errors, not a forged rerun.
+- Final fmt/clippy/test evidence was regenerated with `2>&1 | tee` and `pipefail`.
+
+misleading success output:
+- `cargo clippy -p puread-android --all-targets -- -D warnings` was rerun with `pipefail`; command status was checked by the shell.
+- `cargo test -p puread-android file_actions -- --nocapture` reports 5 file action tests passed.
+
+cleanup:
+- `find /tmp -maxdepth 1 -type d -name 'puread-file-actions-*'` returned no directories after tests.
+- No long-running Cargo/rustc/test process remains after verification.

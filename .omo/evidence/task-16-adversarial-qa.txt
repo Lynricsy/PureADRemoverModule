@@ -1,0 +1,9 @@
+T16 adversarial QA
+
+- hung command / long loop: event loop waits with mio::Poll::poll(None) for normal idle state and Poll::poll(Some(debounce)) only inside a debounce window after a real inotify event. `task-16-loop-grep.txt` is empty, so no `loop {`, `while true`, or `sleep(` pattern exists in puread-daemon.
+- cancel / shutdown: `event_loop_stops_when_shutdown_signal_arrives` starts the loop, sends shutdown through EventLoopHandle, observes ShutdownRequested, and joins the worker through a bounded timeout.
+- reload: `event_loop_emits_reload_event_when_reload_signal_arrives` starts the loop, sends reload, observes ReloadRequested, then shuts down cleanly.
+- stale state: file event tests use a unique temporary directory per test process/id and Drop removes it; watcher roots are validated before registration.
+- misleading success output: final evidence commands were run with `set -o pipefail` for tee-based cargo commands; `task-16-daemon-event-loop.txt`, `task-16-fmt.txt`, and `task-16-clippy.txt` reflect successful command exits. The loop grep command exits 1 because there are no matches, and its evidence file is intentionally empty.
+- forbidden capabilities: `task-16-forbidden-scan.txt` has one hit in `crates/puread-daemon/Cargo.toml` description text: `non-domain`; no forbidden capability implementation was found.
+- LSP: rust LSP is not installed and the LSP tool reports the user previously declined installation, so diagnostics were not available.

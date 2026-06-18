@@ -1,0 +1,29 @@
+# task-17 puread-daemon pure LOC check
+checked_at: 2026-06-18T00:19:45+08:00
+scope: crates/puread-daemon/src crates/puread-daemon/tests
+
+  29 crates/puread-daemon/src/config.rs
+ 131 crates/puread-daemon/src/error.rs
+  18 crates/puread-daemon/src/event.rs
+ 238 crates/puread-daemon/src/event_loop.rs
+  93 crates/puread-daemon/src/file_rule_integration/apply.rs
+ 135 crates/puread-daemon/src/file_rule_integration/config.rs
+  94 crates/puread-daemon/src/file_rule_integration/loader.rs
+   7 crates/puread-daemon/src/file_rule_integration/mod.rs
+ 238 crates/puread-daemon/src/file_rule_integration/planner.rs
+  34 crates/puread-daemon/src/lib.rs
+   5 crates/puread-daemon/src/main.rs
+  70 crates/puread-daemon/src/scheduler/config.rs
+  17 crates/puread-daemon/src/scheduler/decision.rs
+ 181 crates/puread-daemon/src/scheduler/engine.rs
+  42 crates/puread-daemon/src/scheduler/jitter.rs
+  10 crates/puread-daemon/src/scheduler/mod.rs
+  47 crates/puread-daemon/src/scheduler/policy.rs
+  53 crates/puread-daemon/src/signals.rs
+  79 crates/puread-daemon/src/watcher.rs
+ 175 crates/puread-daemon/tests/event_loop.rs
+ 165 crates/puread-daemon/tests/file_rule_integration.rs
+  74 crates/puread-daemon/tests/file_rule_integration/fixture.rs
+  65 crates/puread-daemon/tests/file_rule_integration/harness.rs
+ 140 crates/puread-daemon/tests/scheduler.rs
+PASS: all checked Rust files are <=249 pure LOC (max=238)

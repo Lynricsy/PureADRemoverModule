@@ -1,0 +1,1 @@
+rg -n "chattr" rules produced no matches; default rules do not enable chattr.

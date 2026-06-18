@@ -1,0 +1,59 @@
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m   Compiling[0m puread-daemon v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-daemon)
+[1m[91merror[E0277][0m[1m: can't compare `&str` with `RuleCategory`[0m
+  [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:68:5
+   [1m[94m|[0m
+[1m[94m68[0m [1m[94m|[0m     assert_eq!(action.category(), RuleCategory::FilePath);
+   [1m[94m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mno implementation for `&str == RuleCategory`[0m
+   [1m[94m|[0m
+   [1m[94m= [0m[1mhelp[0m: the trait `PartialEq<RuleCategory>` is not implemented for `&str`
+   [1m[94m= [0m[1mhelp[0m: the following other types implement trait `PartialEq<Rhs>`:
+             `&str` implements `PartialEq<ByteStr>`
+             `&str` implements `PartialEq<ByteString>`
+             `&str` implements `PartialEq<Cow<'_, str>>`
+             `&str` implements `PartialEq<OsString>`
+             `&str` implements `PartialEq<String>`
+             `&str` implements `PartialEq<serde_json::value::Value>`
+             `&str` implements `PartialEq<winnow::stream::bstr::BStr>`
+             `&str` implements `PartialEq<winnow::stream::bytes::Bytes>`
+           and 12 others
+
+[1m[91merror[E0277][0m[1m: can't compare `&str` with `RuleAction`[0m
+  [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:69:5
+   [1m[94m|[0m
+[1m[94m69[0m [1m[94m|[0m     assert_eq!(action.action(), RuleAction::EmptyDir);
+   [1m[94m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mno implementation for `&str == RuleAction`[0m
+   [1m[94m|[0m
+   [1m[94m= [0m[1mhelp[0m: the trait `PartialEq<RuleAction>` is not implemented for `&str`
+   [1m[94m= [0m[1mhelp[0m: the following other types implement trait `PartialEq<Rhs>`:
+             `&str` implements `PartialEq<ByteStr>`
+             `&str` implements `PartialEq<ByteString>`
+             `&str` implements `PartialEq<Cow<'_, str>>`
+             `&str` implements `PartialEq<OsString>`
+             `&str` implements `PartialEq<String>`
+             `&str` implements `PartialEq<serde_json::value::Value>`
+             `&str` implements `PartialEq<winnow::stream::bstr::BStr>`
+             `&str` implements `PartialEq<winnow::stream::bytes::Bytes>`
+           and 12 others
+
+[1m[91merror[E0599][0m[1m: no variant named `Apply` found for enum `FileRuleDaemonMode`[0m
+  [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:97:29
+   [1m[94m|[0m
+[1m[94m97[0m [1m[94m|[0m         FileRuleDaemonMode::Apply {
+   [1m[94m|[0m                             [1m[91m^^^^^[0m [1m[91mvariant not found in `FileRuleDaemonMode`[0m
+
+[1m[91merror[E0599][0m[1m: no variant named `FileRuleApplyReport` found for enum `DaemonEvent`[0m
+   [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:128:22
+    [1m[94m|[0m
+[1m[94m128[0m [1m[94m|[0m     let DaemonEvent::FileRuleApplyReport { outcomes } = event else {
+    [1m[94m|[0m                      [1m[91m^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant not found in `DaemonEvent`[0m
+
+[1m[91merror[E0599][0m[1m: no variant named `FileRuleApplyReport` found for enum `DaemonEvent`[0m
+   [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:216:34
+    [1m[94m|[0m
+[1m[94m216[0m [1m[94m|[0m     matches!(event, DaemonEvent::FileRuleApplyReport { .. })
+    [1m[94m|[0m                                  [1m[91m^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant not found in `DaemonEvent`[0m
+
+[1mSome errors have detailed explanations: E0277, E0599.[0m
+[1mFor more information about an error, try `rustc --explain E0277`.[0m
+[1m[91merror[0m: could not compile `puread-daemon` (test "file_rule_integration") due to 5 previous errors

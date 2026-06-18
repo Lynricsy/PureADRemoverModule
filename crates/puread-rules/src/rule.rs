@@ -1,14 +1,26 @@
+mod metadata;
+mod rollback_input;
+mod schedule;
+mod source_input;
+mod target_input;
+
 use puread_core::model::{PackageName, ProfileKind, RiskLevel, RuleAction, RuleId};
 
 use crate::RuleCategory;
 use crate::error::RuleParseError;
-use crate::raw::{RawDocument, RawRule, RawSource, RawSourceInput};
+use crate::raw::{RawDocument, RawRule};
 use crate::rollback::RollbackStrategy;
 use crate::source::RuleSource;
 use crate::target::{RuleTarget, build_target};
 use crate::validation::{
     require_text, validate_action, validate_default_enabled, validate_profile,
 };
+
+use self::metadata::validate_document_metadata;
+use self::rollback_input::rollback_strategy_from_raw;
+use self::schedule::validate_schedule;
+use self::source_input::source_from_raw;
+use self::target_input::{normalized_rule, package_from_raw};
 
 /// 一个 TOML 文件解析后的类型化规则文档。
 #[derive(Debug, Clone)]
@@ -157,186 +169,5 @@ impl RuleDefinition {
     /// 返回来源元数据。
     pub const fn source(&self) -> &RuleSource {
         &self.source
-    }
-}
-
-fn validate_document_metadata(raw: &RawDocument) -> Result<(), RuleParseError> {
-    if let Some(version) = raw.schema_version
-        && version != 1
-    {
-        return Err(RuleParseError::UnsupportedDocumentMetadata {
-            field: "schema_version",
-            value: version.to_string(),
-        });
-    }
-    if let Some(kind) = raw.kind.as_deref()
-        && kind != "sqlite"
-    {
-        return Err(RuleParseError::UnsupportedDocumentMetadata {
-            field: "kind",
-            value: kind.to_owned(),
-        });
-    }
-    Ok(())
-}
-
-fn package_from_raw(raw: &RawRule, category: RuleCategory) -> Result<PackageName, RuleParseError> {
-    if let Some(package) = raw.package.as_deref() {
-        return Ok(PackageName::parse(package)?);
-    }
-    if category == RuleCategory::Sqlite {
-        return Ok(PackageName::parse(sqlite_package_from_target(raw)?)?);
-    }
-    Err(RuleParseError::InvalidTarget {
-        category,
-        reason: "rule requires package",
-    })
-}
-
-fn normalized_rule(
-    raw: &RawRule,
-    category: RuleCategory,
-    package: &str,
-) -> Result<RawRule, RuleParseError> {
-    if category != RuleCategory::Sqlite {
-        return Ok(raw.clone());
-    }
-    let Some(template) = raw.target_template.as_deref() else {
-        return Ok(raw.clone());
-    };
-    if template.contains("<pkg>") {
-        return Ok(raw.clone());
-    }
-    let normalized_template = normalize_sqlite_template(template, package)?;
-    let mut normalized = raw.clone();
-    normalized.target_template = Some(normalized_template);
-    Ok(normalized)
-}
-
-fn normalize_sqlite_template(template: &str, package: &str) -> Result<String, RuleParseError> {
-    let Some(after_user) = template.strip_prefix("/data/user/") else {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite target must stay under /data/user",
-        });
-    };
-    let Some((user_segment, after_user_id)) = after_user.split_once('/') else {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite target must include user id segment",
-        });
-    };
-    let Some((package_segment, suffix)) = after_user_id.split_once('/') else {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite target must include package segment",
-        });
-    };
-    if package_segment != package && !(package_segment == "*" && package == "puread.sqlite.any") {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite package segment mismatch",
-        });
-    }
-    Ok(format!("/data/user/{user_segment}/<pkg>/{suffix}"))
-}
-
-fn sqlite_package_from_target(raw: &RawRule) -> Result<&str, RuleParseError> {
-    let Some(template) = raw.target_template.as_deref() else {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite rule requires target_template",
-        });
-    };
-    let Some(after_user) = template.strip_prefix("/data/user/") else {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite target must stay under /data/user",
-        });
-    };
-    let Some((_, after_user_id)) = after_user.split_once('/') else {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite target must include user id segment",
-        });
-    };
-    let Some((package, _)) = after_user_id.split_once('/') else {
-        return Err(RuleParseError::InvalidTarget {
-            category: RuleCategory::Sqlite,
-            reason: "sqlite target must include package segment",
-        });
-    };
-    if package == "*" {
-        return Ok("puread.sqlite.any");
-    }
-    Ok(package)
-}
-
-fn rollback_strategy_from_raw(
-    category: RuleCategory,
-    raw: &str,
-) -> Result<RollbackStrategy, RuleParseError> {
-    match RollbackStrategy::parse(raw) {
-        Ok(strategy) => Ok(strategy),
-        Err(error) if category == RuleCategory::Sqlite => sqlite_rollback_strategy(raw, error),
-        Err(error) => Err(error),
-    }
-}
-
-fn sqlite_rollback_strategy(
-    raw: &str,
-    error: RuleParseError,
-) -> Result<RollbackStrategy, RuleParseError> {
-    if raw.contains("snapshot the original database path") && raw.contains("restore") {
-        return Ok(RollbackStrategy::RestoreOriginal);
-    }
-    Err(error)
-}
-
-fn source_from_raw(source: RawSourceInput, raw: &RawRule) -> Result<RawSource, RuleParseError> {
-    match source {
-        RawSourceInput::Nested(nested) => {
-            if raw.source_file.is_some()
-                || raw.zip_entry.is_some()
-                || raw.source_line_or_pattern.is_some()
-            {
-                return Err(RuleParseError::InvalidSourceMetadata {
-                    reason: "nested source must not be mixed with flat source fields",
-                });
-            }
-            Ok(nested)
-        }
-        RawSourceInput::Name(source) => {
-            let Some(source_line_or_pattern) = raw.source_line_or_pattern.clone() else {
-                return Err(RuleParseError::InvalidSourceMetadata {
-                    reason: "flat source requires source_line_or_pattern",
-                });
-            };
-            Ok(RawSource {
-                source,
-                source_file: raw.source_file.clone(),
-                zip_entry: raw.zip_entry.clone(),
-                source_line_or_pattern,
-            })
-        }
-    }
-}
-
-fn validate_schedule(category: RuleCategory, schedule: Option<&str>) -> Result<(), RuleParseError> {
-    let Some(schedule) = schedule else {
-        return Ok(());
-    };
-    if category != RuleCategory::Sqlite {
-        return Err(RuleParseError::InvalidTarget {
-            category,
-            reason: "only sqlite rules may define schedule",
-        });
-    }
-    match schedule {
-        "manual" | "boot_once" | "low_frequency" => Ok(()),
-        _ => Err(RuleParseError::InvalidTarget {
-            category,
-            reason: "unsupported sqlite schedule",
-        }),
     }
 }

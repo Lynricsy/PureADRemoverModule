@@ -1,0 +1,30 @@
+[1m[92m   Compiling[0m puread-daemon v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-daemon)
+[1m[91merror[E0432][0m[1m: unresolved imports `puread_daemon::FileRuleDaemonConfig`, `puread_daemon::FileRuleDaemonMode`[0m
+  [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:10:42
+   [1m[94m|[0m
+[1m[94m10[0m [1m[94m|[0m     DaemonError, DaemonEvent, EventLoop, FileRuleDaemonConfig, FileRuleDaemonMode,
+   [1m[94m|[0m                                          [1m[91m^^^^^^^^^^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^^^^[0m [1m[91mno `FileRuleDaemonMode` in the root[0m
+   [1m[94m|[0m                                          [1m[91m|[0m
+   [1m[94m|[0m                                          [1m[91mno `FileRuleDaemonConfig` in the root[0m
+
+[1m[91merror[E0599][0m[1m: no associated function or constant named `from_file_rules` found for struct `EventLoop` in the current scope[0m
+  [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:34:47
+   [1m[94m|[0m
+[1m[94m34[0m [1m[94m|[0m     let (mut event_loop, handle) = EventLoop::from_file_rules(config)?;
+   [1m[94m|[0m                                               [1m[91m^^^^^^^^^^^^^^^[0m [1m[91massociated function or constant not found in `EventLoop`[0m
+
+[1m[91merror[E0599][0m[1m: no variant named `DryRunFilePlan` found for enum `DaemonEvent`[0m
+  [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:59:22
+   [1m[94m|[0m
+[1m[94m59[0m [1m[94m|[0m     let DaemonEvent::DryRunFilePlan { actions } = event else {
+   [1m[94m|[0m                      [1m[91m^^^^^^^^^^^^^^[0m [1m[91mvariant not found in `DaemonEvent`[0m
+
+[1m[91merror[E0599][0m[1m: no variant named `DryRunFilePlan` found for enum `DaemonEvent`[0m
+   [1m[94m--> [0mcrates/puread-daemon/tests/file_rule_integration.rs:144:34
+    [1m[94m|[0m
+[1m[94m144[0m [1m[94m|[0m     matches!(event, DaemonEvent::DryRunFilePlan { .. })
+    [1m[94m|[0m                                  [1m[91m^^^^^^^^^^^^^^[0m [1m[91mvariant not found in `DaemonEvent`[0m
+
+[1mSome errors have detailed explanations: E0432, E0599.[0m
+[1mFor more information about an error, try `rustc --explain E0432`.[0m
+[1m[91merror[0m: could not compile `puread-daemon` (test "file_rule_integration") due to 4 previous errors

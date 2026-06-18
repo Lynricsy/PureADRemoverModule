@@ -74,6 +74,7 @@ if [ -f "Cargo.toml" ]; then
     if command -v cargo >/dev/null 2>&1; then
         run cargo fmt --check
         run cargo check --workspace --locked
+        run cargo clippy --workspace --all-targets --all-features -- -D warnings
         run cargo test --workspace --locked
     else
         skip "cargo not found; Rust checks not run"

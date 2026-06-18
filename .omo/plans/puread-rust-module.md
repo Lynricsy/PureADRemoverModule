@@ -233,7 +233,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo run -p puread-cli -- restore --dry-run --ledger tests/fixtures/ledger.json > .omo/evidence/task-12-restore-dry-run.json`
   Commit: N | feat(cli): add restore ledger dry-run | Files `crates/puread-cli/**`
 
-- [ ] 13. 实现文件动作执行器
+- [x] 13. 实现文件动作执行器
   What to do / Must NOT do: 在 `puread-android` 或 core adapter 中实现 delete、empty-file、empty-dir、chmod-000、chown/chcon 封装和账本记录。必须支持 dry-run 与真实执行分离。若无法确定 SELinux context，只记录并跳过高风险路径，不盲目 `chcon`。不要默认 chattr。
   Parallelization: Can parallel Y | Wave 3 | Blocks T17/T20
   References: `Example/ads288.zip/mod/util_functions.sh:52`; `Example/ads288.zip/mod/ad.sh:152`
@@ -241,7 +241,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-android file_actions -- --nocapture | tee .omo/evidence/task-13-file-actions.txt`
   Commit: N | feat(android): execute reversible file actions | Files `crates/puread-android/**`
 
-- [ ] 14. 实现可选 `chattr +i` 强力模式
+- [x] 14. 实现可选 `chattr +i` 强力模式
   What to do / Must NOT do: `chattr` 只能在强力 profile 中执行，先检测命令存在，记录原属性，失败要降级并写日志。不要让默认规则触发 chattr。
   Parallelization: Can parallel Y | Wave 3 | Blocks T17/T20
   References: `Example/ads288.zip/配置.prop:25`; `Example/ads288.zip/mod/util_functions.sh:16`
@@ -249,7 +249,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-android chattr -- --nocapture | tee .omo/evidence/task-14-chattr-tests.txt`; `rg -n "chattr" rules | tee .omo/evidence/task-14-chattr-rules.txt`
   Commit: N | feat(android): gate immutable file mode behind profiles | Files `crates/puread-android/**`, `rules/**`
 
-- [ ] 15. 实现 SQLite 动作执行器
+- [x] 15. 实现 SQLite 动作执行器
   What to do / Must NOT do: 实现删除、写最小 SQLite 头、deny-write 占位三种动作；默认只由 boot_once/manual/low_frequency 调度触发。执行前记录元信息，避免高频处理正在使用的数据库；完整性验证不能只检查固定二进制头。不要监控每次写入。
   Parallelization: Can parallel Y | Wave 3 | Blocks T18/T20
   References: `Example/ads288.zip/mod/sqlite_clean_up.sh:9`
@@ -257,7 +257,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-android sqlite_actions -- --nocapture | tee .omo/evidence/task-15-sqlite-actions.txt`
   Commit: N | feat(android): add reversible SQLite ad database actions | Files `crates/puread-android/**`
 
-- [ ] 16. 实现 daemon 事件循环骨架
+- [x] 16. 实现 daemon 事件循环骨架
   What to do / Must NOT do: `puread-daemon` 使用 inotify/epoll 或 Rust crate 对应封装建立阻塞事件循环；支持 shutdown signal、reload signal、事件去抖。禁止 busy loop。
   Parallelization: Can parallel Y | Wave 3 | Blocks T20/T25
   References: 外部约束：inotify/epoll man pages; `.omo/drafts/puread-rust-module.md`
@@ -265,7 +265,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-daemon event_loop -- --nocapture | tee .omo/evidence/task-16-daemon-event-loop.txt`; `rg -n "sleep\\(|loop \\{|while true" crates/puread-daemon > .omo/evidence/task-16-loop-grep.txt`
   Commit: N | feat(daemon): add event-driven file watcher | Files `crates/puread-daemon/**`
 
-- [ ] 17. 集成文件规则到 daemon
+- [x] 17. 集成文件规则到 daemon
   What to do / Must NOT do: daemon 加载文件规则，建立 watch，事件触发后执行文件动作并写账本。必须支持 dry-run daemon 模式。不要加载 SQLite/AppOps/组件规则进高频 watcher。
   Parallelization: Can parallel Y | Wave 3 | Blocks T23/T25
   References: T8/T13/T14/T16 outputs
@@ -273,7 +273,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-daemon file_rule_integration -- --nocapture | tee .omo/evidence/task-17-file-daemon.txt`
   Commit: N | feat(daemon): apply file rules from watcher events | Files `crates/puread-daemon/**`
 
-- [ ] 18. 集成低频维护调度
+- [x] 18. 集成低频维护调度
   What to do / Must NOT do: 实现 boot_once、manual、low_frequency 调度，带 jitter 和退避；用于 SQLite 和补扫。默认参数：首次启动补扫一次，常规补扫间隔不低于 6 小时，失败指数退避到 24 小时上限，带随机 jitter。不要引入固定短周期扫描。
   Parallelization: Can parallel Y | Wave 3 | Blocks T23/T25
   References: Android 省电约束; `Example/ads288.zip/mod/ads_monitor_Check.sh`

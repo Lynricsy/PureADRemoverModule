@@ -1,0 +1,11 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+[1m[92m     Running[0m tests/chattr.rs (target/debug/deps/chattr-0ea6bb0e1ea82ffd)
+
+running 5 tests
+test chattr_skips_without_command_execution_when_profile_is_not_strong ... ok
+test chattr_records_original_attrs_and_applies_immutable_when_profile_is_strong ... ok
+test degrades_when_chattr_claims_success_but_output_reports_failure ... ok
+test degrades_with_original_attrs_when_chattr_fails ... ok
+test degrades_without_panic_when_chattr_command_is_missing ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

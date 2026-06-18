@@ -1,0 +1,6 @@
+crates/puread-daemon/tests/file_rule_integration.rs:16:const EVENT_TIMEOUT: Duration = Duration::from_secs(3);
+crates/puread-daemon/tests/file_rule_integration.rs:17:const DEBOUNCE: Duration = Duration::from_millis(40);
+crates/puread-daemon/tests/scheduler.rs:111:        Duration::from_secs(60),
+crates/puread-daemon/tests/scheduler.rs:137:        MaintenanceScheduler::new(config, FixedJitter::new(Duration::from_secs(15)));
+crates/puread-daemon/tests/event_loop.rs:11:const EVENT_TIMEOUT: Duration = Duration::from_secs(3);
+crates/puread-daemon/tests/event_loop.rs:12:const DEBOUNCE: Duration = Duration::from_millis(40);

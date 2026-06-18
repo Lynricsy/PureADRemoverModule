@@ -1,0 +1,274 @@
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/src/chattr/command.rs:61:
+
+     /// 构造失败输出。
+     #[must_use]
+[31m-    pub fn failure(
+[m[31m-        status: i32,
+[m[31m-        stderr: impl Into<String>,
+[m[31m-        stdout: impl Into<String>,
+[m[31m-    ) -> Self {
+[m[32m+    pub fn failure(status: i32, stderr: impl Into<String>, stdout: impl Into<String>) -> Self {
+[m         Self {
+             status,
+             stdout: stdout.into(),
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/src/chattr.rs:13:
+ const LSATTR: &str = "lsattr";
+ const CHATTR: &str = "chattr";
+ const COMMAND: &str = "command";
+[31m-const FAILURE_MARKERS: [&str; 4] = ["not permitted", "permission denied", "operation failed", "error"];
+[m[32m+const FAILURE_MARKERS: [&str; 4] = [
+[m[32m+    "not permitted",
+[m[32m+    "permission denied",
+[m[32m+    "operation failed",
+[m[32m+    "error",
+[m[32m+];
+[m
+ /// 单次 immutable 应用请求。
+ #[derive(Debug, Clone, PartialEq, Eq)]
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/src/chattr.rs:123:
+     let invocation = CommandInvocation::new(CHATTR, ["+i", target]);
+     let output = runner.run(&invocation)?;
+     if output.is_success_without_failure_marker() {
+[31m-        return Ok(ObservedCommand::from_invocation(&invocation, output.status()));
+[m[32m+        return Ok(ObservedCommand::from_invocation(
+[m[32m+            &invocation,
+[m[32m+            output.status(),
+[m[32m+        ));
+[m     }
+     Err(ImmutableError::CommandFailed {
+         program: CHATTR.to_owned(),
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/src/chattr.rs:168:
+ }
+
+ pub(crate) fn contains_failure_marker(stdout: &str, stderr: &str) -> bool {
+[31m-    let combined = format!("{}\n{}", stdout.to_ascii_lowercase(), stderr.to_ascii_lowercase());
+[m[32m+    let combined = format!(
+[m[32m+        "{}\n{}",
+[m[32m+        stdout.to_ascii_lowercase(),
+[m[32m+        stderr.to_ascii_lowercase()
+[m[32m+    );
+[m     FAILURE_MARKERS
+         .iter()
+         .any(|marker| combined.contains(marker))
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/chattr.rs:63:
+     ))
+ }
+
+[31m-fn output(program: &str, args: &[&str], result: Result<CommandOutput, ImmutableError>) -> ScriptedOutput {
+[m[32m+fn output(
+[m[32m+    program: &str,
+[m[32m+    args: &[&str],
+[m[32m+    result: Result<CommandOutput, ImmutableError>,
+[m[32m+) -> ScriptedOutput {
+[m     ScriptedOutput {
+         program: program.to_owned(),
+         args: args.iter().map(ToString::to_string).collect(),
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/chattr.rs:94:
+     let runner = ScriptedRunner::with_outputs(vec![
+         output("command", &["-v", "lsattr"], ok("lsattr\n")),
+         output("command", &["-v", "chattr"], ok("chattr\n")),
+[31m-        output("lsattr", &["/data/user/0/com.example/cache/ad"], ok("--------------e------- /data/user/0/com.example/cache/ad\n")),
+[m[31m-        output("chattr", &["+i", "/data/user/0/com.example/cache/ad"], ok("")),
+[m[32m+        output(
+[m[32m+            "lsattr",
+[m[32m+            &["/data/user/0/com.example/cache/ad"],
+[m[32m+            ok("--------------e------- /data/user/0/com.example/cache/ad\n"),
+[m[32m+        ),
+[m[32m+        output(
+[m[32m+            "chattr",
+[m[32m+            &["+i", "/data/user/0/com.example/cache/ad"],
+[m[32m+            ok(""),
+[m[32m+        ),
+[m     ]);
+     let request = ImmutableRequest::new(
+         Path::new("/data/user/0/com.example/cache/ad"),
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/chattr.rs:115:
+     assert_eq!(calls[3].program(), "chattr");
+     assert_eq!(
+         calls[3].args(),
+[31m-        &["+i".to_owned(), "/data/user/0/com.example/cache/ad".to_owned()]
+[m[32m+        &[
+[m[32m+            "+i".to_owned(),
+[m[32m+            "/data/user/0/com.example/cache/ad".to_owned()
+[m[32m+        ]
+[m     );
+ }
+
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/chattr.rs:152:
+     let runner = ScriptedRunner::with_outputs(vec![
+         output("command", &["-v", "lsattr"], ok("lsattr\n")),
+         output("command", &["-v", "chattr"], ok("chattr\n")),
+[31m-        output("lsattr", &["/data/user/0/com.example/cache/ad"], ok("----i---------e------- /data/user/0/com.example/cache/ad\n")),
+[m         output(
+[32m+            "lsattr",
+[m[32m+            &["/data/user/0/com.example/cache/ad"],
+[m[32m+            ok("----i---------e------- /data/user/0/com.example/cache/ad\n"),
+[m[32m+        ),
+[m[32m+        output(
+[m             "chattr",
+             &["+i", "/data/user/0/com.example/cache/ad"],
+[31m-            fail("chattr", &["+i", "/data/user/0/com.example/cache/ad"], "operation not permitted"),
+[m[32m+            fail(
+[m[32m+                "chattr",
+[m[32m+                &["+i", "/data/user/0/com.example/cache/ad"],
+[m[32m+                "operation not permitted",
+[m[32m+            ),
+[m         ),
+     ]);
+     let request = ImmutableRequest::new(
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/chattr.rs:180:
+     let runner = ScriptedRunner::with_outputs(vec![
+         output("command", &["-v", "lsattr"], ok("lsattr\n")),
+         output("command", &["-v", "chattr"], ok("chattr\n")),
+[31m-        output("lsattr", &["/data/user/0/com.example/cache/ad"], ok("--------------e------- /data/user/0/com.example/cache/ad\n")),
+[m[32m+        output(
+[m[32m+            "lsattr",
+[m[32m+            &["/data/user/0/com.example/cache/ad"],
+[m[32m+            ok("--------------e------- /data/user/0/com.example/cache/ad\n"),
+[m[32m+        ),
+[m         output(
+             "chattr",
+             &["+i", "/data/user/0/com.example/cache/ad"],
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/file_actions.rs:73:
+ }
+
+ #[test]
+[31m-fn file_actions_dry_run_reports_plan_without_mutating_files_or_ledger()
+[m[31m--> Result<(), Box<dyn Error>> {
+[m[32m+fn file_actions_dry_run_reports_plan_without_mutating_files_or_ledger() -> Result<(), Box<dyn Error>>
+[m[32m+{
+[m     // Given: an existing app-private ad cache file and an empty state ledger.
+     let root = TestRoot::new()?;
+     let android_path = "/data/data/com.example.app/cache/splash-ad.bin";
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/file_actions.rs:81:
+     root.write(android_path, b"ad payload")?;
+[31m-    let plan = plan_for(&root, android_path, FileActionKind::EmptyFile, RiskLevel::Low)?;
+[m[32m+    let plan = plan_for(
+[m[32m+        &root,
+[m[32m+        android_path,
+[m[32m+        FileActionKind::EmptyFile,
+[m[32m+        RiskLevel::Low,
+[m[32m+    )?;
+[m     let executor = FileActionExecutor::new(root.ledger(), root.backup_dir());
+
+     // When: the action is evaluated through the dry-run surface.
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/file_actions.rs:102:
+     let root = TestRoot::new()?;
+     let android_path = "/data/data/com.example.app/cache/ad.bin";
+     root.write(android_path, b"payload")?;
+[31m-    let plan = plan_for(&root, android_path, FileActionKind::EmptyFile, RiskLevel::Low)?;
+[m[32m+    let plan = plan_for(
+[m[32m+        &root,
+[m[32m+        android_path,
+[m[32m+        FileActionKind::EmptyFile,
+[m[32m+        RiskLevel::Low,
+[m[32m+    )?;
+[m     let executor = FileActionExecutor::new(root.ledger(), root.backup_dir());
+
+     // When: the action is really applied.
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/file_actions.rs:117:
+     assert_eq!(records.len(), 1);
+     assert_eq!(records[0].action, LedgerAction::EmptyFile);
+     assert_eq!(records[0].original_file_type, OriginalFileType::File);
+[31m-    assert!(records[0]
+[m[31m-        .restore_steps
+[m[31m-        .iter()
+[m[31m-        .any(|step| matches!(step, RestoreStep::RestoreContent { .. })));
+[m[32m+    assert!(
+[m[32m+        records[0]
+[m[32m+            .restore_steps
+[m[32m+            .iter()
+[m[32m+            .any(|step| matches!(step, RestoreStep::RestoreContent { .. }))
+[m[32m+    );
+[m     Ok(())
+ }
+
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/file_actions.rs:168:
+ }
+
+ #[test]
+[31m-fn file_actions_skips_high_risk_chcon_when_current_context_is_unknown()
+[m[31m--> Result<(), Box<dyn Error>> {
+[m[32m+fn file_actions_skips_high_risk_chcon_when_current_context_is_unknown() -> Result<(), Box<dyn Error>>
+[m[32m+{
+[m     // Given: a high-risk action asking the executor to preserve the current context.
+     let root = TestRoot::new()?;
+     let android_path = "/data/data/com.example.app/cache/ad.bin";
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/file_actions.rs:176:
+     root.write(android_path, b"payload")?;
+[31m-    let mut request = request_for(&root, android_path, FileActionKind::Chmod000, RiskLevel::High)?;
+[m[32m+    let mut request = request_for(
+[m[32m+        &root,
+[m[32m+        android_path,
+[m[32m+        FileActionKind::Chmod000,
+[m[32m+        RiskLevel::High,
+[m[32m+    )?;
+[m     request.push_metadata_change(MetadataChange::restore_selinux_context());
+     let plan = FileActionPlanner::new().plan(&request)?;
+     let executor = FileActionExecutor::new(root.ledger(), root.backup_dir());
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/file_actions.rs:186:
+     let records = root.ledger().read_records()?;
+     println!("file_actions_chcon_skip={outcome:?} records={records:?}");
+     assert_eq!(outcome.status(), FileActionStatus::Applied);
+[31m-    assert!(outcome
+[m[31m-        .metadata_operations()
+[m[31m-        .contains(&MetadataOperation::SkippedChconUnknownContext));
+[m[31m-    assert!(records.iter().all(|record| record.selinux_context.is_none()));
+[m[32m+    assert!(
+[m[32m+        outcome
+[m[32m+            .metadata_operations()
+[m[32m+            .contains(&MetadataOperation::SkippedChconUnknownContext)
+[m[32m+    );
+[m[32m+    assert!(
+[m[32m+        records
+[m[32m+            .iter()
+[m[32m+            .all(|record| record.selinux_context.is_none())
+[m[32m+    );
+[m     assert!(records.iter().all(|record| {
+         !record
+             .restore_steps
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/sqlite_actions.rs:140:
+ }
+
+ #[test]
+[31m-fn sqlite_actions_reject_high_frequency_schedule_before_touching_file()
+[m[31m--> Result<(), Box<dyn Error>> {
+[m[32m+fn sqlite_actions_reject_high_frequency_schedule_before_touching_file() -> Result<(), Box<dyn Error>>
+[m[32m+{
+[m     // Given: an existing file and a disallowed high-frequency request.
+     let dir = TestDir::new()?;
+     let db_path = dir.path().join("hot.db");
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-android/tests/sqlite_actions.rs:179:
+     let ok_path = dir.path().join("ok.db");
+     fs::write(&locked_path, b"locked")?;
+     fs::write(&ok_path, b"ok")?;
+[31m-    let lock_file = OpenOptions::new().read(true).write(true).open(&locked_path)?;
+[m[32m+    let lock_file = OpenOptions::new()
+[m[32m+        .read(true)
+[m[32m+        .write(true)
+[m[32m+        .open(&locked_path)?;
+[m     lock_file.try_lock_exclusive()?;
+     let ledger = dir.ledger();
+     let runner = SqliteActionRunner::new(ledger.clone());
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-daemon/tests/event_loop.rs:9:
+ const DEBOUNCE: Duration = Duration::from_millis(40);
+
+ #[test]
+[31m-fn event_loop_emits_debounced_file_event_when_file_is_created() -> Result<(), Box<dyn std::error::Error>>
+[m[31m-{
+[m[32m+fn event_loop_emits_debounced_file_event_when_file_is_created()
+[m[32m+-> Result<(), Box<dyn std::error::Error>> {
+[m     // Given: a daemon event loop watches a temporary directory.
+     let temp = tempfile::tempdir()?;
+     let watched_path = temp.path().to_path_buf();
+Diff in /root/Projects/Ling/PureADRemoverModule/crates/puread-daemon/tests/event_loop.rs:45:
+ }
+
+ #[test]
+[31m-fn event_loop_emits_reload_event_when_reload_signal_arrives() -> Result<(), Box<dyn std::error::Error>>
+[m[31m-{
+[m[32m+fn event_loop_emits_reload_event_when_reload_signal_arrives()
+[m[32m+-> Result<(), Box<dyn std::error::Error>> {
+[m     // Given: a daemon event loop has entered its blocking receive path.
+     let temp = tempfile::tempdir()?;
+     let (started_tx, started_rx) = mpsc::channel();

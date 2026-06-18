@@ -1,0 +1,41 @@
+[1m[92m    Updating[0m crates.io index
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m     Locking[0m 24 packages to latest Rust 1.88 compatible versions
+[1m[92m      Adding[0m fsevent-sys v4.1.0
+[1m[92m      Adding[0m inotify v0.11.2
+[1m[92m      Adding[0m inotify-sys v0.1.5
+[1m[92m      Adding[0m kqueue v1.2.0
+[1m[92m      Adding[0m kqueue-sys v1.1.2
+[1m[92m      Adding[0m mio v1.2.1
+[1m[92m      Adding[0m notify v8.2.0
+[1m[92m      Adding[0m notify-types v2.1.0
+[1m[92m      Adding[0m same-file v1.0.6
+[1m[92m      Adding[0m signal-hook v0.3.18 [1m[33m(available: v0.4.4)[0m
+[1m[92m      Adding[0m signal-hook-registry v1.4.8
+[1m[92m      Adding[0m walkdir v2.5.0
+[1m[92m      Adding[0m wasi v0.11.1+wasi-snapshot-preview1
+[1m[92m      Adding[0m winapi-util v0.1.11
+[1m[92m      Adding[0m windows-sys v0.60.2
+[1m[92m      Adding[0m windows-targets v0.53.5
+[1m[92m      Adding[0m windows_aarch64_gnullvm v0.53.1
+[1m[92m      Adding[0m windows_aarch64_msvc v0.53.1
+[1m[92m      Adding[0m windows_i686_gnu v0.53.1
+[1m[92m      Adding[0m windows_i686_gnullvm v0.53.1
+[1m[92m      Adding[0m windows_i686_msvc v0.53.1
+[1m[92m      Adding[0m windows_x86_64_gnu v0.53.1
+[1m[92m      Adding[0m windows_x86_64_gnullvm v0.53.1
+[1m[92m      Adding[0m windows_x86_64_msvc v0.53.1
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m   Compiling[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.74s
+[1m[92m     Running[0m tests/chattr.rs (target/debug/deps/chattr-0ea6bb0e1ea82ffd)
+
+running 5 tests
+test chattr_skips_without_command_execution_when_profile_is_not_strong ... ok
+test chattr_records_original_attrs_and_applies_immutable_when_profile_is_strong ... ok
+test degrades_when_chattr_claims_success_but_output_reports_failure ... ok
+test degrades_with_original_attrs_when_chattr_fails ... ok
+test degrades_without_panic_when_chattr_command_is_missing ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

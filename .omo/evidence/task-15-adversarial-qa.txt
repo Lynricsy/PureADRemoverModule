@@ -1,0 +1,7 @@
+Adversarial QA classes for T15
+- malformed path/input: high_frequency schedule rejected before mutation; parent traversal/relative path rejected by validate_request; tests cover disallowed high_frequency target unchanged
+- locked/in-use DB: fs2 exclusive lock simulation reports failure and batch continues
+- permission/missing parent failure: missing parent deny-write target fails while later valid delete succeeds
+- stale state/idempotence: ledger append happens before mutation and uses idempotent RestoreLedger append_record
+- misleading success output: minimal sqlite is verified by internal SQLite page parser and external sqlite3 pragma integrity_check in test
+- no high-frequency watcher: only explicit run_batch over Manual/BootOnce/LowFrequency is implemented, HighFrequency is rejected

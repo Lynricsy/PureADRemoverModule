@@ -8,7 +8,13 @@ repository.workspace = true
 description = "Daemon entrypoint scaffold for the PureAD non-domain ad remover module."
 
 [dependencies]
+inotify = { version = "0.11", default-features = false }
+mio = { version = "1", features = ["os-poll", "os-ext"] }
+puread-android = { path = "../puread-android" }
 puread-core = { path = "../puread-core" }
+puread-rules = { path = "../puread-rules" }
+signal-hook = "0.3"
+thiserror.workspace = true
 
 [lints]
 workspace = true

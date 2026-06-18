@@ -1,0 +1,40 @@
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m   Compiling[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[91merror[E0599][0m[1m: no associated function or constant named `from_android_path` found for struct `SqliteActionTarget` in the current scope[0m
+  [1m[94m--> [0mcrates/puread-android/tests/sqlite_actions.rs:54:42
+   [1m[94m|[0m
+[1m[94m54[0m [1m[94m|[0m         let result = SqliteActionTarget::from_android_path(android, host, dir.path());
+   [1m[94m|[0m                                          [1m[91m^^^^^^^^^^^^^^^^^[0m [1m[91massociated function or constant not found in `SqliteActionTarget`[0m
+   [1m[94m|[0m
+[1m[92mnote[0m: if you're trying to build a new `SqliteActionTarget`, consider using `SqliteActionTarget::new` which returns `SqliteActionTarget`
+  [1m[94m--> [0mcrates/puread-android/src/sqlite_actions/types.rs:56:5
+   [1m[94m|[0m
+[1m[94m56[0m [1m[94m|[0m     pub const fn new(path: PathBuf) -> Self {
+   [1m[94m|[0m     [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[E0599][0m[1m: no associated function or constant named `from_android_path` found for struct `SqliteActionTarget` in the current scope[0m
+  [1m[94m--> [0mcrates/puread-android/tests/sqlite_actions.rs:75:38
+   [1m[94m|[0m
+[1m[94m75[0m [1m[94m|[0m     let result = SqliteActionTarget::from_android_path(
+   [1m[94m|[0m                                      [1m[91m^^^^^^^^^^^^^^^^^[0m [1m[91massociated function or constant not found in `SqliteActionTarget`[0m
+   [1m[94m|[0m
+[1m[92mnote[0m: if you're trying to build a new `SqliteActionTarget`, consider using `SqliteActionTarget::new` which returns `SqliteActionTarget`
+  [1m[94m--> [0mcrates/puread-android/src/sqlite_actions/types.rs:56:5
+   [1m[94m|[0m
+[1m[94m56[0m [1m[94m|[0m     pub const fn new(path: PathBuf) -> Self {
+   [1m[94m|[0m     [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[E0599][0m[1m: no associated function or constant named `from_android_path` found for struct `SqliteActionTarget` in the current scope[0m
+  [1m[94m--> [0mcrates/puread-android/tests/sqlite_actions.rs:99:38
+   [1m[94m|[0m
+[1m[94m99[0m [1m[94m|[0m     let target = SqliteActionTarget::from_android_path(
+   [1m[94m|[0m                                      [1m[91m^^^^^^^^^^^^^^^^^[0m [1m[91massociated function or constant not found in `SqliteActionTarget`[0m
+   [1m[94m|[0m
+[1m[92mnote[0m: if you're trying to build a new `SqliteActionTarget`, consider using `SqliteActionTarget::new` which returns `SqliteActionTarget`
+  [1m[94m--> [0mcrates/puread-android/src/sqlite_actions/types.rs:56:5
+   [1m[94m|[0m
+[1m[94m56[0m [1m[94m|[0m     pub const fn new(path: PathBuf) -> Self {
+   [1m[94m|[0m     [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1mFor more information about this error, try `rustc --explain E0599`.[0m
+[1m[91merror[0m: could not compile `puread-android` (test "sqlite_actions") due to 3 previous errors

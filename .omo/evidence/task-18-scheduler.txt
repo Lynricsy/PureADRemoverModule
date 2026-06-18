@@ -1,0 +1,10 @@
+
+running 6 tests
+test scheduler_boot_once_runs_only_before_first_success_when_startup_is_evaluated ... ok
+test scheduler_failure_backoff_never_exceeds_one_day_when_custom_interval_is_longer ... ok
+test scheduler_low_frequency_failure_uses_exponential_backoff_capped_at_one_day_with_jitter ... ok
+test scheduler_custom_low_frequency_interval_cannot_go_below_six_hours ... ok
+test scheduler_low_frequency_rescan_schedules_startup_once_then_waits_at_least_six_hours ... ok
+test scheduler_manual_job_never_creates_automatic_plan_when_evaluated ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

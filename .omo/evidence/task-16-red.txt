@@ -1,0 +1,52 @@
+[1m[92m Downloading[0m crates ...
+[1m[92m  Downloaded[0m errno v0.3.14
+[1m[92m  Downloaded[0m getrandom v0.4.2
+[1m[92m  Downloaded[0m bitflags v2.13.0
+[1m[92m  Downloaded[0m once_cell v1.21.4
+[1m[92m  Downloaded[0m cfg-if v1.0.4
+[1m[92m  Downloaded[0m fastrand v2.4.1
+[1m[92m  Downloaded[0m tempfile v3.27.0
+[1m[92m  Downloaded[0m rustix v1.1.4
+[1m[92m  Downloaded[0m libc v0.2.186
+[1m[92m  Downloaded[0m linux-raw-sys v0.12.1
+[1m[92m   Compiling[0m libc v0.2.186
+[1m[92m   Compiling[0m getrandom v0.4.2
+[1m[92m   Compiling[0m rustix v1.1.4
+[1m[92m   Compiling[0m linux-raw-sys v0.12.1
+[1m[92m   Compiling[0m cfg-if v1.0.4
+[1m[92m   Compiling[0m bitflags v2.13.0
+[1m[92m   Compiling[0m fastrand v2.4.1
+[1m[92m   Compiling[0m once_cell v1.21.4
+[1m[92m   Compiling[0m puread-daemon v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-daemon)
+[1m[92m   Compiling[0m tempfile v3.27.0
+[1m[91merror[E0432][0m[1m: unresolved imports `puread_daemon::DaemonEvent`, `puread_daemon::EventLoop`, `puread_daemon::EventLoopConfig`[0m
+ [1m[94m--> [0mcrates/puread-daemon/tests/event_loop.rs:6:21
+  [1m[94m|[0m
+[1m[94m6[0m [1m[94m|[0m use puread_daemon::{DaemonEvent, EventLoop, EventLoopConfig};
+  [1m[94m|[0m                     [1m[91m^^^^^^^^^^^[0m  [1m[91m^^^^^^^^^[0m  [1m[91m^^^^^^^^^^^^^^^[0m [1m[91mno `EventLoopConfig` in the root[0m
+  [1m[94m|[0m                     [1m[91m|[0m            [1m[91m|[0m
+  [1m[94m|[0m                     [1m[91m|[0m            [1m[91mno `EventLoop` in the root[0m
+  [1m[94m|[0m                     [1m[91mno `DaemonEvent` in the root[0m
+
+[1m[91merror[E0433][0m[1m: cannot find `DaemonError` in `puread_daemon`[0m
+   [1m[94m--> [0mcrates/puread-daemon/tests/event_loop.rs:135:47
+    [1m[94m|[0m
+[1m[94m135[0m [1m[94m|[0m             Err(_panic) => Err(puread_daemon::DaemonError::WorkerPanicked),
+    [1m[94m|[0m                                               [1m[91m^^^^^^^^^^^[0m [1m[91mcould not find `DaemonError` in `puread_daemon`[0m
+
+[1m[91merror[E0425][0m[1m: cannot find type `DaemonError` in crate `puread_daemon`[0m
+   [1m[94m--> [0mcrates/puread-daemon/tests/event_loop.rs:128:58
+    [1m[94m|[0m
+[1m[94m128[0m [1m[94m|[0m     worker: thread::JoinHandle<Result<(), puread_daemon::DaemonError>>,
+    [1m[94m|[0m                                                          [1m[91m^^^^^^^^^^^[0m [1m[91mnot found in `puread_daemon`[0m
+
+[1m[91merror[E0425][0m[1m: cannot find type `DaemonError` in crate `puread_daemon`[0m
+   [1m[94m--> [0mcrates/puread-daemon/tests/event_loop.rs:130:39
+    [1m[94m|[0m
+[1m[94m130[0m [1m[94m|[0m ) -> Result<Result<(), puread_daemon::DaemonError>, Box<dyn std::error::Error>> {
+    [1m[94m|[0m                                       [1m[91m^^^^^^^^^^^[0m [1m[91mnot found in `puread_daemon`[0m
+
+[1mSome errors have detailed explanations: E0425, E0432, E0433.[0m
+[1mFor more information about an error, try `rustc --explain E0425`.[0m
+[1m[91merror[0m: could not compile `puread-daemon` (test "event_loop") due to 4 previous errors
+[1m[33mwarning[0m: build failed, waiting for other jobs to finish...

@@ -1,0 +1,9 @@
+[1m[92m   Compiling[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[91merror[E0432][0m[1m: unresolved import `puread_android::chattr`[0m
+ [1m[94m--> [0mcrates/puread-android/tests/chattr.rs:5:21
+  [1m[94m|[0m
+[1m[94m5[0m [1m[94m|[0m use puread_android::chattr::{
+  [1m[94m|[0m                     [1m[91m^^^^^^[0m [1m[91mcould not find `chattr` in `puread_android`[0m
+
+[1mFor more information about this error, try `rustc --explain E0432`.[0m
+[1m[91merror[0m: could not compile `puread-android` (test "chattr") due to 1 previous error

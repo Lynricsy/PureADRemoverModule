@@ -1,0 +1,38 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+[1m[92m     Running[0m tests/file_actions.rs (target/debug/deps/file_actions-c0ca9b6b7fdc6b5f)
+
+running 1 test
+file_actions_repeated=FileActionOutcome { mode: Apply, status: Applied, will_mutate: true, metadata_operations: [] } records=[LedgerRecord { original_path: "/data/data/com.example.app/cache/repeated-ad.bin", action: EmptyFile, original_file_type: File, mode: 33188, uid: 0, gid: 0, selinux_context: None, immutable: false, timestamp: 2026-06-17 15:20:10.886474131 +00:00:00, profile: "conservative", restore_steps: [RestoreContent { backup_path: "/tmp/puread-file-actions-4149007-0/state/backups/file-actions-test-empty_file-_data_data_com_example_app_cache_repeated_ad_bin.bak" }, SetMode { mode: 33188 }, SetOwner { uid: 0, gid: 0 }] }]
+
+thread 'file_actions_repeated_execution_preserves_first_backup_and_single_ledger_record' (4149008) panicked at crates/puread-android/tests/file_actions.rs:169:5:
+assertion `left == right` failed
+  left: [114, 101, 99, 114, 101, 97, 116, 101, 100, 32, 97, 100, 32, 112, 97, 121, 108, 111, 97, 100]
+ right: [111, 114, 105, 103, 105, 110, 97, 108, 32, 112, 97, 121, 108, 111, 97, 100]
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+             at /rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/std/src/panicking.rs:689:5
+   1: core::panicking::panic_fmt
+             at /rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/core/src/panicking.rs:80:14
+   2: core::panicking::assert_failed_inner
+             at /rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/core/src/panicking.rs:439:17
+   3: core::panicking::assert_failed
+             at /rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/core/src/panicking.rs:394:5
+   4: file_actions::file_actions_repeated_execution_preserves_first_backup_and_single_ledger_record
+             at ./tests/file_actions.rs:169:5
+   5: file_actions::file_actions_repeated_execution_preserves_first_backup_and_single_ledger_record::{{closure}}
+             at ./tests/file_actions.rs:145:4
+   6: core::ops::function::FnOnce::call_once
+             at /rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/core/src/ops/function.rs:250:5
+   7: <fn() -> core::result::Result<(), alloc::string::String> as core::ops::function::FnOnce<()>>::call_once
+             at /rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/core/src/ops/function.rs:250:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+test file_actions_repeated_execution_preserves_first_backup_and_single_ledger_record ... FAILED
+
+failures:
+
+failures:
+    file_actions_repeated_execution_preserves_first_backup_and_single_ledger_record
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.01s
+
+[1m[91merror[0m: test failed, to rerun pass `-p puread-android --test file_actions`

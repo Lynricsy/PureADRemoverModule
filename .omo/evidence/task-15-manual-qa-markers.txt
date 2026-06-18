@@ -1,0 +1,27 @@
+crates/puread-android/tests/sqlite_actions.rs:62:        SqliteActionSchedule::BootOnce,
+crates/puread-android/tests/sqlite_actions.rs:81:            .any(|step| format!("{step:?}").contains("RestoreContent"))
+crates/puread-android/tests/sqlite_actions.rs:100:        SqliteActionSchedule::Manual,
+crates/puread-android/tests/sqlite_actions.rs:132:        SqliteActionSchedule::LowFrequency,
+crates/puread-android/tests/sqlite_actions.rs:164:        SqliteActionSchedule::HighFrequency,
+crates/puread-android/tests/sqlite_actions.rs:193:    lock_file.try_lock_exclusive()?;
+crates/puread-android/tests/sqlite_actions.rs:203:            SqliteActionSchedule::BootOnce,
+crates/puread-android/tests/sqlite_actions.rs:209:            SqliteActionSchedule::LowFrequency,
+crates/puread-android/tests/sqlite_actions.rs:215:            SqliteActionSchedule::Manual,
+crates/puread-android/tests/sqlite_actions.rs:255:        .arg("pragma integrity_check;")
+crates/puread-android/src/sqlite_actions/types.rs:23:    Manual,
+crates/puread-android/src/sqlite_actions/types.rs:25:    BootOnce,
+crates/puread-android/src/sqlite_actions/types.rs:27:    LowFrequency,
+crates/puread-android/src/sqlite_actions/types.rs:29:    HighFrequency,
+crates/puread-android/src/sqlite_actions/types.rs:34:        matches!(self, Self::Manual | Self::BootOnce | Self::LowFrequency)
+crates/puread-android/src/sqlite_actions/types.rs:39:            Self::Manual => "sqlite:manual",
+crates/puread-android/src/sqlite_actions/types.rs:40:            Self::BootOnce => "sqlite:boot_once",
+crates/puread-android/src/sqlite_actions/types.rs:41:            Self::LowFrequency => "sqlite:low_frequency",
+crates/puread-android/src/sqlite_actions/types.rs:42:            Self::HighFrequency => "sqlite:high_frequency",
+crates/puread-android/src/sqlite_actions/ledger.rs:38:        return Ok(vec![RestoreStep::RemovePlaceholder]);
+crates/puread-android/src/sqlite_actions/ledger.rs:43:        RestoreStep::RestoreContent {
+crates/puread-android/src/sqlite_actions/runner.rs:10:use crate::sqlite_actions::minimal::{minimal_sqlite_image, validate_sqlite_image};
+crates/puread-android/src/sqlite_actions/runner.rs:90:            .append_record(&record)
+crates/puread-android/src/sqlite_actions/runner.rs:131:    file.try_lock_exclusive()
+crates/puread-android/src/sqlite_actions/runner.rs:145:    validate_sqlite_image(
+crates/puread-android/src/sqlite_actions/minimal.rs:30:    validate_sqlite_image(path, &image)?;
+crates/puread-android/src/sqlite_actions/minimal.rs:34:pub(super) fn validate_sqlite_image(path: &Path, image: &[u8]) -> Result<(), SqliteActionError> {

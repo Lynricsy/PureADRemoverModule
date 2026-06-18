@@ -1,0 +1,32 @@
+diff --git a/crates/puread-android/Cargo.toml b/crates/puread-android/Cargo.toml
+index 41f6d2c..3dd6e56 100644
+--- a/crates/puread-android/Cargo.toml
++++ b/crates/puread-android/Cargo.toml
+@@ -8,7 +8,10 @@ repository.workspace = true
+ description = "Android adapter boundary for the PureAD non-domain ad remover module."
+
+ [dependencies]
++fs2 = "0.4"
+ puread-core = { path = "../puread-core" }
++thiserror.workspace = true
++time = { version = "0.3", features = ["formatting", "macros", "parsing", "serde", "serde-well-known"] }
+
+ [lints]
+ workspace = true
+diff --git a/crates/puread-android/src/lib.rs b/crates/puread-android/src/lib.rs
+index 6a902e9..e012419 100644
+--- a/crates/puread-android/src/lib.rs
++++ b/crates/puread-android/src/lib.rs
+@@ -1,5 +1,12 @@
+ #![doc = "`PureAD` Android 适配 crate 的最小脚手架。"]
+
++/// `chattr +i` 强力 profile 适配层。
++pub mod chattr;
++/// 可恢复文件动作执行器。
++pub mod file_actions;
++/// `SQLite` 广告库动作执行器。
++pub mod sqlite_actions;
++
+ /// Android 适配 crate 标识。
+ #[must_use]
+ pub const fn crate_name() -> &'static str {

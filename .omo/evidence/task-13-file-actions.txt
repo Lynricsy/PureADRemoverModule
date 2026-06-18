@@ -1,0 +1,51 @@
+   Compiling puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.40s
+     Running unittests src/lib.rs (target/debug/deps/puread_android-25ea1801a0cf67b4)
+
+running 9 tests
+test file_actions::executor::tests::guard_target_unchanged_rejects_symlink_replacement_before_mutation ... ok
+test file_actions::executor::race_tests::missing_empty_file_rejects_parent_symlink_escape ... ok
+test file_actions::executor::tests::empty_file_rejects_new_file_created_after_missing_guard ... ok
+test file_actions::executor::race_tests::delete_restores_replacement_when_path_swaps_after_fd_guard ... ok
+test file_actions::executor::tests::delete_rejects_regular_file_replacement_before_remove ... ok
+test file_actions::executor::race_tests::delete_rejects_existing_backup_without_orphan_move ... ok
+test file_actions::executor::tests::empty_dir_moves_existing_directory_to_backup_and_recreates_empty_dir ... ok
+test file_actions::executor::tests::empty_file_rejects_regular_file_replacement_after_helper_guard ... ok
+test file_actions::executor::tests::file_helper_final_guard_rejects_swap_after_executor_guard ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/chattr.rs (target/debug/deps/chattr-6958f170e80dc4cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/file_actions.rs (target/debug/deps/file_actions-c0ca9b6b7fdc6b5f)
+
+running 6 tests
+file_actions_dangerous_path=/ result=Err(RejectedTarget { path: "/", reason: "protected root rejected" })
+file_actions_dangerous_path=/data result=Err(RejectedTarget { path: "/data", reason: "protected root rejected" })
+file_actions_symlink_target_result=Err(RejectedTarget { path: "/data/data/com.example.app/cache/link.bin", reason: "symlink targets are rejected" })
+file_actions_dangerous_path=/sdcard result=Err(RejectedTarget { path: "/sdcard", reason: "protected root rejected" })
+file_actions_dangerous_path=/system result=Err(RejectedTarget { path: "/system", reason: "protected root rejected" })
+file_actions_dangerous_path=/vendor result=Err(RejectedTarget { path: "/vendor", reason: "protected root rejected" })
+file_actions_dangerous_path=/data/adb result=Err(RejectedTarget { path: "/data/adb", reason: "protected root rejected" })
+file_actions_dry_run=FileActionOutcome { mode: DryRun, status: Planned, will_mutate: false, metadata_operations: [] }
+test file_actions_dry_run_reports_plan_without_mutating_files_or_ledger ... ok
+test file_actions_delete_rejects_symlink_targets_before_backup_or_mutation ... ok
+test file_actions_rejects_dangerous_android_paths_before_execution ... ok
+file_actions_empty_file=FileActionOutcome { mode: Apply, status: Applied, will_mutate: true, metadata_operations: [] } records=[LedgerRecord { original_path: "/data/data/com.example.app/cache/ad.bin", action: EmptyFile, original_file_type: File, mode: 33188, uid: 0, gid: 0, selinux_context: None, immutable: false, timestamp: 2026-06-18 3:17:00.643122249 +00:00:00, profile: "conservative", restore_steps: [RestoreContent { backup_path: "/tmp/puread-file-actions-820355-2/state/backups/file-actions-test-empty_file-_data_data_com_example_app_cache_ad_bin.bak" }, SetMode { mode: 33188 }, SetOwner { uid: 0, gid: 0 }] }]
+test file_actions_empty_file_executes_in_temp_root_and_records_reversible_ledger ... ok
+file_actions_repeated=FileActionOutcome { mode: Apply, status: Applied, will_mutate: true, metadata_operations: [] } records=[LedgerRecord { original_path: "/data/data/com.example.app/cache/repeated-ad.bin", action: EmptyFile, original_file_type: File, mode: 33188, uid: 0, gid: 0, selinux_context: None, immutable: false, timestamp: 2026-06-18 3:17:00.643359883 +00:00:00, profile: "conservative", restore_steps: [RestoreContent { backup_path: "/tmp/puread-file-actions-820355-4/state/backups/file-actions-test-empty_file-_data_data_com_example_app_cache_repeated_ad_bin.bak" }, SetMode { mode: 33188 }, SetOwner { uid: 0, gid: 0 }] }]
+file_actions_chcon_skip=FileActionOutcome { mode: Apply, status: Applied, will_mutate: true, metadata_operations: [SkippedChconUnknownContext] } records=[LedgerRecord { original_path: "/data/data/com.example.app/cache/ad.bin", action: Chmod000, original_file_type: File, mode: 33188, uid: 0, gid: 0, selinux_context: None, immutable: false, timestamp: 2026-06-18 3:17:00.643316281 +00:00:00, profile: "conservative", restore_steps: [RestoreContent { backup_path: "/tmp/puread-file-actions-820355-5/state/backups/file-actions-test-chmod_000-_data_data_com_example_app_cache_ad_bin.bak" }, SetMode { mode: 33188 }, SetOwner { uid: 0, gid: 0 }] }]
+test file_actions_repeated_execution_preserves_first_backup_and_single_ledger_record ... ok
+test file_actions_skips_high_risk_chcon_when_current_context_is_unknown ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sqlite_actions.rs (target/debug/deps/sqlite_actions-09a819c9eb8ce2bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
