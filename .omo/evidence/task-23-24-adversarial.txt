@@ -1,0 +1,169 @@
+# PureAD T23/T24 adversarial evidence
+
+timestamp: 2026-06-18T15:54:57+08:00
+scope: Android AppOps / component / ROM profiles only
+boundary: no DNS / hosts / proxy / iptables / private DNS / root hiding / IFW feature was added
+
+## malformed input
+
+Command:
+
+```sh
+cargo test -p puread-android --test command_runner command_runner_rejects_injected_tokens_without_blocking_android_names -- --nocapture
+```
+
+Observed output:
+
+```text
+running 1 test
+test command_runner_rejects_injected_tokens_without_blocking_android_names ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out
+```
+
+Coverage:
+- Rejects option-looking, path traversal, whitespace, NUL, and shell metacharacter tokens before command execution.
+- Representative denied examples include `com.example/.Bad;id`, `com example`, `com.example\0bad`, `RUN;BACKGROUND`, `../prop`, and `ro.foo;id`.
+- Valid Android-shaped package/component/property names remain accepted, so the guard is not a broad false-positive block.
+
+## stale state
+
+Command:
+
+```sh
+cargo test -p puread-android --test appops_components appops_profile_records_original_mode_and_restores_default_when_missing -- --nocapture
+```
+
+Observed output:
+
+```text
+running 1 test
+test appops_profile_records_original_mode_and_restores_default_when_missing ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out
+```
+
+Coverage:
+- Simulates stale/missing AppOps probe output (`No operations.`) for the target op.
+- Executor records `original_mode = "default"` and restore drives `/system/bin/cmd appops set ... default`.
+
+Command:
+
+```sh
+cargo test -p puread-android --test rom_profiles rom_profile_modifies_and_restores_shared_prefs_xml_with_backup_and_hash -- --nocapture
+```
+
+Observed output:
+
+```text
+running 1 test
+test rom_profile_modifies_and_restores_shared_prefs_xml_with_backup_and_hash ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out
+```
+
+Coverage:
+- XML mutation records `original_sha256`, `original_value`, and `backup_path` before changing the file.
+- Restore path copies the backup back and the test verifies the original XML bytes are restored exactly.
+
+## dirty worktree
+
+Command:
+
+```sh
+git status --short --ignored
+```
+
+Observed relevant output:
+
+```text
+ M Cargo.lock
+ M crates/puread-android/Cargo.toml
+ M crates/puread-android/src/command_runner.rs
+ M crates/puread-android/src/command_runner/pm.rs
+ M crates/puread-android/src/command_runner/settings.rs
+ M crates/puread-android/src/lib.rs
+ M crates/puread-cli/Cargo.toml
+ M crates/puread-cli/src/cli.rs
+ M crates/puread-cli/src/error.rs
+ M crates/puread-cli/src/ledger.rs
+ M crates/puread-cli/src/main.rs
+ M crates/puread-cli/src/scan.rs
+?? crates/puread-android/src/profiles.rs
+?? crates/puread-android/src/profiles/
+?? crates/puread-android/tests/appops_components.rs
+?? crates/puread-android/tests/rom_profiles.rs
+?? crates/puread-cli/src/lock.rs
+?? crates/puread-cli/src/profile.rs
+?? crates/puread-cli/src/profile_execute.rs
+?? crates/puread-cli/src/rule_plan.rs
+?? crates/puread-cli/tests/cli_profiles.rs
+?? rules/appops/
+?? rules/components/
+?? rules/rom/
+```
+
+Coverage:
+- Worktree is shared and dirty; CLI files are present but were not modified for this task.
+- This task only edited Android profile Rust files/tests and `.omo/evidence/task-23-24-adversarial.txt`.
+- No revert, checkout, reset, commit, push, or git config command was run.
+
+## long command
+
+Command:
+
+```sh
+cargo test -p puread-android --test command_runner command_runner_pm_appops_settings_and_getprop_execute_expected_argv_and_record_output -- --nocapture
+```
+
+Prior observed full-suite output from `cargo test -p puread-android` includes:
+
+```text
+test command_runner_pm_appops_settings_and_getprop_execute_expected_argv_and_record_output ... ok
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+Coverage:
+- The command adapter stores argv as structured vectors, not shell strings.
+- The test asserts long Android command sequences for `pm`, `cmd appops`, `settings`, and `getprop` retain exact argument boundaries.
+- This is the applicable long-command guard for profiles because T23/T24 execute Android commands through `command_runner`; no shell-concatenated profile command exists.
+
+## misleading success output
+
+Command:
+
+```sh
+cargo test -p puread-android --test chattr degrades_when_chattr_claims_success_but_output_reports_failure -- --nocapture
+```
+
+Observed output:
+
+```text
+running 1 test
+test degrades_when_chattr_claims_success_but_output_reports_failure ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out
+```
+
+Coverage:
+- Existing Android command behavior treats suspicious output as observable evidence instead of blind success.
+- T23/T24 component `pm hide` similarly records non-zero or unavailable hide as `hide_status = "skipped_unavailable"` rather than declaring hidden state applied.
+
+Command:
+
+```sh
+cargo test -p puread-android --test appops_components component_profile_disables_enables_and_skips_unavailable_pm_hide -- --nocapture
+```
+
+Observed output:
+
+```text
+running 1 test
+test component_profile_disables_enables_and_skips_unavailable_pm_hide ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out
+```
+
+## mid-operation interrupt
+
+Result: not directly executed.
+
+Reason:
+- T23/T24 profile executor currently exposes synchronous apply/restore operations with fake `AndroidCommandRunner` tests; there is no signal-injection harness or async cancellation surface for these profiles.
+- Applicable recovery evidence is still present: AppOps/components record original mode/enabled/hidden state before mutation, and ROM XML writes a backup plus original hash before rewriting.
+- A true mid-operation interrupt test should be added when the profile executor is wired into the CLI transaction/lock layer, because interruption semantics belong to that process boundary rather than the Android adapter itself.

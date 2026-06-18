@@ -1,0 +1,11 @@
+# Forbidden ROM scan
+command: rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward|private_dns|root hiding|IFW" rules/rom crates/puread-android/src/profiles crates/puread-android/tests/rom_profiles.rs crates/puread-android/src/command_runner/settings.rs crates/puread-android/tests/command_runner.rs
+crates/puread-android/tests/command_runner.rs:293:        "private_dns_mode",
+crates/puread-android/tests/command_runner.rs:294:        "private_dns_specifier",
+crates/puread-android/tests/command_runner.rs:296:        "hosts_file_override",
+crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+rules/rom/miui-ad-settings.toml:39:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+
+Review: forbidden tokens are limited to ROM rule notes or settings/test guards documenting denial of DNS/hosts/proxy-related keys. No production profile executor path implements DNS, hosts, proxy, iptables, private DNS, root hiding, or IFW behavior.

@@ -1,0 +1,109 @@
+# Wave4 final4 QA
+
+Scope:
+- Task: final4 QA after final3 narrow fix.
+- Constraints honored: no product file edits, no commit/push, no git config changes.
+- Evidence file written: `.omo/evidence/review-wave4-final4-qa.txt`.
+- QA runtime cleanup: not needed; cleanup scan found no lingering `*/data/adb` paths.
+
+Verdict: FAIL
+
+Failure:
+- LOC gate failed for touched Rust source/test files.
+- Reproduction:
+  - `awk '!/^[[:space:]]*$/ && !/^[[:space:]]*\/\//' crates/puread-cli/tests/cli_profile_restore.rs | wc -l`
+  - observed: `255`
+  - required: `<=250`
+- Highest touched Rust source/test file:
+  - `crates/puread-cli/tests/cli_profile_restore.rs`: 255 pure LOC
+- Confirmed recent blocker fixed:
+  - `crates/puread-android/tests/appops_components.rs`: 215 pure LOC
+
+Required command results:
+
+1. `cargo fmt --all -- --check`
+   - Exit: 0
+   - Result: PASS
+
+2. `cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings`
+   - Exit: 0
+   - Result: PASS
+   - Key output: `Finished dev profile ... target(s) in 0.05s`
+
+3. `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`
+   - Exit: 0
+   - Result: PASS
+   - Key numbers: 12 passed; 0 failed; 0 ignored; 0 filtered out
+   - Required final-state folding coverage present:
+     - `cli_profile_restore_keeps_component_final_state_per_user_id`
+     - `cli_profile_restore_folds_component_provisional_and_confirmed_records`
+
+4. `cargo test -p puread-cli --test cli_profiles -- --nocapture`
+   - Exit: 0
+   - Result: PASS
+   - Key numbers: 10 passed; 0 failed; 0 ignored; 0 filtered out
+
+5. `cargo test -p puread-cli --test cli_execute_security -- --nocapture`
+   - Exit: 0
+   - Result: PASS
+   - Key numbers: 15 passed; 0 failed; 0 ignored; 0 filtered out
+
+6. `cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture`
+   - Exit: 0
+   - Result: PASS
+   - Key numbers:
+     - `appops_components`: 8 passed; 0 failed; 0 ignored; 0 filtered out
+     - `rom_profiles`: 11 passed; 0 failed; 0 ignored; 0 filtered out
+
+7. `cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom`
+   - Exit: 0
+   - Result: PASS
+   - JSON summary:
+     - `valid`: true
+     - `error_count`: 0
+     - `rule_file_count`: 5
+     - `rule_count`: 9
+
+Additional required scans:
+
+1. LOC check for touched Rust source/test files
+   - Result: FAIL
+   - Touched Rust source/test files scanned: 53
+   - Highest files:
+     - 255 `crates/puread-cli/tests/cli_profile_restore.rs`
+     - 247 `crates/puread-cli/src/restore_fs.rs`
+     - 241 `crates/puread-cli/tests/cli_profiles.rs`
+     - 234 `crates/puread-cli/tests/cli_execute_security.rs`
+     - 230 `crates/puread-cli/tests/support/cli_profile_restore.rs`
+     - 215 `crates/puread-android/tests/appops_components.rs`
+   - Over 250: 1
+
+2. Forbidden scan
+   - Result: PASS for production capability, with raw hits classified.
+   - Focused production/rules hits:
+     - `rules/rom/miui-ad-settings.toml`: note says private DNS/network keys are excluded.
+     - `rules/components/sdk-ad-components.toml`: note says reward video SDK component is not domain or network blocking.
+     - `crates/puread-android/src/command_runner/settings.rs`: allowlist rejects `private_dns_*`, keys containing `dns`, and hosts settings as out of scope.
+   - Broad raw hits also appeared in:
+     - `scripts/verify-local.sh`: forbidden-token guard.
+     - `xtask/upstream-report/src/classifier/forbidden.rs`: upstream rejection classifier.
+     - `xtask/upstream-report/tests/*`: forbidden classifier tests.
+     - `crates/puread-rules/src/{parse.rs,category.rs}` and fixtures/tests: forbidden category/field rejection.
+     - Cargo package descriptions and tests containing "non-domain" or explicit rejected examples.
+   - Classification: rejection guards, tests, metadata, or explanatory notes only. No observed forbidden production capability implementing hosts/DNS/domain/proxy/iptables/AdGuardHome/mount_hosts/ad_reward/root-hide behavior.
+
+3. Test seam scan
+   - Command: `rg -n "PUREAD_TEST_PROFILE_RUNNER" crates/puread-cli/src || true`
+   - Result: PASS
+   - Production `crates/puread-cli/src`: no hits.
+   - Broader check found only `crates/puread-cli/tests/support/cli_profile_restore.rs:29`.
+
+4. Cleanup check
+   - Command: `find . -path './target' -prune -o -path './Example' -prune -o -path '*/data/adb' -print`
+   - Result: PASS
+   - Output: empty
+   - Cleanup performed: none.
+
+Worktree note:
+- Start/end status showed pre-existing modified and untracked Wave4 files plus ignored `AgentLogs/`, `Example/`, and `target/`.
+- This final4 QA added only this evidence file and did not modify product files.

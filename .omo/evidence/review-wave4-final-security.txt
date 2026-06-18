@@ -1,0 +1,213 @@
+# PureAD Wave4 T20/T23/T24 final security review
+
+reviewed_at: 2026-06-18T19:20:00+08:00
+cwd: /root/Projects/Ling/PureADRemoverModule
+verdict: FAIL
+confidence: HIGH
+mode: read-only security audit, except this required evidence file
+
+## Scope
+
+- Reviewed current uncommitted Wave4 workspace state.
+- Inspected `git status --short --ignored` and `git diff HEAD`.
+- Read focused implementation files:
+  - `crates/puread-cli/src/restore.rs`
+  - `crates/puread-cli/src/restore_fs.rs`
+  - `crates/puread-cli/src/profile_execute/*`
+  - `crates/puread-cli/src/scan.rs`
+  - `crates/puread-cli/src/ledger.rs`
+  - `crates/puread-cli/src/lock.rs`
+  - `crates/puread-android/src/profiles/executor/{appops_components.rs,rom.rs,shared.rs}`
+  - `crates/puread-android/src/profiles/xml*`
+  - `crates/puread-android/src/command_runner/{pm.rs,settings.rs}`
+  - targeted tests under `cli_execute_security.rs`, `cli_profiles.rs`, `appops_components.rs`, `rom_profiles.rs`
+- Ran targeted grep only; did not run large tests in this pass.
+- Read prior QA evidence:
+  - `.omo/evidence/task-20-final-green.txt`
+  - `.omo/evidence/task-23-24-final-green.txt`
+  - `.omo/evidence/review-wave4-final-qa.txt`
+  - `.omo/evidence/review-wave4-final-qa2.txt`
+
+## Blocking security issue
+
+### 1. Profile state ledger and lock paths follow symlinks before/while opening state files
+
+Severity: HIGH for module-state integrity and recoverability.
+
+Affected code:
+
+- `crates/puread-cli/src/profile_execute/profile_runtime.rs:57-65`
+  - `JsonlProfileLedger::append()` uses `std::fs::create_dir_all(parent)` and `OpenOptions::new().create(true).append(true).open(&self.path)`.
+  - This follows symlinked parent directories and a symlinked final `profile-actions.jsonl`.
+- `crates/puread-cli/src/lock.rs:22-31`
+  - `GlobalLock::acquire()` uses `fs::create_dir_all(parent)` and plain `OpenOptions::open(path)`.
+  - This follows a symlinked `run` parent or final `puread.lock`.
+- `crates/puread-cli/src/profile.rs:76-84`
+  - `apply-profile --execute` derives the lock and profile ledger from user-supplied `--module-root`, then executes Android profile mutations after ledger append.
+
+Risk chain:
+
+1. An attacker or buggy prior run controls or tampers with the module state path, for example:
+   - `/data/adb/modules/puread/state` is a symlink to another writable directory, or
+   - `/data/adb/modules/puread/state/profile-actions.jsonl` is a symlink to another file, or
+   - `/data/adb/modules/puread/run` / `puread.lock` is a symlink.
+2. User runs an explicit Android profile mutation:
+   - `puread-cli apply-profile component --execute --rules rules/components --root / --module-root /data/adb/modules/puread`
+3. The lock open and profile ledger append follow the symlink.
+4. `AndroidProfileExecutor::operation()` considers the append successful because `ProfileLedgerSink::append()` returned `Ok(())`.
+5. Mutation proceeds:
+   - component path: `pm hide` capability attempt and `pm disable-user`
+   - appops path: `cmd appops set`
+   - ROM settings path: `settings put`
+6. The restore record may be written outside the intended module state ledger, may be attacker-controlled, or may be unavailable to the normal restore/report path. This breaks the key safety invariant that mutation is recoverable from module-local state.
+
+Concrete reproduction sketch:
+
+```sh
+ROOT="$(mktemp -d)"
+MODULE="$ROOT/module"
+OUTSIDE="$ROOT/outside"
+mkdir -p "$MODULE" "$OUTSIDE"
+ln -s "$OUTSIDE" "$MODULE/state"
+PUREAD_TEST_PROFILE_RUNNER=1 \
+PUREAD_TEST_PROFILE_RUNNER_LOG="$ROOT/runner.log" \
+cargo run -q -p puread-cli -- \
+  apply-profile component --execute \
+  --rules rules/components \
+  --root tests/fixtures/android-fs \
+  --module-root "$MODULE"
+
+# Expected secure behavior: fail before mutation because state parent is a symlink.
+# Current risk: profile ledger append follows "$MODULE/state" to "$OUTSIDE/profile-actions.jsonl",
+# then pm hide / pm disable-user can be issued through the runner.
+test -f "$OUTSIDE/profile-actions.jsonl"
+grep -E "pm hide|pm disable-user" "$ROOT/runner.log"
+```
+
+A similar lock-path reproduction uses `ln -s "$OUTSIDE" "$MODULE/run"` before `apply-profile --execute`; the lock file is opened through the symlink instead of being rejected as an unsafe module-state path.
+
+Why this is blocking:
+
+- The project safety contract requires real mutation to be conservative and recoverable.
+- The reviewed profile execution path correctly requires ledger append before mutation, but the ledger sink itself is not protected against state path symlink escape.
+- The user explicitly requested review of lock/state file permissions, paths, and concurrency risk.
+- Existing tests cover injected ledger failure (`PUREAD_TEST_PROFILE_LEDGER_FAIL`) but do not cover symlinked module state paths or final ledger symlink.
+
+Minimum fix:
+
+- Replace profile ledger append with secure module-state file I/O:
+  - Validate `module_root` is absolute for real execution.
+  - Ensure `state/` parent chain under `module_root` is no-follow and not symlinked.
+  - Open `state/profile-actions.jsonl` with final-component no-follow semantics.
+  - Prefer `O_NOFOLLOW | O_CLOEXEC | O_APPEND | O_CREAT`; use mode `0600` or `0640`.
+  - Reject symlinked final ledger path instead of following it.
+- Replace lock acquisition path setup/open with secure no-follow I/O:
+  - Ensure `run/` parent chain under `module_root` is no-follow.
+  - Open final `puread.lock` with no-follow and a restrictive mode.
+  - Reject symlinked override lock paths, or only allow overrides after explicit no-follow validation.
+- Add targeted tests:
+  - `apply-profile --execute` rejects `module_root/state` parent symlink and does not issue `pm hide`, `pm disable-user`, `cmd appops set`, `settings put`, or XML write.
+  - `apply-profile --execute` rejects final `state/profile-actions.jsonl` symlink before mutation.
+  - `apply-profile --execute` rejects `module_root/run` and final `run/puread.lock` symlinks before mutation.
+  - Assertions should verify runner log contains only read-only probes, or no commands if lock validation fails first.
+
+## Passed checks
+
+### Restore --execute target and backup safety
+
+Result: PASS.
+
+Evidence:
+
+- `crates/puread-cli/src/restore.rs:50-63` acquires the global lock before reading/restoring records and only applies clear attempts after restore attempts are collected.
+- `crates/puread-cli/src/restore.rs:71-87` records failed restore attempts as failed in the report and attempt list.
+- `crates/puread-cli/src/restore_fs.rs:27-35` enforces root-bound and parent-chain checks through `RestoreRoot`.
+- `crates/puread-cli/src/restore_fs.rs:96-108` calls `root.guard_existing_path(path)` before `remove_dir_all` or `remove_file`.
+- `crates/puread-cli/src/restore_fs.rs:116-118` uses the same guarded `remove_placeholder()` for directory restore replacement.
+- `crates/puread-cli/src/restore_fs.rs:147-158` ensures parent path then rejects final symlink and opens with `O_NOFOLLOW`.
+- `crates/puread-cli/src/restore_fs.rs:255-267` rejects final symlink.
+- `crates/puread-core/src/restore_ledger/store.rs:115-136` only removes succeeded attempts, preserves failed attempts, and returns an error if ledger rewrite fails.
+- Tests in `crates/puread-cli/tests/cli_execute_security.rs:217-266` and support cases in `tests/support/cli_restore_adversarial.rs:18-199` cover target symlink, target parent symlink, directory restore parent symlink, explicit `RemovePlaceholder` parent symlink, backup symlink, backup parent symlink, backup path escape, missing parent recreation, and mode restore.
+
+Residual note:
+
+- `restore_fs.rs` uses `remove_dir_all()` after no-follow parent/final checks. That still has theoretical TOCTOU exposure between check and deletion if an attacker can swap the final path after validation. Current tests cover parent symlink attacks requested for T20; a stronger future hardening would use descriptor-relative deletion, but I did not classify this as the blocker in this final review because the explicit required parent-symlink and final-symlink checks are present and tested.
+
+### ROM SharedPreferences/XML writes
+
+Result: PASS for the requested XML mutation path.
+
+Evidence:
+
+- `crates/puread-android/src/profiles/executor/rom.rs:31-46` plans and preflights XML, appends ledger through `self.applied(&record)`, then commits XML.
+- `crates/puread-android/src/profiles/xml.rs:42-70` opens the XML target with `secure_fs::open_read_no_follow()` during planning.
+- `crates/puread-android/src/profiles/xml.rs:104-111` preflights target and backup before ledger append.
+- `crates/puread-android/src/profiles/xml.rs:73-101` creates backup and commits through `secure_fs` no-follow functions.
+- `crates/puread-android/src/secure_fs/unix.rs:17-31`, `33-47`, and `101-129` implement absolute-path, no-traversal, parent-chain no-follow, and final `OFlags::NOFOLLOW` behavior.
+- Tests in `crates/puread-android/tests/rom_profiles.rs:123-150` verify ledger failure prevents XML mutation and backup.
+- Tests in `crates/puread-android/tests/rom_profiles/security.rs:16-168` cover XML target symlink, relative/traversal paths, XML parent symlink, backup dir symlink, existing backup collision, and backup file symlink.
+
+### AppOps/component/ROM ledger-before-mutation ordering
+
+Result: PASS for command mutation ordering.
+
+Evidence:
+
+- `crates/puread-android/src/profiles/executor.rs:45-52` serializes and appends the profile record before returning an applied/skipped operation.
+- `crates/puread-android/src/profiles/executor/appops_components.rs:20-34` probes AppOps, appends record via `self.applied()`, then runs `appops set`.
+- `crates/puread-android/src/profiles/executor/appops_components.rs:57-75` probes package/disabled/hidden state, appends record via `self.applied()`, then attempts `pm hide` and disables the component.
+- `crates/puread-android/src/profiles/executor/rom.rs:78-99` probes settings, appends record, then runs `settings put`.
+- Tests:
+  - `crates/puread-android/tests/appops_components.rs:185-244` verifies appops/component ledger failure blocks mutation.
+  - `crates/puread-android/tests/rom_profiles.rs:89-150` verifies ROM settings/shared_prefs ledger failure blocks mutation.
+  - `crates/puread-cli/tests/cli_profiles.rs:206-243` verifies CLI profile ledger failure blocks `pm hide` and `pm disable-user`.
+
+Important caveat:
+
+- The ordering is correct only if `ProfileLedgerSink::append()` is a trustworthy module-state write. The blocking issue above shows the concrete gap.
+
+### pm hide scope
+
+Result: PASS.
+
+Evidence:
+
+- `crates/puread-android/src/command_runner/pm.rs:62-77` only constructs `/system/bin/pm hide` and `/system/bin/pm unhide` invocations.
+- `crates/puread-android/src/profiles/executor/appops_components.rs:107-119` treats `TryHide` as a runner-backed attempt; command failure maps to `SkippedUnavailable`.
+- `crates/puread-android/tests/appops_components.rs:51-183` covers unavailable, failed, and available `pm hide` behavior.
+- Targeted grep found no Zygisk/root hiding/anti-detection implementation in reviewed execution paths.
+
+### DNS/domain/hosts/proxy/network boundary
+
+Result: PASS.
+
+Evidence:
+
+- Targeted grep over reviewed code/rules found no executable hosts, DNS, domain-list, proxy, iptables, Clash/Mihomo/Box, AdGuardHome, `mount_hosts`, or `ad_reward` implementation.
+- Only ROM rule hit was documentation text: `rules/rom/miui-ad-settings.toml:35`, explicitly saying no private DNS/network/proxy/privacy keys are included.
+- `crates/puread-android/src/command_runner/settings.rs:102-129` denies DNS/hosts/proxy settings keys and enforces an allowlist for ROM settings.
+
+## Targeted grep evidence
+
+Commands run:
+
+```sh
+git status --short --ignored
+git diff HEAD -- crates/puread-cli/src/restore.rs crates/puread-cli/src/restore_fs.rs crates/puread-cli/src/profile_execute crates/puread-cli/src/scan.rs crates/puread-cli/src/ledger.rs crates/puread-cli/src/lock.rs crates/puread-android/src/profiles crates/puread-android/src/command_runner/pm.rs crates/puread-android/src/command_runner/settings.rs crates/puread-cli/tests/cli_execute_security.rs crates/puread-cli/tests/cli_profiles.rs crates/puread-android/tests/appops_components.rs crates/puread-android/tests/rom_profiles.rs --stat
+rg -n "std::fs::remove|remove_dir_all|remove_file|OpenOptions::new\\(|create_dir_all\\(|set_permissions\\(|write_all\\(|set_len\\(|rename\\(|pm hide|disable-user|appops set|settings put|settings delete|hosts|DNS|domain|proxy|iptables|AdGuardHome|mount_hosts|ad_reward|root_hide|zygisk" crates/puread-cli/src/restore.rs crates/puread-cli/src/restore_fs.rs crates/puread-cli/src/profile_execute crates/puread-cli/src/scan.rs crates/puread-cli/src/ledger.rs crates/puread-cli/src/lock.rs crates/puread-android/src/profiles crates/puread-android/src/command_runner/pm.rs crates/puread-android/src/command_runner/settings.rs crates/puread-cli/tests/cli_execute_security.rs crates/puread-cli/tests/cli_profiles.rs crates/puread-android/tests/appops_components.rs crates/puread-android/tests/rom_profiles.rs
+rg -n "hosts|DNS|iptables|Clash|Mihomo|Box|AdGuardHome|mount_hosts|ad_reward|zygisk|root_hide|proxy|domain" crates rules --glob '!**/target/**'
+```
+
+Key outputs:
+
+- Dangerous plain state I/O hits:
+  - `crates/puread-cli/src/lock.rs:22`, `26`, `82`
+  - `crates/puread-cli/src/profile_execute/profile_runtime.rs:58`, `60`
+- Restore mutation hits are guarded in `restore_fs.rs` as described above.
+- Forbidden capability scan did not show executable network/hosts/proxy/ad_reward capability in production paths.
+
+## Final verdict
+
+FAIL.
+
+No blocking issue was found in the requested restore target/backup no-follow fixes, ROM XML no-follow write path, command mutation ordering, `pm hide` scope, or network-boundary scan. The blocking issue is the remaining ordinary filesystem handling for profile state ledger and lock files, which can follow symlinks and lets a successful profile mutation be recorded outside the intended module state path.

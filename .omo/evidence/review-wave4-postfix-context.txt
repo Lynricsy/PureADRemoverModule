@@ -1,0 +1,110 @@
+PureAD Wave4 postfix context-mining review
+generated_at: 2026-06-18T16:48:00+08:00
+lane: E context mining after fixes
+verdict: PASS
+
+Scope
+- Reviewed previous context FAIL items only:
+  1. T23/T24 rules did not validate against schema.
+  2. T20 scan --execute was inconsistent with the plan.
+- Did not edit product files, commit, push, or set git config.
+
+Sources searched
+- AgentLogs searched first via search_logs:
+  query: PureADRemoverModule T20 T23 T24 scan --execute schema validation review lane E context mining previous FAIL
+- AgentLogs read:
+  - 0129-PureAD-Wave4-T20-T23-T24-context-mining-review.md
+  - 0130-PureAD-Wave4-T20-T23-T24-复审失败与修复方向.md
+  - 0131-PureAD-Wave4-阻塞修复进入验证收尾.md
+  - 0128-PureAD-Wave4-T20-T24-review-lane-2-QA-PASS.md
+- Project requirements:
+  - AGENTS.md
+  - .omo/plans/puread-rust-module.md
+- Final evidence:
+  - .omo/evidence/task-20-final-green.txt
+  - .omo/evidence/task-23-24-final-green.txt
+  - .omo/evidence/review-wave4-context.txt
+- Current implementation and rules:
+  - crates/puread-cli/src/cli.rs
+  - crates/puread-cli/src/scan.rs
+  - crates/puread-cli/src/rule_plan.rs
+  - crates/puread-cli/src/profile_execute.rs
+  - crates/puread-cli/tests/cli_profiles.rs
+  - crates/puread-cli/tests/cli_execute_security.rs
+  - crates/puread-rules/src/raw.rs
+  - crates/puread-rules/src/target.rs
+  - crates/puread-rules/src/validation.rs
+  - crates/puread-rules/src/rule.rs
+  - rules/appops/luna-and-reader-appops.toml
+  - rules/components/mi-market-components.toml
+  - rules/components/sdk-ad-components.toml
+  - rules/rom/miui-ad-settings.toml
+  - rules/rom/miui-shared-prefs.toml
+
+Worktree context
+- git status --short --ignored shows many Wave4 modified/untracked files still present.
+- Example remains ignored only: git diff --name-only -- Example produced no tracked diff; git status --short --ignored -- Example showed only "!! Example/".
+- This review added only this evidence file.
+
+Previous blocker 1: T23/T24 rule schema validation
+- Current result: fixed.
+- Command:
+  cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom
+- Output summary:
+  {
+    "schema_version": 1,
+    "command": "rules_validate",
+    "valid": true,
+    "error_count": 0,
+    "rule_file_count": 5,
+    "rule_count": 9
+  }
+- Current schema now accepts profile targets:
+  - raw.rs has target_component, appop, and appop_mode fields under deny_unknown_fields.
+  - target.rs builds Component and AppOp RuleTarget variants and validates package ownership / uppercase appop / supported mode.
+  - validation.rs allows component:disable_component, appops:set_appop, and rom_profile:rom_setting.
+- Current rules use the schema-compatible field names:
+  - appops rules use appop and appop_mode.
+  - component rules use target_component.
+  - ROM rules validate as rom_profile with rom_setting and guarded path templates.
+
+Previous blocker 2: T20 scan --execute inconsistency
+- Current result: fixed enough for context lane.
+- scan.rs no longer returns RealScanUnsupported. It rejects conflicting mode flags, plans rules, acquires a global lock under data/adb/modules/puread/run/puread.lock for execute mode, and runs ExecutionSummary::execute.
+- Independent temporary-fixture command:
+  tmp=$(mktemp -d /tmp/puread-review-wave4.XXXXXX)
+  cp -a tests/fixtures/android-fs "$tmp/root"
+  mkdir -p "$tmp/root/data/adb/modules/puread"
+  cargo run -p puread-cli -- scan --execute --root "$tmp/root" > "$tmp/scan-execute.json"
+- Output summary:
+  - exit_status=0
+  - JSON mode="execute"
+  - dry_run=false
+  - will_mutate=true
+  - action_count=2
+- Observed effects in temporary root:
+  - The two planned Aweme splash cache directories were emptied.
+  - $tmp/root/data/adb/modules/puread/state/actions.jsonl was created.
+  - Ledger records contain restore_content, set_mode, and set_owner steps for both emptied directories.
+- No repository fixture was mutated by this execute check.
+
+Supporting verification
+- cargo test -p puread-cli cli_profiles -- --nocapture
+  - PASS: 7 cli_profiles tests passed.
+- cargo test -p puread-android --test appops_components -- --nocapture
+  - PASS: 3 tests passed.
+- cargo test -p puread-android --test rom_profiles -- --nocapture
+  - PASS: 5 tests passed.
+- rg -n "RealScanUnsupported|real scan execution is not implemented|scan --execute" crates/puread-cli crates/puread-android rules/appops rules/components rules/rom .omo/evidence/task-20-final-green.txt .omo/evidence/task-23-24-final-green.txt
+  - No current implementation hit for RealScanUnsupported or the old unimplemented scan error.
+
+Notes
+- task-20-final-green.txt still contains one exit_status=1, but it is the expected global-lock conflict proof and is marked expected_failure_observed=true.
+- task-20-final-green.txt documents apply-profile --execute and restore --execute against a copied temporary fixture. It does not include a saved scan --execute transcript, so this lane independently ran scan --execute in /tmp and recorded the observed result above.
+- A reviewer typo command, cargo test -p puread-android appops components -- --nocapture, was rejected by Cargo as an invalid invocation and was not counted as product failure. Correct test-target invocations passed.
+
+Blocking issues
+- None found for marking T20/T23/T24 complete from this context-mining lane.
+
+Final verdict
+- PASS: the two previous context blockers are fixed, and no new context blocker was found in AGENTS.md, the plan, final evidence, git status, or current implementation/rules.

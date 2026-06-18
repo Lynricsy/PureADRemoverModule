@@ -1,0 +1,368 @@
+# Wave4 final4 context/evidence/plan consistency review
+
+reviewed_at: 2026-06-18T20:36:27+08:00
+updated_after_parallel_final4_evidence: 2026-06-18T20:44:00+08:00
+cwd: /root/Projects/Ling/PureADRemoverModule
+mode: read-only context/evidence audit; no product files changed
+verdict: FAIL
+
+## Scope
+
+Task: final4 context/evidence/plan consistency review for deciding whether T20/T23/T24 can be checked.
+
+Constraints observed:
+- Sent required preflight message: `WORKING: final4 context - checking evidence and plan`.
+- Did not modify product files.
+- Did not commit, push, or set git config.
+- Used AgentLogs MCP first for history lookup.
+- Wrote only this evidence file.
+
+## AgentLogs history lookup
+
+Required history lookup was performed through `search_logs`, not manual AgentLogs file search.
+
+Query:
+- `final4 T20 T23 T24 review wave4 QA quality security context evidence PureADRemoverModule`
+
+Result:
+- No completed final4 QA/quality/security/context PASS log was found.
+- Relevant results were older or preparatory:
+  - `0185-Wave4-final3-narrow-blockers-fixed-ready-for-final4.md`
+  - `0184-task-23-final-state-user_id-folding-and-appops_components-LOC-fixed.md`
+  - `0183-PureADRemoverModule-Wave4-final3-QA.md`
+  - `0182-Wave4-final3-context-evidence-review-failed.md`
+  - `0181-Wave4-final3-quality-review-failed-on-component-user_id-folding.md`
+  - `0177-PureAD-task20-profile-restore-lock-order-fix.md`
+  - `0179-task-23-component-hide-durable-final-state-fixed.md`
+  - `0173-Wave4-final2-T20-T23-T24-闭环复审.md`
+
+History read:
+- `0185-Wave4-final3-narrow-blockers-fixed-ready-for-final4.md`
+
+Assessment:
+- `0185` records that final3 narrow blockers were fixed and that final4 QA/quality/security/context should be started.
+- It is not a final4 QA/quality/security PASS artifact.
+
+## Required final4 evidence files
+
+Required by task:
+- `.omo/evidence/review-wave4-final4-qa.txt`
+- `.omo/evidence/review-wave4-final4-quality.txt`
+- `.omo/evidence/review-wave4-final4-security.txt`
+
+Initial check:
+- These files were absent at the first read, so the first draft of this context evidence recorded missing final4 artifacts.
+
+Parallel update:
+- Before final response, `git status --short --ignored` showed the three final4 evidence files had appeared.
+- I re-read all three files and updated this context evidence.
+
+Assessment:
+- final4 evidence is now present.
+- final4 QA is FAIL.
+- final4 quality is FAIL.
+- final4 security is PASS.
+- Therefore the PASS criterion "final4 QA/quality/security all PASS" is not satisfied.
+
+## Latest relevant evidence reviewed
+
+### `.omo/evidence/task-23-final-state-user-loc-fix.txt`
+
+Present and read.
+
+Key evidence:
+- Fixes final3 quality blocker 1 by adding `user_id` to `ComponentActionKey`.
+- Adds regression test `cli_profile_restore_keeps_component_final_state_per_user_id`.
+- Regression asserts both `pm enable --user 0 ...` and `pm enable --user 10 ...` run once and both records are restored.
+- Fixes final3 quality blocker 2 by reducing `crates/puread-android/tests/appops_components.rs` to 205 pure LOC.
+- Verification recorded:
+  - `cargo fmt --all -- --check`: passed.
+  - `cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings`: passed.
+  - `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`: passed, 12 passed.
+  - `cargo test -p puread-android --test appops_components -- --nocapture`: passed, 8 passed.
+
+Assessment:
+- This is good targeted fix evidence for the two final3 quality blockers.
+- It is corroborated by final4 quality/security for the `user_id` folding fix, but final4 QA/quality still fail on a new LOC gate.
+
+### `.omo/evidence/review-wave4-final4-qa.txt`
+
+Present and read after it appeared during this review.
+
+Verdict:
+- FAIL
+
+Passing evidence:
+- `cargo fmt --all -- --check`: PASS.
+- `cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings`: PASS.
+- `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`: PASS, 12 passed.
+- `cargo test -p puread-cli --test cli_profiles -- --nocapture`: PASS, 10 passed.
+- `cargo test -p puread-cli --test cli_execute_security -- --nocapture`: PASS, 15 passed.
+- `cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture`: PASS, appops 8 passed and ROM 11 passed.
+- `cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom`: PASS, valid=true, error_count=0, rule_count=9.
+- Forbidden production capability scan: PASS after classification.
+- Test seam scan: PASS.
+- Cleanup check: PASS.
+
+Blocking issue:
+- LOC gate failed because `crates/puread-cli/tests/cli_profile_restore.rs` is 255 pure LOC and must be <=250.
+- The old final3 QA blocker for `crates/puread-android/tests/appops_components.rs` is fixed enough for this file: final4 QA reports it at 215 pure LOC.
+
+Assessment:
+- final4 QA does not pass.
+
+### `.omo/evidence/review-wave4-final4-quality.txt`
+
+Present and read after it appeared during this review.
+
+Verdict:
+- FAIL
+
+Passing evidence:
+- `ComponentActionKey` now includes `rule_id`, `user_id`, `package`, and `component`.
+- `component_action_key` parses `user_id` and uses it in target matching and restored-index folding.
+- The reviewer did not find deletion of unrecovered, later, different-user, or different-action records.
+- Targeted tests passed:
+  - `cli_profile_restore_keeps_component_final_state_per_user_id`
+  - `cli_profile_restore_folds_component_provisional_and_confirmed_records`
+  - `cli_profile_restore_keeps_component_skipped_only_record_without_unhide`
+  - `cli_profile_restore_default_runner_ignores_env_fake_runner`
+  - Android component profile targeted tests, 4 passed.
+- Forbidden capability scan found no new production DNS/domain/hosts/proxy/iptables/root-hiding capability.
+
+Blocking issue:
+- `crates/puread-cli/tests/cli_profile_restore.rs` is 255 pure LOC, exceeding the <=250 pure LOC ceiling for touched Rust files.
+
+Assessment:
+- final3's `user_id` folding blocker is covered.
+- final3's `appops_components.rs` LOC blocker is covered.
+- final4 quality does not pass because a new touched-file LOC blocker remains.
+
+### `.omo/evidence/review-wave4-final4-security.txt`
+
+Present and read after it appeared during this review.
+
+Verdict:
+- PASS
+
+Passing evidence:
+- Component final-state folding key includes `user_id`.
+- `profile-restore --execute` still locks before reading and rewrite preserves locked-read records under the project-lock precondition.
+- Profile ledger/lock symlink and path-escape protections remain.
+- `pm hide` success durable confirmed records restore via unhide; skipped/failure paths do not unhide.
+- No DNS/domain/hosts/proxy/iptables/AdGuardHome/root-hiding/anti-detection production capability was found.
+
+Assessment:
+- final4 security passes.
+
+### `.omo/evidence/review-wave4-final3-qa.txt`
+
+Present and read as old final3 FAIL evidence.
+
+Final command verdicts include:
+- fmt: PASS
+- clippy: PASS
+- CLI restore/profile/security tests: PASS
+- Android appops/ROM tests: PASS
+- rules validate: PASS
+- forbidden scan: PASS after classification
+- test seam scan: PASS
+- cleanup check: PASS
+- LOC check: FAIL, `crates/puread-android/tests/appops_components.rs` was 255 pure LOC
+
+Final verdict:
+- `<verdict>FAIL</verdict>`
+
+Assessment:
+- This old final3 QA FAIL is targeted by `task-23-final-state-user-loc-fix.txt` and final4 QA confirms the old appops LOC target is no longer the failing file.
+- It is not fully superseded by a passing final4 QA artifact because final4 QA itself is FAIL on `crates/puread-cli/tests/cli_profile_restore.rs` pure LOC.
+
+### `.omo/evidence/review-wave4-final3-quality.txt`
+
+Present and read as old final3 FAIL evidence.
+
+Blocking issues recorded:
+- `profile-restore` folded component records without `user_id`, causing cross-user restore collapse and false restored marking.
+- `crates/puread-android/tests/appops_components.rs` was 255 pure LOC.
+
+Final verdict:
+- FAIL
+
+Assessment:
+- Both blockers are targeted by `task-23-final-state-user-loc-fix.txt`.
+- final4 quality confirms both old final3 quality blockers are fixed at the behavior level.
+- It is not a passing final4 quality artifact because a new pure LOC blocker remains.
+
+### `.omo/evidence/review-wave4-final3-security.txt`
+
+Present and read.
+
+Verdict:
+- PASS
+
+Assessment:
+- final4 security also exists and passes.
+
+### Older postfix evidence
+
+Read as historical context:
+- `.omo/evidence/review-wave4-postfix-qa.txt`: PASS, generated earlier at 2026-06-18T16:50:59+08:00.
+- `.omo/evidence/review-wave4-postfix-context.txt`: PASS, generated earlier at 2026-06-18T16:48:00+08:00.
+
+Assessment:
+- These are older postfix artifacts and predate final3/final4 naming and final3 narrow blocker discovery.
+- They do not override the newer final4 QA/quality FAIL evidence.
+
+## Plan status
+
+Read `.omo/plans/puread-rust-module.md`.
+
+Current status:
+```text
+292:- [ ] 20. CLI 手动扫描和应用 profile
+316:- [ ] 23. 实现 AppOps 与组件 profile
+324:- [ ] 24. 实现 ROM profile 与 settings/XML 修改
+```
+
+Assessment:
+- T20, T23, and T24 are currently unchecked.
+- They should remain unchecked until final4 QA/quality/security PASS artifacts exist.
+
+## Repository context checks
+
+### AGENTS upstream instructions
+
+Read `AGENTS.md` key sections.
+
+Present:
+- `项目边界`
+- `禁止能力`
+- `上游源清单`
+- `当前快照记录`
+- `同步流程`
+- `规则分类矩阵`
+- `规则溯源字段`
+- `验证命令`
+- `任务日志要求`
+- `Git 与非 Git 注意事项`
+- `Example/ 只读约定`
+- Required remote text: `git@github.com:Lynricsy/PureADRemoverModule.git`
+
+Assessment:
+- PASS.
+
+### `.gitignore` / `Example/`
+
+Commands and outputs:
+```text
+rg -n "^Example/$" .gitignore
+2:Example/
+
+git check-ignore -v Example/ads288.zip Example/Adguard-Home-For-Magisk-Mod
+.gitignore:2:Example/	Example/ads288.zip
+.gitignore:2:Example/	Example/Adguard-Home-For-Magisk-Mod
+
+git ls-files Example
+<no output>
+```
+
+Assessment:
+- `Example/` is ignored and not tracked.
+- PASS.
+
+### Remote
+
+Command:
+```text
+git remote -v
+origin	git@github.com:Lynricsy/PureADRemoverModule.git (fetch)
+origin	git@github.com:Lynricsy/PureADRemoverModule.git (push)
+```
+
+Assessment:
+- PASS.
+
+### Local git identity
+
+Commands:
+```text
+git config --local --get user.name
+exit_code=1, no output
+
+git config --local --get user.email
+exit_code=1, no output
+
+git config --local --list --show-origin
+file:.git/config	core.repositoryformatversion=0
+file:.git/config	core.filemode=true
+file:.git/config	core.bare=false
+file:.git/config	core.logallrefupdates=true
+file:.git/config	remote.origin.url=git@github.com:Lynricsy/PureADRemoverModule.git
+file:.git/config	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config	branch.main.remote=origin
+file:.git/config	branch.main.merge=refs/heads/main
+```
+
+Assessment:
+- No local `user.name` or `user.email`.
+- PASS.
+
+### Worktree note
+
+`git status --short --ignored` shows many existing modified and untracked Wave4 product/rule/evidence files plus ignored `AgentLogs/`, `Example/`, `target/`, and `xtask/upstream-report/target/`.
+
+Assessment:
+- This review did not restore or overwrite those files.
+- This evidence file is the only file written by this review.
+
+## Consistency decision
+
+PASS criteria evaluation:
+- final4 QA PASS: FAIL. File exists but verdict is FAIL.
+- final4 quality PASS: FAIL. File exists but verdict is FAIL.
+- final4 security PASS: PASS.
+- old final3 FAIL covered: PARTIAL/PRACTICALLY COVERED AT ISSUE LEVEL, but not enough for overall PASS.
+  - Targeted fix evidence exists in `task-23-final-state-user-loc-fix.txt`.
+  - final4 quality/security confirm the `user_id` folding fix.
+  - final4 QA confirms the old `appops_components.rs` LOC issue is no longer the blocker.
+  - The final4 layer still fails because `crates/puread-cli/tests/cli_profile_restore.rs` is 255 pure LOC.
+- AGENTS upstream instructions present: PASS.
+- Example ignored: PASS.
+- Remote correct: PASS.
+- Local git config has no `user.name`/`user.email`: PASS.
+- Example not tracked: PASS.
+
+## T20/T23/T24 checkbox recommendation
+
+Do not check T20/T23/T24 yet.
+
+Reason:
+- The explicit PASS criterion requires final4 QA/quality/security all PASS.
+- final4 QA and final4 quality are FAIL.
+
+Per task:
+- T20: keep unchecked until final4 QA/quality/security pass as a set. The current blocker is in CLI restore test LOC.
+- T23: targeted user_id/appops LOC fix evidence exists and final4 behavior checks support it, but keep unchecked until final4 QA/quality/security pass as a set.
+- T24: repository context checks are clean and final4 QA reports ROM tests passed, but keep unchecked until final4 QA/quality/security pass as a set.
+
+## Blocking items
+
+1. `.omo/evidence/review-wave4-final4-qa.txt` verdict is FAIL.
+   - Blocking issue: `crates/puread-cli/tests/cli_profile_restore.rs` is 255 pure LOC, exceeding the <=250 touched-Rust-file ceiling.
+2. `.omo/evidence/review-wave4-final4-quality.txt` verdict is FAIL.
+   - Blocking issue: same `crates/puread-cli/tests/cli_profile_restore.rs` pure LOC violation.
+3. `.omo/evidence/review-wave4-final4-security.txt` verdict is PASS and is not a blocker.
+4. Because final4 QA and quality are not PASS, T20/T23/T24 should not be checked yet.
+
+## Closeout TODO
+
+- Reduce `crates/puread-cli/tests/cli_profile_restore.rs` from 255 pure LOC to <=250, or document an accepted exception if the project allows one.
+- Re-run final4 QA and ensure it ends PASS.
+- Re-run final4 quality and ensure it ends PASS.
+- Keep final4 security PASS unless subsequent code changes touch the reviewed surface.
+- Re-run this context/evidence/plan consistency review after final4 QA and quality are PASS.
+- Only then mark T20/T23/T24 complete in `.omo/plans/puread-rust-module.md`.
+
+## Final verdict
+
+<verdict>FAIL</verdict>

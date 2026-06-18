@@ -1,0 +1,114 @@
+PureAD Wave4 T20/T23/T24 最终上下文复审 2
+生成时间：2026-06-18T18:44:31+08:00
+工作区：/root/Projects/Ling/PureADRemoverModule
+结论：FAIL
+
+范围与约束
+- 角色：Wave4 T20/T23/T24 只读上下文审计者。
+- 未修改产品文件。
+- 未 commit、未 push、未设置 git config。
+- 本轮只写入用户要求的 evidence 文件：.omo/evidence/review-wave4-final-context2.txt。
+- 已按要求先使用 search_logs 查询 AgentLogs，未手动关键词搜索日志文件。
+
+历史日志查询
+- 使用的 search_logs 查询：
+  PureAD Wave4 final review blockers evidence plan T20 T23 T24
+- 已读取的相关日志：
+  - 0130-PureAD-Wave4-T20-T23-T24-复审失败与修复方向.md
+  - 0155-PureAD-Wave4-T20-T23-T24-final-context-mining-FAIL.md
+  - 0156-task-20-restore-execute-删除前-root-bound-no-follow-校验修复.md
+  - 0158-PureAD-profile-execute-runner-ledger-修复完成.md
+  - 0133-PureAD-Wave4-T20-T23-T24-final-green-验证收尾完成.md
+
+历史结论梳理
+- 0130 记录过真实 Wave4 阻塞：规则 schema 不兼容、execute/restore 路径缺失或不安全、Android profile ledger 顺序问题、LOC 问题、旧红证据未闭环。
+- 0155 记录后续 final context 失败：当时 T20/T23/T24 仍未勾选，且 task-23-24-final-green 仍写 BLOCKED/summary_failures=1。
+- 0156 声称 T20 restore execute root-bound/no-follow 阻塞已修复并验证。
+- 0158 声称 profile execute 生产 runner 与持久 ledger 阻塞已修复，并声称 task-20-final-green 与 task-23-24-final-green 已刷新为 GREEN。
+- 0133 是更早的 green 记录，可作为历史参考，但在时间线上已被后续 0155/0156/0158 覆盖。
+
+AGENTS.md 复审
+- PASS：AGENTS.md 包含项目边界、禁止能力、上游源清单、当前快照记录字段、同步流程、规则分类矩阵、规则溯源字段、验证命令、AgentLogs 规则、Git/非 Git 规则、Example 只读约定。
+- PASS：AGENTS.md 已说明未来如何获取/确认上游：只能使用主人提供或本地快照，记录 SHA256/remote/commit/file_count，分类候选规则，拒绝 hosts/DNS/domain/proxy/iptables/AdGuardHome/ad_reward/IFW 清空/root hiding 等能力，生成 diff 报告，并在落地前验证 forbidden token。
+- 未发现 AGENTS.md 收口阻塞。
+
+计划文件复审
+- 当前计划仍将 Wave4 三项保留为未完成：
+  - .omo/plans/puread-rust-module.md:292: [ ] 20. CLI 手动扫描和应用 profile
+  - .omo/plans/puread-rust-module.md:316: [ ] 23. 实现 AppOps 与组件 profile
+  - .omo/plans/puread-rust-module.md:324: [ ] 24. 实现 ROM profile 与 settings/XML 修改
+- 按用户说明，如果 evidence/QA 全部过关，这本身不算代码 FAIL，但必须作为最终收口待办。
+- 未发现 T20/T23/T24 被错误勾选。
+
+Git 与 Example 复审
+- PASS：.gitignore 包含 Example/。
+- PASS：git ls-files Example 无输出，说明 Example 没有进入跟踪文件。
+- PASS：git status --short --ignored -- Example 仅显示：
+  !! Example/
+- PASS：git remote -v 显示：
+  origin git@github.com:Lynricsy/PureADRemoverModule.git (fetch)
+  origin git@github.com:Lynricsy/PureADRemoverModule.git (push)
+- PASS：git config --local --list --show-origin 未出现 user.name 或 user.email；本地 config 只有仓库 core、origin URL/fetch 和 main 分支跟踪项。
+- 工作树仍有大量 Wave4 源码、规则和 evidence 的未提交/未跟踪变更；这是本轮复审上下文，不应被恢复。
+- 最终 git status 中出现新的 .omo/evidence/review-wave4-final-quality.txt，判断为其他并行 worker/会话新增；本轮未恢复、覆盖或修改它。
+
+final green evidence 复审
+- PASS：.omo/evidence/task-20-final-green.txt 当前写 status: GREEN。
+- PASS：.omo/evidence/task-23-24-final-green.txt 当前写 status: GREEN，并记录 rules_validate valid=true error_count=0。
+- 可接受的旧失败：.omo/evidence/review-wave4-final-context.txt 是旧 final-context FAIL，仍记录当时 task-23-24-final-green 为 BLOCKED/summary_failures=1。该状态已被当前 task-23-24-final-green 覆盖，不能单独视为最终状态。
+- 阻塞性不一致：新的 QA2 evidence 与 final green summary 在 LOC gate 上冲突。
+
+当前 QA/evidence 阻塞
+- .omo/evidence/review-wave4-final-qa2.txt 已存在，是用户上下文中特别提到的新版 QA lane。
+- 它记录 fmt、clippy、cli_profiles、cli_execute_security、Android appops/ROM tests、rules validate 均 PASS。
+- 但它同时记录：
+  - FAIL LOC 262 crates/puread-cli/tests/cli_profiles.rs
+  - loc_check: FAIL 1 file over 250 pure LOC: crates/puread-cli/tests/cli_profiles.rs=262
+  - final_verdict: FAIL due to LOC gate
+- 本轮按相同 pure LOC 口径重新计算：
+  awk '!/^[[:space:]]*$/ && !/^[[:space:]]*\/\//' crates/puread-cli/tests/cli_profiles.rs | wc -l
+  结果：262
+- 因此 LOC 失败是当前事实，不只是 stale 文本。
+
+stale evidence 清单
+- .omo/evidence/task-23-24-final-green.txt 对当前 LOC gate 而言 stale 或不完整：它声称 touched-file pure LOC check PASS，但更新的 QA2 和本轮复算均显示 crates/puread-cli/tests/cli_profiles.rs 为 262 pure LOC。
+- .omo/evidence/task-23-24-loc-check.txt stale：其中列出 crates/puread-cli/tests/cli_profiles.rs 为 250，但当前复算为 262。
+- .omo/evidence/task-20-loc-check.txt stale：其中列出 crates/puread-cli/tests/cli_profiles.rs 为 232，但当前复算为 262。
+- .omo/evidence/review-wave4-final-context.txt stale：它是旧 final-context FAIL，引用了已不再是当前状态的 task-23-24-final-green BLOCKED 状态。
+- 旧红证据可以保留，但必须由新的 final evidence 明确覆盖。对 LOC gate 而言，当前 final evidence 没有覆盖新的 QA2 失败。
+
+阻塞项
+1. 当前 LOC gate 失败：
+   - crates/puread-cli/tests/cli_profiles.rs 当前为 262 pure LOC。
+   - 项目计划要求所有 Rust 文件遵守 250 pure LOC 上限。
+   - review-wave4-final-qa2.txt 已明确 final_verdict: FAIL due to LOC gate。
+2. final green evidence 与当前/新版 QA2 LOC 结果不一致：
+   - task-23-24-final-green.txt 写 GREEN / LOC PASS。
+   - review-wave4-final-qa2.txt 和本轮复算显示 LOC FAIL。
+3. 计划收口未完成：
+   - T20/T23/T24 仍未勾选。待 QA/evidence 真正全绿后，应更新计划作为收口动作。
+
+PASS 项
+- AGENTS.md 上游获取/规则同步说明满足要求。
+- git remote 为 git@github.com:Lynricsy/PureADRemoverModule.git。
+- 未发现本地 git identity 配置。
+- .gitignore 包含 Example/。
+- Example/ 未进入跟踪文件或待提交变更，只显示 ignored。
+- task-20-final-green.txt 与 task-23-24-final-green.txt 当前都写 GREEN。
+- 旧 review-wave4-final-context.txt 中关于 task-23-24-final-green BLOCKED 的描述已被当前 green 文件覆盖，属于 stale 历史，不是当前阻塞。
+
+PASS 前必须修复/更新
+- 将 crates/puread-cli/tests/cli_profiles.rs 降到 <=250 pure LOC。可考虑把可复用测试辅助函数迁到 crates/puread-cli/tests/support/cli_profiles.rs，或拆分聚焦 integration test。
+- 修复后重跑并刷新 LOC evidence：
+  - .omo/evidence/task-23-24-loc-check.txt
+  - .omo/evidence/task-20-loc-check.txt，如果它仍作为 final 支撑证据
+  - .omo/evidence/review-wave4-final-qa2.txt 或更新的 QA lane evidence
+- 只有 LOC gate 真实变绿后，才能刷新 final green evidence：
+  - .omo/evidence/task-20-final-green.txt
+  - .omo/evidence/task-23-24-final-green.txt
+- 新 final context/QA evidence 应显式说明旧红证据和旧 context FAIL 已被哪些新证据覆盖，不能只依赖文件名。
+- evidence/QA 全绿后，再更新 .omo/plans/puread-rust-module.md，将 T20/T23/T24 勾选。
+- 保持 Example/ ignored 且不进入提交列表；保持 remote 为 git@github.com:Lynricsy/PureADRemoverModule.git；继续不得设置 local git identity。
+
+最终结论
+FAIL：AGENTS.md、remote、gitignore/Example、历史 restore/profile 修复线索均可接受；但当前 crates/puread-cli/tests/cli_profiles.rs 仍为 262 pure LOC，review-wave4-final-qa2.txt 已记录 final_verdict: FAIL due to LOC gate，且 final green evidence 与当前 LOC 事实不一致，不能最终收口。

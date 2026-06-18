@@ -1,0 +1,41 @@
+[[rules]]
+id = "miui-personalized-ad-enabled"
+category = "rom_profile"
+package = "com.miui.systemadsolution"
+action = "rom_setting"
+target_template = "/data/system/users/0/settings_global.xml"
+risk_level = "high"
+default_enabled = false
+profile = "rom"
+observed_behavior = "MIUI exposes advertising personalization switches through ROM settings keys."
+rollback_strategy = "restore_rom_value"
+introduced_by = "task-24"
+reviewed_at = "2026-06-18"
+notes = "Manual-only ROM profile. Execution probes ro.miui.ui.version.name before mutation and records original value."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/miui_ad.sh"
+source_line_or_pattern = "settings put global passport_ad_status OFF; settings put global com.android.thememanager.preferences.using_theme_show_ad false"
+
+[[rules]]
+id = "miui-system-ad-solution-switch"
+category = "rom_profile"
+package = "com.miui.systemadsolution"
+action = "rom_setting"
+target_template = "/data/system/users/0/settings_global.xml"
+risk_level = "high"
+default_enabled = false
+profile = "rom"
+observed_behavior = "MIUI SystemAdSolution advertising switch can be represented as a guarded ROM ad setting."
+rollback_strategy = "restore_rom_value"
+introduced_by = "task-24"
+reviewed_at = "2026-06-18"
+notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/disable_app.sh"
+source_line_or_pattern = "com.miui.systemAdSolution"

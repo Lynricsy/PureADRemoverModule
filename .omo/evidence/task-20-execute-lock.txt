@@ -1,0 +1,69 @@
+## normal execute with lock acquisition
+$ cargo run -p puread-cli -- apply-profile conservative --execute --root /tmp/tmp.DR8RhSfOyB/android-fs --module-root /tmp/tmp.DR8RhSfOyB/module
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+[1m[92m     Running[0m `target/debug/puread-cli apply-profile conservative --execute --root /tmp/tmp.DR8RhSfOyB/android-fs --module-root /tmp/tmp.DR8RhSfOyB/module`
+{
+  "schema_version": 1,
+  "command": "apply_profile",
+  "mode": "execute",
+  "profile": "conservative",
+  "root_path": "/tmp/tmp.DR8RhSfOyB/android-fs",
+  "module_root": "/tmp/tmp.DR8RhSfOyB/module",
+  "lock_path": "/tmp/tmp.DR8RhSfOyB/module/run/puread.lock",
+  "lock_acquired": true,
+  "rule_file_count": 10,
+  "action_count": 2,
+  "will_mutate": true,
+  "applied": 2,
+  "skipped": 0,
+  "failed": 0,
+  "actions": [
+    {
+      "rule_id": "aweme-internal-splash-commerce-card",
+      "action": "empty_dir",
+      "android_path": "/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "host_path": "/tmp/tmp.DR8RhSfOyB/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "rule_id": "aweme-external-splash-cache",
+      "action": "empty_dir",
+      "android_path": "/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "host_path": "/tmp/tmp.DR8RhSfOyB/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "status": "applied",
+      "error": null
+    }
+  ]
+}
+normal execute exit status: 0
+
+## status after execute, lock file remains but is not held
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 1.21s
+[1m[92m     Running[0m `target/debug/puread-cli status --root /tmp/tmp.DR8RhSfOyB/android-fs --module-root /tmp/tmp.DR8RhSfOyB/module`
+{
+  "schema_version": 1,
+  "command": "status",
+  "root_path": "/tmp/tmp.DR8RhSfOyB/android-fs",
+  "module_root": "/tmp/tmp.DR8RhSfOyB/module",
+  "lock_path": "/tmp/tmp.DR8RhSfOyB/module/run/puread.lock",
+  "lock_held": false
+}
+status command exit status: 0
+
+## execute while external flock holds the same lock
+$ flock -x /tmp/tmp.DR8RhSfOyB/module/run/puread.lock -c "cargo run -p puread-cli -- apply-profile conservative --execute --root /tmp/tmp.DR8RhSfOyB/android-fs --module-root /tmp/tmp.DR8RhSfOyB/module"
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.73s
+[1m[92m     Running[0m `target/debug/puread-cli apply-profile conservative --execute --root /tmp/tmp.DR8RhSfOyB/android-fs --module-root /tmp/tmp.DR8RhSfOyB/module`
+global lock is already held: /tmp/tmp.DR8RhSfOyB/module/run/puread.lock
+lock conflict command exit status: 1
+OK: lock conflict failed before mutation

@@ -1,0 +1,36 @@
+task: task-20-cli-profile-restore-loc-final-fix
+recorded_at: 2026-06-18T20:43:28+08:00
+
+scope:
+- production files were not changed.
+- test helper extraction only touched:
+  - crates/puread-cli/tests/cli_profile_restore.rs
+  - crates/puread-cli/tests/support/cli_profile_restore_apply.rs
+- existing support helper file was inspected and left behavior-compatible:
+  - crates/puread-cli/tests/support/cli_profile_restore.rs
+
+change:
+- moved the apply-profile state symlink setup from the main cli_profile_restore integration test into
+  crates/puread-cli/tests/support/cli_profile_restore_apply.rs.
+- kept the public test function and all assertions in crates/puread-cli/tests/cli_profile_restore.rs.
+- preserved coverage for user_id folding, lock-before-read, symlink rejection, and fake-runner behavior.
+
+pure_loc:
+- crates/puread-cli/tests/cli_profile_restore.rs: 234
+- crates/puread-cli/tests/support/cli_profile_restore.rs: 230
+- crates/puread-cli/tests/support/cli_profile_restore_apply.rs: 38
+
+verification:
+- cargo fmt --all -- --check: passed
+- cargo clippy -p puread-cli --all-targets -- -D warnings: passed
+- cargo test -p puread-cli --test cli_profile_restore -- --nocapture: passed
+  - 12 passed; 0 failed; 0 ignored
+
+lsp:
+- automatic LSP diagnostics hook could not run because the stable toolchain does not provide rust-analyzer:
+  "Unknown binary 'rust-analyzer' in official toolchain 'stable-x86_64-unknown-linux-gnu'."
+- cargo fmt, cargo clippy with -D warnings, and the matching integration test were used as the Rust verification gates.
+
+notes:
+- no commit, push, or git config changes were performed.
+- the worktree already contained unrelated modified and untracked files from parallel work; they were left untouched.

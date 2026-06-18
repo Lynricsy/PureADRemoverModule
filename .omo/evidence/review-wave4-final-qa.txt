@@ -1,0 +1,94 @@
+PureAD Wave4 T20/T23/T24 final hands-on QA
+Recorded at: 2026-06-18T18:20:36+08:00
+Verdict: PASS
+
+Scope and constraints:
+- Read-only QA was performed; no source, commit, push, or git config changes were made.
+- The only workspace file written by this QA pass is this evidence file.
+- Existing uncommitted Wave4 source/rule/evidence changes were treated as prior work and were not modified.
+
+Commands and results:
+
+1. cargo fmt --all -- --check
+Result: PASS
+Exit code: 0
+Key output: no output.
+
+2. cargo clippy -p puread-cli -p puread-android -p puread-rules -p puread-core --all-targets -- -D warnings
+Result: PASS
+Exit code: 0
+Key output: Finished dev profile in 0.11s.
+
+3. cargo test -p puread-cli -p puread-android -p puread-rules -p puread-core --all-targets
+Result: PASS
+Exit code: 0
+Key output:
+- puread-android lib: 46 passed
+- puread-android tests/appops_components.rs: 5 passed
+- puread-android tests/chattr.rs: 5 passed
+- puread-android tests/command_runner.rs: 7 passed
+- puread-android tests/file_actions.rs: 6 passed
+- puread-android tests/rom_profiles.rs: 11 passed
+- puread-android tests/sqlite_actions.rs: 9 passed
+- puread-cli lib: 1 passed
+- puread-cli tests/cli_execute_security.rs: 13 passed
+- puread-cli tests/cli_profiles.rs: 9 passed
+- puread-cli tests/ledger.rs: 7 passed
+- puread-cli tests/rules.rs: 5 passed
+- puread-cli tests/scan_dry_run.rs: 4 passed
+- puread-core tests/path_expansion.rs: 5 passed
+- puread-core tests/restore_ledger.rs: 7 passed
+- puread-core tests/rule_model.rs: 5 passed
+- puread-rules tests/rule_parsing.rs: 8 passed
+
+4. cargo run -q -p puread-cli -- rules validate rules/appops rules/components rules/rom
+Result: PASS
+Exit code: 0
+Key output:
+{
+  "schema_version": 1,
+  "command": "rules_validate",
+  "valid": true,
+  "error_count": 0,
+  "rule_file_count": 5,
+  "rule_count": 9
+}
+
+5. cargo test -p puread-cli --test cli_execute_security -- --nocapture
+Result: PASS
+Exit code: 0
+Key output: 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out.
+
+6. cargo test -p puread-cli cli_profiles -- --nocapture
+Result: PASS
+Exit code: 0
+Key output: tests/cli_profiles.rs ran 9 tests; 9 passed; 0 failed.
+
+7. cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture
+Result: PASS
+Exit code: 0
+Key output:
+- tests/appops_components.rs: 5 passed; 0 failed.
+- tests/rom_profiles.rs: 11 passed; 0 failed.
+
+8. full-repo Rust LOC <=250
+Result: PASS
+Method:
+for f in $(rg --files -g '*.rs' | sort); do
+  n=$(awk '!/^[[:space:]]*$/ && !/^[[:space:]]*\/\//' "$f" | wc -l)
+  printf '%4d %s\n' "$n" "$f"
+done | sort -nr
+Key output:
+- 250 crates/puread-cli/src/restore_fs.rs
+- 246 crates/puread-daemon/tests/event_loop.rs
+- 245 crates/puread-android/tests/appops_components.rs
+- 244 crates/puread-android/src/file_actions/mutate/metadata_ops.rs
+- No Rust file exceeded 250 pure LOC.
+
+9. git status --short tests/fixtures/android-fs
+Result: PASS
+Exit code: 0
+Key output: no output.
+
+Final status:
+PASS. All requested Wave4 T20/T23/T24 QA gates passed, full-repo Rust LOC is within the <=250 ceiling, and tests/fixtures/android-fs remained clean.

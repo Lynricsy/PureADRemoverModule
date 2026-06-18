@@ -289,7 +289,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-android command_runner -- --nocapture | tee .omo/evidence/task-19-command-runner.txt`
   Commit: N | feat(android): add injectable Android command runner | Files `crates/puread-android/**`
 
-- [ ] 20. CLI 手动扫描和应用 profile
+- [x] 20. CLI 手动扫描和应用 profile
   What to do / Must NOT do: `puread-cli` 支持 `status`、`scan`、`apply-profile`、`restore`、`dump-report`，默认 dry-run 提示，真实执行需要显式 `--execute`。所有修改动作必须获取全局锁 `/data/adb/modules/<id>/run/puread.lock`。不要让 action.sh 默认执行破坏性动作，不实现 Web UI。
   Parallelization: Can parallel Y | Wave 4 | Blocks T25/T26
   References: `Example/ads288.zip/action.sh`; T10/T13/T14/T15/T16 outputs
@@ -313,7 +313,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `find module -maxdepth 3 -type f -print | sort > .omo/evidence/task-22-module-files.txt`; `sh -n module/service.sh module/uninstall.sh module/action.sh | tee .omo/evidence/task-22-shell-parse.txt`
   Commit: N | feat(module): add root module lifecycle scripts | Files `module/**`
 
-- [ ] 23. 实现 AppOps 与组件 profile
+- [x] 23. 实现 AppOps 与组件 profile
   What to do / Must NOT do: 从 `APPOPS.sh`、`disable_app.sh`、`mi_market.sh`、`123pan.sh`、`com.luna.music.sh` 等提取 AppOps/组件 profile；通过命令适配层执行并写账本。组件禁用记录原 enabled/hidden 状态，AppOps 记录原 mode 或 default；`pm hide` 必须 capability-detect，不可用则跳过并记录。默认仅可选 profile。
   Parallelization: Can parallel Y | Wave 4 | Blocks T25/T27
   References: `Example/ads288.zip/mod/APPOPS.sh:1`; `Example/ads288.zip/mod/disable_app.sh:9`; `Example/ads288.zip/mod/mi_market.sh:10`; `Example/ads288.zip/mod/123pan.sh`
@@ -321,7 +321,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-android appops components -- --nocapture | tee .omo/evidence/task-23-appops-components.txt`; `rg -n "default_enabled = true" rules/appops rules/components > .omo/evidence/task-23-default-enabled-grep.txt || true`
   Commit: N | feat(profiles): add reversible AppOps and component profiles | Files `rules/appops/**`, `rules/components/**`, `crates/puread-android/**`
 
-- [ ] 24. 实现 ROM profile 与 settings/XML 修改
+- [x] 24. 实现 ROM profile 与 settings/XML 修改
   What to do / Must NOT do: 添加 MIUI/OPPO/Xiaomi profile，支持 `settings` 和 shared_prefs XML 修改，执行前检测 ROM。必须记录原值、原文件哈希、备份路径；默认不启用。ROM profile 限定广告相关组件/广告开关，禁止云备份、隐私保护、通知管理、网络限制等非广告目的改动。不要写通用跨 ROM 破坏性逻辑。
   Parallelization: Can parallel Y | Wave 4 | Blocks T25/T29
   References: `Example/ads288.zip/mod/miui_ad.sh:3`; `Example/ads288.zip/mod/modtify_xml.sh`; `Example/ads288.zip/package_extra.sh:125`

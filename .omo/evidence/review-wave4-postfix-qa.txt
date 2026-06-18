@@ -1,0 +1,206 @@
+Wave4 T20/T23/T24 postfix lane B hands-on QA
+generated_at: 2026-06-18T16:50:59+08:00
+worktree: /root/Projects/Ling/PureADRemoverModule
+scope: re-review final Wave4 T20/T23/T24 state after fixes
+result: PASS
+
+Constraints honored:
+- No source files edited by this QA pass.
+- No commit, push, or git config changes performed.
+- Repository fixture was used only for read-only dry-run.
+- Mutation-class CLI checks used a /tmp copy and a /tmp module root.
+
+Initial worktree note:
+- The worktree already contained pending Wave4 source/rule/evidence changes before this QA pass.
+- This QA pass treated those changes as the state under review and did not restore or overwrite them.
+
+Historical context lookup:
+- search_logs query for Wave4/T20/T23/T24 postfix QA returned resource_exhausted.
+- list_logs/read_log were used afterward; relevant logs read: 0128, 0130, 0133.
+- 0130 recorded the previous review blockers; 0133 recorded final-green fixes. This pass re-ran the command matrix against the current worktree.
+
+Command matrix:
+
+1. cargo fmt --all -- --check
+exit_status=0
+result=PASS
+key_output: no output
+
+2. cargo clippy -p puread-cli -p puread-android -p puread-rules -p puread-core --all-targets -- -D warnings
+exit_status=0
+result=PASS
+key_output:
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+
+3. cargo test -p puread-cli -p puread-android -p puread-rules -p puread-core --all-targets
+exit_status=0
+result=PASS
+key_results:
+- puread-android unit tests: 45 passed, 0 failed
+- puread-android appops_components integration: 3 passed, 0 failed
+- puread-android chattr integration: 5 passed, 0 failed
+- puread-android command_runner integration: 7 passed, 0 failed
+- puread-android file_actions integration: 6 passed, 0 failed
+- puread-android rom_profiles integration: 5 passed, 0 failed
+- puread-android sqlite_actions integration: 9 passed, 0 failed
+- puread-cli unit tests: 1 passed, 0 failed
+- puread-cli cli_execute_security integration: 4 passed, 0 failed
+- puread-cli cli_profiles integration: 7 passed, 0 failed
+- puread-cli ledger integration: 7 passed, 0 failed
+- puread-cli rules integration: 5 passed, 0 failed
+- puread-cli scan_dry_run integration: 4 passed, 0 failed
+- puread-core path_expansion integration: 5 passed, 0 failed
+- puread-core restore_ledger integration: 7 passed, 0 failed
+- puread-core rule_model integration: 5 passed, 0 failed
+- puread-rules rule_parsing integration: 8 passed, 0 failed
+
+4. cargo run -q -p puread-cli -- rules validate rules/appops rules/components rules/rom
+exit_status=0
+result=PASS
+key_output:
+{
+  "schema_version": 1,
+  "command": "rules_validate",
+  "valid": true,
+  "error_count": 0,
+  "rule_file_count": 5,
+  "rule_count": 9
+}
+
+5. cargo test -p puread-cli cli_profiles -- --nocapture
+exit_status=0
+result=PASS
+key_results:
+- cli_profiles_dump_report_uses_existing_ledger_report_without_mutation: ok
+- cli_profiles_status_outputs_paths_and_lock_state_when_module_root_is_fixture: ok
+- cli_profiles_restore_keeps_existing_dry_run_contract: ok
+- cli_profiles_apply_profile_execute_reports_lock_conflict_when_lock_is_held: ok
+- cli_profiles_apply_profile_defaults_to_dry_run_when_execute_is_omitted: ok
+- cli_profiles_scan_defaults_to_dry_run_when_flag_is_omitted: ok
+- cli_profiles_apply_profile_execute_uses_global_lock_under_fixture: ok
+- summary: 7 passed, 0 failed
+
+6. cargo test -p puread-cli --test cli_execute_security -- --nocapture
+exit_status=0
+result=PASS
+key_results:
+- cli_execute_rejects_target_symlink_without_mutating_escape: ok
+- cli_execute_rejects_parent_symlink: ok
+- cli_execute_rejects_backup_symlink_and_keeps_prior_ledger: ok
+- cli_execute_restore_recovers_directory_from_ledger: ok
+- summary: 4 passed, 0 failed
+
+7. cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture
+exit_status=0
+result=PASS
+key_results:
+- appops_profile_does_not_mutate_when_ledger_sink_fails: ok
+- appops_profile_records_original_mode_and_restores_default_when_missing: ok
+- component_profile_disables_enables_and_skips_unavailable_pm_hide: ok
+- rom_profile_skips_miui_settings_when_getprop_does_not_match: ok
+- rom_settings_does_not_mutate_when_ledger_sink_fails: ok
+- rom_rule_rejects_unsafe_rule_ids_before_backup_path: ok
+- rom_shared_prefs_rejects_xml_symlink_target: ok
+- rom_profile_modifies_and_restores_shared_prefs_xml_with_backup_and_hash: ok
+- summary: 8 passed, 0 failed
+
+Real safe fixture CLI checks:
+
+8. scan dry-run against repository fixture
+command:
+  cargo run -q -p puread-cli -- scan --dry-run --root tests/fixtures/android-fs
+exit_status=0
+result=PASS
+key_output:
+- mode: dry_run
+- dry_run: true
+- root_path: tests/fixtures/android-fs
+- rule_file_count: 10
+- action_count: 2
+- will_mutate: false
+- planned rule ids:
+  - aweme-internal-splash-commerce-card
+  - aweme-external-splash-cache
+
+Repository fixture preservation after dry-run:
+command:
+  test -f tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card/.fixture &&
+  test -f tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache/.fixture
+exit_status=0
+result=PASS
+key_output:
+  repo_fixture_sentinels=present
+
+Repository fixture diff check:
+command:
+  git diff -- tests/fixtures/android-fs
+exit_status=0
+result=PASS
+key_output: no output
+
+9. apply-profile --execute on /tmp copy
+setup:
+  tmp=$(mktemp -d)
+  cp -a tests/fixtures/android-fs "$tmp/android-fs"
+  mkdir -p "$tmp/module/run"
+command:
+  cargo run -q -p puread-cli -- apply-profile conservative --execute --root "$tmp/android-fs" --module-root "$tmp/module"
+exit_status=0
+result=PASS
+key_output:
+- command: apply_profile
+- mode: execute
+- profile: conservative
+- lock_acquired: true
+- action_count: 2
+- will_mutate: true
+- applied: 2
+- skipped: 0
+- failed: 0
+- action statuses:
+  - aweme-internal-splash-commerce-card: applied
+  - aweme-external-splash-cache: applied
+post_apply_checks:
+- internal_cache_empty=yes
+- external_cache_empty=yes
+- ledger_exists=yes
+
+10. restore --execute on /tmp ledger
+command:
+  cargo run -q -p puread-cli -- restore --execute --ledger "$tmp/android-fs/data/adb/modules/puread/state/actions.jsonl"
+exit_status=0
+result=PASS
+key_output:
+- mode: execute
+- action_count: 2
+- will_mutate: true
+- restored: 2
+- failed: 0
+- action statuses:
+  - /data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card: restored
+  - /sdcard/Android/data/com.ss.android.ugc.aweme/splashCache: restored
+post_restore_checks:
+- internal_marker=restored
+- external_marker=restored
+- ledger_size=0
+
+11. lock conflict
+setup:
+  lock="$tmp/module/run/puread.lock"
+command:
+  flock -x "$lock" cargo run -q -p puread-cli -- apply-profile conservative --execute --root "$tmp/android-fs" --module-root "$tmp/module"
+exit_status=1
+expected_failure_observed=true
+result=PASS
+key_output:
+  global lock is already held: /tmp/tmp.FrxXXrhOAQ/module/run/puread.lock
+
+Temporary fixture cleanup:
+- tmp directory was removed by shell trap after the command block.
+
+Final fixture/repo checks:
+- git diff -- tests/fixtures/android-fs: no output
+- repo_fixture_sentinels=present
+
+Final verdict:
+PASS. The final Wave4 T20/T23/T24 state passed the requested hands-on QA command matrix and real safe fixture CLI checks.

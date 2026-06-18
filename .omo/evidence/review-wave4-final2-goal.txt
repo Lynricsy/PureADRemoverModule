@@ -1,0 +1,163 @@
+# Wave4 final2 goal review
+
+Verdict: PASS
+Confidence: HIGH
+Reviewed at: 2026-06-18T19:50:00+08:00
+Scope: read-only review of Wave4 T20/T23/T24 first-round FAIL closure. No product files were modified; no commit/push; no git config was set.
+
+## Inputs reviewed
+
+- `git status --short --ignored`
+- `git diff HEAD`
+- `git ls-files --others --exclude-standard`
+- `.omo/evidence/task-20-profile-ledger-restore-security.txt`
+- `.omo/evidence/task-23-component-hide-ledger-fix.txt`
+- `.omo/evidence/task-20-cli-profiles-loc-fix.txt`
+- CLI profile/restore source and tests under `crates/puread-cli/src` and `crates/puread-cli/tests`
+- Android profile source and tests under `crates/puread-android/src/profiles*` and `crates/puread-android/tests`
+- Rules under `rules/appops`, `rules/components`, and `rules/rom`
+
+## Success criteria review
+
+### LOC: `crates/puread-cli/tests/cli_profiles.rs` <= 250
+
+PASS.
+
+- Physical line count is 300, but the project's established LOC gate is pure LOC: non-blank, non-comment Rust lines.
+- Current direct check:
+  - `awk '!/^[[:space:]]*$/ && !/^[[:space:]]*\/\//' crates/puread-cli/tests/cli_profiles.rs | wc -l`
+  - Result: `241`
+- Existing evidence also records the file at or below the ceiling:
+  - `.omo/evidence/task-20-profile-ledger-restore-security.txt`: `crates/puread-cli/tests/cli_profiles.rs`: 241
+  - `.omo/evidence/task-20-loc-check.txt` / `.omo/evidence/task-23-24-loc-check.txt`: at or below 250 under their scan output.
+
+### T23 component hide ledger/report consistency
+
+PASS.
+
+Code evidence:
+
+- `crates/puread-android/src/profiles/executor/appops_components.rs:63-74` persists the pre-mutation component record with `hide_status_for_policy(rule.hide_policy)`.
+- `crates/puread-android/src/profiles/executor/appops_components.rs:122-125` maps `PmHidePolicy::TryHide` to `HideApplyStatus::SkippedUnavailable` for the persisted record.
+- `crates/puread-android/src/profiles/executor/appops_components.rs:107-118` computes the returned operation report status from the actual `pm hide` attempt.
+- `crates/puread-android/src/profiles/executor/appops_components.rs:90-103` restores with `pm unhide` only when persisted `original_hidden == visible` and persisted `hide_status == applied`.
+
+Behavior evidence:
+
+- `cargo test -p puread-android --test appops_components -- --nocapture`
+- Result: PASS, 7 passed.
+- Covered cases include unavailable runner, non-zero `pm hide`, successful hide/unhide, and persisted skipped hide restore with no `pm unhide`.
+
+### T20/T23/T24 profile restore user surface
+
+PASS.
+
+Code evidence:
+
+- CLI routes `profile-restore` through `crates/puread-cli/src/profile.rs:112-120`.
+- Restore reads persisted `state/profile-actions.jsonl` through `crates/puread-cli/src/profile_execute/profile_restore.rs:39-45`.
+- Restore dispatches persisted kinds in `crates/puread-cli/src/profile_execute/profile_restore.rs:90-103`:
+  - `app_op` -> `executor.restore_appop`
+  - `component` -> `executor.restore_component`
+  - `rom_setting`, `shared_prefs_bool`, `rom_skipped` -> `executor.restore_rom`
+- Android restore implementations:
+  - AppOps restore: `crates/puread-android/src/profiles/executor/appops_components.rs:37-49`
+  - Component restore: `crates/puread-android/src/profiles/executor/appops_components.rs:90-104`
+  - ROM settings/shared_prefs restore: `crates/puread-android/src/profiles/executor/rom.rs:51-70`
+- Shared prefs restore opens backup and target through no-follow secure FS in `crates/puread-android/src/profiles/xml.rs:163-175`.
+
+Behavior evidence:
+
+- `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`
+- Result: PASS, 8 passed.
+- `cli_profile_restore_restores_all_profile_record_kinds` verifies AppOps, component, ROM settings, and shared_prefs restore through the real CLI surface.
+- `cargo test -p puread-android --test rom_profiles -- --nocapture`
+- Result: PASS, 11 passed.
+
+### Test seam: production `src` must not read `PUREAD_TEST_PROFILE_RUNNER`
+
+PASS.
+
+Direct scan:
+
+- `rg -n "PUREAD_TEST_PROFILE_RUNNER" crates/puread-cli/src crates/puread-android/src crates/puread-cli/tests crates/puread-android/tests`
+- Result: only `crates/puread-cli/tests/support/cli_profile_restore.rs:28`.
+
+Behavior evidence:
+
+- `cli_profile_restore_default_runner_ignores_env_fake_runner` passes in `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`.
+- The test sets the environment seam but omits the hidden `--test-profile-runner` flag, and verifies the fake runner log is not created.
+
+### Safety boundary: ledger/lock symlink rejection before real mutation
+
+PASS.
+
+Code evidence:
+
+- Apply profile acquires the module lock and preflights profile ledger before Android profile mutation: `crates/puread-cli/src/profile.rs:80-83`.
+- Profile ledger append preflight enforces module-root containment, parent creation without symlinks, and leaf symlink rejection: `crates/puread-cli/src/profile_execute/profile_runtime.rs:72-105`.
+- Lock path containment, parent symlink rejection, leaf symlink rejection, and `O_NOFOLLOW` open are in `crates/puread-cli/src/lock.rs:20-35` and `crates/puread-cli/src/lock.rs:84-105`.
+- Profile restore safe read rejects escaped/profile-ledger symlink paths before runner dispatch: `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs`.
+
+Behavior evidence:
+
+- `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`
+- Result: PASS, 8 passed.
+- Covered symlink cases:
+  - `state/` symlink before restore mutation
+  - `state/profile-actions.jsonl` symlink before restore mutation
+  - `run/` symlink before restore mutation
+  - `run/puread.lock` symlink before restore mutation
+  - `apply-profile --execute` rejects state symlink before Android mutation
+- `cargo test -p puread-cli --test cli_execute_security -- --nocapture`
+- Result: PASS, 15 passed.
+
+### Safety boundary: no forbidden capability added
+
+PASS.
+
+Direct scan:
+
+- `rg -n "hosts|DNS|domain|Clash|Mihomo|Box|proxy|iptables|AdGuardHome|Zygisk|root hiding|anti-detection|mount_hosts|ad_reward" crates/puread-cli/src crates/puread-android/src rules scripts README.md AGENTS.md`
+
+Review result:
+
+- Hits in `AGENTS.md`, `README.md`, and `scripts/verify-local.sh` are boundary/guard documentation.
+- Hits in `crates/puread-android/src/command_runner/settings.rs` are explicit rejection messages for DNS/hosts/proxy settings.
+- Hits in rules are explanatory notes or component names such as `proxy` inside an Android class name, not domain/proxy/network-blocking behavior.
+- No production execution path adds DNS/domain/hosts/proxy/iptables/AdGuardHome/root hiding/anti-detection functionality.
+
+### `Example/` must not enter changes
+
+PASS.
+
+- `git status --short --ignored Example` reports only `!! Example/`.
+- `git diff --name-only HEAD -- Example` produced no tracked diff.
+- `git ls-files --others --exclude-standard Example` produced no untracked addable files.
+
+## Verification commands run
+
+- `cargo fmt --all -- --check`: PASS.
+- `cargo clippy -p puread-cli --all-targets -- -D warnings`: PASS.
+- `cargo clippy -p puread-android --all-targets -- -D warnings`: PASS.
+- `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`: PASS, 8 passed.
+- `cargo test -p puread-cli --test cli_profiles -- --nocapture`: PASS, 10 passed.
+- `cargo test -p puread-cli --test cli_execute_security -- --nocapture`: PASS, 15 passed.
+- `cargo test -p puread-android --test appops_components -- --nocapture`: PASS, 7 passed.
+- `cargo test -p puread-android --test rom_profiles -- --nocapture`: PASS, 11 passed.
+- `rg -n "PUREAD_TEST_PROFILE_RUNNER" crates/puread-cli/src crates/puread-android/src crates/puread-cli/tests crates/puread-android/tests`: PASS, test support only.
+- Forbidden capability scan over production/document/rule paths: PASS after manual classification of allowed guard/documentation hits.
+- `git config --local --list --show-origin`: no local identity config found; only repository core/remote/branch config is present.
+
+## Blockers
+
+None.
+
+## Residual risks
+
+- This review did not run the full workspace test suite; it ran the targeted Wave4 T20/T23/T24 gates plus fmt and relevant clippy gates.
+- Android command behavior is verified through adapters and scripted runners, not on a real rooted Android device.
+
+<verdict>PASS</verdict>
+confidence: HIGH
+blocking_issues: none

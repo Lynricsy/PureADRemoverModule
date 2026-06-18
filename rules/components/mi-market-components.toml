@@ -1,0 +1,41 @@
+[[rules]]
+id = "mi-market-reverse-ad-schedule-service"
+category = "component"
+package = "com.xiaomi.market"
+action = "disable_component"
+target_component = "com.xiaomi.market/com.xiaomi.market.reverse_ad.service.ReverseAdScheduleService"
+risk_level = "high"
+default_enabled = false
+profile = "component"
+observed_behavior = "Xiaomi Market includes reverse-ad scheduling service components in the upstream profile."
+rollback_strategy = "reenable_component"
+introduced_by = "task-23"
+reviewed_at = "2026-06-18"
+notes = "Manual profile. Execution records original enabled and hidden state before disabling."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/mi_market.sh"
+source_line_or_pattern = "com.xiaomi.market/com.xiaomi.market.reverse_ad.service.ReverseAdScheduleService"
+
+[[rules]]
+id = "mi-market-reverse-ad-page"
+category = "component"
+package = "com.xiaomi.market"
+action = "disable_component"
+target_component = "com.xiaomi.market/com.xiaomi.market.reverse_ad.page.WebReverseAdActivity"
+risk_level = "high"
+default_enabled = false
+profile = "component"
+observed_behavior = "Xiaomi Market includes reverse-ad page activity components in the upstream profile."
+rollback_strategy = "reenable_component"
+introduced_by = "task-23"
+reviewed_at = "2026-06-18"
+notes = "Manual profile; disabled by default because component changes require explicit user intent."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/mi_market.sh"
+source_line_or_pattern = "com.xiaomi.market/com.xiaomi.market.reverse_ad.page.WebReverseAdActivity"

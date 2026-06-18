@@ -1,0 +1,41 @@
+[[rules]]
+id = "pan123-kwad-reward-video-activity"
+category = "component"
+package = "com.mfcloudcalculate.networkdisk"
+action = "disable_component"
+target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+risk_level = "high"
+default_enabled = false
+profile = "component"
+observed_behavior = "The upstream 123pan profile disables Kuaishou ad SDK reward video activity components."
+rollback_strategy = "reenable_component"
+introduced_by = "task-23"
+reviewed_at = "2026-06-18"
+notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/123pan.sh"
+source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+
+[[rules]]
+id = "luna-music-bytedance-collector"
+category = "component"
+package = "com.luna.music"
+action = "disable_component"
+target_component = "com.luna.music/com.bytedance.applog.collector.Collector"
+risk_level = "high"
+default_enabled = false
+profile = "component"
+observed_behavior = "The upstream Luna Music profile disables ByteDance applog collector components."
+rollback_strategy = "reenable_component"
+introduced_by = "task-23"
+reviewed_at = "2026-06-18"
+notes = "Manual component profile; AppLog collector is local component governance, not network blocking."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/com.luna.music.sh"
+source_line_or_pattern = "com.luna.music/com.bytedance.applog.collector.Collector"

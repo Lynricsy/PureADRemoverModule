@@ -6,6 +6,8 @@ pub mod chattr;
 pub mod command_runner;
 /// 可恢复文件动作执行器。
 pub mod file_actions;
+/// Android profile 执行层。
+pub mod profiles;
 /// `SQLite` 广告库动作执行器。
 pub mod sqlite_actions;
 

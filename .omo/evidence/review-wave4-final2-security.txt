@@ -1,0 +1,182 @@
+# PureAD Wave4 第二轮最终安全复审
+
+reviewed_at: 2026-06-18T20:10:00+08:00
+cwd: /root/Projects/Ling/PureADRemoverModule
+mode: read-only security audit; no source edits, no commit, no push, no git config
+verdict: FAIL
+confidence: HIGH
+
+## 复审范围
+
+- 重点复查了用户指定文件：
+  - `crates/puread-cli/src/lock.rs`
+  - `crates/puread-cli/src/profile.rs`
+  - `crates/puread-cli/src/profile_execute/profile_runtime.rs`
+  - `crates/puread-cli/src/profile_execute/profile_restore.rs`
+  - `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs`
+  - `crates/puread-cli/tests/cli_profile_restore.rs`
+  - `crates/puread-android/src/profiles/executor/appops_components.rs`
+  - `crates/puread-android/src/profiles/executor/rom.rs`
+  - `crates/puread-android/src/profiles/executor/shared.rs`
+  - `crates/puread-android/src/profiles/xml.rs`
+- 运行了只读命令：`git status --short --ignored`、`git diff HEAD`、`rg`、`sed`、`nl`。
+- 未运行大测试，按任务要求以 grep、文件读取和定向推理为主。
+- 未修改源码、未提交、未推送、未设置 git config。
+
+## 最终结论
+
+FAIL。
+
+第一轮安全 FAIL 的静态 symlink/path-escape 修复大体已经补上，但本轮发现两个仍会破坏“真实 mutation 必须可由模块本地账本恢复”的阻塞安全问题。
+
+## 阻塞安全问题
+
+### 1. `profile-restore --execute` 在获取全局锁前读取 profile ledger，可能丢失并发 apply 写入的恢复记录
+
+严重性：HIGH，影响模块状态账本完整性与可恢复性。
+
+代码证据：
+
+- `crates/puread-cli/src/profile_execute/profile_restore.rs:39-45`
+  - 先执行 `ledger::read_entries(module_root, path.as_path())?`
+  - 之后才执行 `GlobalLock::acquire(lock.as_path())?`
+- `crates/puread-cli/src/profile_execute/profile_restore.rs:53`
+  - restore 成功后用读取到的旧 `entries` 调用 `ledger::rewrite_restored(...)`
+- `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs:59-86`
+  - `rewrite_restored()` 会用旧 entries 生成完整输出并 `truncate(true)` 重写账本。
+
+风险链：
+
+1. `profile-restore --execute` 启动并在未持锁状态读取旧 ledger，例如只读到记录 A。
+2. 另一个 `apply-profile --execute` 先拿到同一 `puread.lock`，追加记录 B，并执行真实 Android mutation。
+3. apply 释放锁。
+4. restore 才拿到锁，按旧快照恢复 A，并 `truncate` 重写 ledger。
+5. 记录 B 被丢弃，但 B 对应的 AppOps、component、ROM settings/XML mutation 已经发生。
+
+这会让后续 `profile-report` / `profile-restore` 找不到 B 的恢复记录，违反项目“真实修改必须写入恢复账本、可恢复”的安全契约。正确顺序应为：在 `execute` 模式下先计算并获取 lock，再在锁内读取 ledger、恢复、重写 ledger。dry-run/report 读取可保持无锁或只读策略。
+
+所需证据：
+
+- 增加并通过针对性并发/交错测试，证明 `profile-restore --execute` 在持锁后读取账本。
+- 测试应覆盖 restore 读取前后有 apply 写入的场景，确认新记录不会被旧 entries 的 `truncate` 重写丢失。
+
+### 2. `pm hide` 成功时持久 profile ledger 仍记录 `skipped_unavailable`，成功隐藏不可由持久账本恢复
+
+严重性：HIGH，影响 component profile 的恢复完整性。
+
+代码证据：
+
+- `crates/puread-android/src/profiles/executor/appops_components.rs:63-73`
+  - `hide_status_for_policy(PmHidePolicy::TryHide)` 预先生成 `HideApplyStatus::SkippedUnavailable`。
+  - `self.applied(&record)?` 在执行 `pm hide` 前把该记录写入持久 ledger。
+- `crates/puread-android/src/profiles/executor/appops_components.rs:74-87`
+  - 之后才执行 `self.apply_hide_policy(...)`。
+  - 如果 `pm hide` 成功，返回给 CLI report 的 transient record 会变成 `hide_status:"applied"`。
+  - 但持久 ledger 仍是 mutation 前写入的 `hide_status:"skipped_unavailable"`。
+- `crates/puread-android/src/profiles/executor/appops_components.rs:95-100`
+  - restore 只有在 `original_hidden == Visible && hide_status == Applied` 时才调用 `pm unhide`。
+
+测试证据缺口：
+
+- `crates/puread-android/tests/appops_components.rs:50-155` 覆盖了 hide 不可用/失败时持久 ledger 与 report 都为 `skipped_unavailable`。
+- `crates/puread-android/tests/appops_components.rs:179-221` 覆盖了 transient `apply.record` 成功时能触发 `pm unhide`，但没有断言持久 `ledger.records()` 在成功 `pm hide` 后也保存 `hide_status:"applied"`。
+
+风险链：
+
+1. component 规则执行，持久 ledger 先记录 `hide_status:"skipped_unavailable"`。
+2. 随后的 `pm hide` 实际成功，package 被隐藏。
+3. 后续 `profile-restore --execute` 从持久 ledger 读取 `skipped_unavailable`。
+4. restore 不调用 `pm unhide`，只执行 component enable。
+5. package hidden 状态残留，真实 mutation 不可完整恢复。
+
+这同时影响用户要求复查的第 3 项“apply-profile --execute 写入 module-local recoverable record before mutation”和第 5 项“component pm hide persistent ledger”语义：当前记录虽然在 mutation 前写入，但在 `pm hide` 成功路径不是 recoverable record。
+
+所需证据：
+
+- 增加并通过测试：当 `pm hide` 成功时，持久 profile ledger 中的 component 记录必须能驱动 restore 调用 `pm unhide`，或生产逻辑必须避免执行无法预先准确记账的 `pm hide` mutation。
+- 测试应直接检查 `ledger.records()`，不能只检查 transient `apply.record`。
+
+## 已通过的旧阻塞项复查
+
+### Ledger append/read 静态 symlink 与路径逃逸
+
+结果：PASS。
+
+- `crates/puread-cli/src/profile_execute/profile_runtime.rs:78-85` 在 append 前验证 module child path、父链目录、最终 `profile-actions.jsonl` 非 symlink。
+- `crates/puread-cli/src/profile_execute/profile_runtime.rs:96-101` append 打开最终文件时使用 `O_NOFOLLOW`。
+- `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs:34-57` read 前验证 module child path、父链、最终 ledger 非 symlink，并用 `O_NOFOLLOW` 打开。
+- `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs:72-76` rewrite 用 `O_NOFOLLOW` 打开最终 ledger。
+- `crates/puread-cli/tests/cli_profile_restore.rs:101-153` 覆盖 state symlink、final ledger symlink、apply-profile state symlink 失败且 runner log 不产生 mutation。
+
+### GlobalLock symlink、final lock symlink、外部 override lock path
+
+结果：PASS。
+
+- `crates/puread-cli/src/lock.rs:45-49` `lock_path()` 对 override path 也调用 `ensure_lock_inside_module()`。
+- `crates/puread-cli/src/lock.rs:84-91` 要求 lock path 留在 module root 下且不含 `..`。
+- `crates/puread-cli/src/lock.rs:94-150` 检查父链目录和 final lock symlink。
+- `crates/puread-cli/src/lock.rs:163-171` lock 文件打开带 `O_NOFOLLOW` 与 `0600` mode。
+- `crates/puread-cli/tests/cli_profile_restore.rs:114-124` 覆盖 run symlink 与 final lock symlink 在 restore 前失败。
+
+### Ledger/lock preflight 失败不会触发 Android mutation
+
+结果：PARTIAL PASS，但受阻塞问题 2 影响。
+
+- `crates/puread-cli/src/profile.rs:80-83` execute 模式先获取 lock，再执行 profile ledger preflight，之后才执行 file/android mutation。
+- `crates/puread-android/src/profiles/executor/appops_components.rs:20-34` AppOps 在 ledger append 后才 `appops set`。
+- `crates/puread-android/src/profiles/executor/appops_components.rs:57-75` component 在 ledger append 后才 `pm hide` / `pm disable-user`。
+- `crates/puread-android/src/profiles/executor/rom.rs:78-99` ROM settings 在 ledger append 后才 `settings put`。
+- `crates/puread-android/src/profiles/executor/rom.rs:31-46` shared_prefs XML 在 plan/preflight/ledger append 后才 commit XML。
+- `crates/puread-cli/tests/cli_profiles.rs:199-231` 覆盖 ledger failure 时无 `pm hide` / `pm disable-user`。
+- `crates/puread-android/tests/appops_components.rs:223-283` 覆盖 AppOps/component ledger failure 只做 read-only probes。
+- `crates/puread-android/tests/rom_profiles.rs:89-150` 覆盖 settings/XML ledger failure 不 mutation。
+
+阻塞原因：component `pm hide` 成功路径的持久记录并不能完整恢复 hide mutation。
+
+### 生产源码不读取 `PUREAD_TEST_PROFILE_RUNNER`
+
+结果：PASS。
+
+- `rg` 结果显示 `PUREAD_TEST_PROFILE_RUNNER` 只出现在测试辅助：`crates/puread-cli/tests/support/cli_profile_restore.rs:28`。
+- 生产源码没有 `std::env::var` / `var_os` 读取该 env。
+- `ScriptedProfileRunner`、`--test-profile-runner`、`--profile-runner-log`、`--test-profile-ledger-fail` 都受 `#[cfg(debug_assertions)]` 包裹：
+  - `crates/puread-cli/src/cli.rs:50-66`
+  - `crates/puread-cli/src/cli.rs:127-132`
+  - `crates/puread-cli/src/profile_execute/profile_runtime.rs:19-30`
+  - `crates/puread-cli/src/profile_execute/profile_runtime.rs:176-221`
+
+### `skipped_unavailable` restore 不调用 `pm unhide`
+
+结果：PASS。
+
+- `crates/puread-android/src/profiles/executor/appops_components.rs:95-100` 只有 `hide_status == Applied` 才调用 `pm unhide`。
+- `crates/puread-android/tests/appops_components.rs:157-177` 覆盖 persisted `skipped_unavailable` restore 只 enable component，不 unhide。
+
+### 禁止能力扫描
+
+结果：PASS。
+
+定向扫描未发现生产执行路径实现 DNS/domain/hosts/proxy/iptables/AdGuardHome/root hiding/anti-detection 能力。
+
+可解释命中：
+
+- `crates/puread-android/src/command_runner/settings.rs:105-120` 是 deny guard，拒绝 DNS/hosts/proxy settings key。
+- `rules/rom/miui-ad-settings.toml:35` 是说明文字，声明不包含 private DNS/network/proxy key。
+- `rules/components/sdk-ad-components.toml:6,14,20` 中的 `proxy` 是 Android SDK 组件类名/说明，不是代理能力实现。
+
+## 命令记录
+
+```sh
+git status --short --ignored
+git diff HEAD -- crates/puread-cli/src/lock.rs crates/puread-cli/src/profile.rs crates/puread-cli/src/profile_execute.rs crates/puread-cli/src/profile_execute crates/puread-cli/tests/cli_profile_restore.rs crates/puread-android/src/profiles crates/puread-android/tests/appops_components.rs crates/puread-android/tests/rom_profiles.rs
+rg -n "PUREAD_TEST_PROFILE_RUNNER|test_profile_runner|profile_runner_log|test_profile_ledger_fail|ScriptedProfileRunner|cfg\\(debug_assertions\\)" crates/puread-cli/src crates/puread-cli/tests crates/puread-android/src -g '!target'
+rg -n "OpenOptions::new\\(|create_dir_all\\(|create_dir\\(|custom_flags\\(|O_NOFOLLOW|symlink_metadata\\(|canonicalize\\(|starts_with\\(|remove_file\\(|remove_dir_all\\(|write_all\\(|rename\\(|truncate\\(" crates/puread-cli/src/lock.rs crates/puread-cli/src/profile.rs crates/puread-cli/src/profile_execute crates/puread-android/src/profiles crates/puread-android/src/secure_fs crates/puread-android/src/command_runner
+rg -n "hosts|DNS|dns|domain|域名|proxy|代理|iptables|AdGuardHome|mount_hosts|ad_reward|Zygisk|zygisk|root hiding|Root 隐藏|反检测|anti-detection|Clash|Mihomo|Box" crates/puread-cli/src crates/puread-android/src rules
+```
+
+## 结束状态
+
+- 本复审只新增本 evidence 文件。
+- 未修改源码。
+- 未 commit/push。
+- 未设置 git config。

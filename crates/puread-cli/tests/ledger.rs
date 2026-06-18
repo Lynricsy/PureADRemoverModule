@@ -111,20 +111,19 @@ fn restore_dry_run_fails_cleanly_when_ledger_json_is_malformed() -> Result<(), B
 }
 
 #[test]
-fn restore_without_dry_run_fails_without_mutating_ledger_fixture() -> Result<(), Box<dyn Error>> {
-    // Given: a valid ledger fixture and a restore command without dry-run.
+fn restore_without_execute_defaults_to_dry_run_without_mutating_ledger_fixture()
+-> Result<(), Box<dyn Error>> {
+    // Given: a valid ledger fixture and a restore command without execute.
     let before = fs::read(LEDGER_FIXTURE)?;
 
-    // When: real restore is requested.
+    // When: restore is requested without an explicit execution flag.
     let output = run_puread(["restore", "--ledger", LEDGER_FIXTURE])?;
 
-    // Then: the CLI rejects real execution and leaves the ledger unchanged.
-    assert!(!output.status.success(), "{output:?}");
-    let stderr = String::from_utf8(output.stderr)?;
-    assert!(
-        stderr.contains("real restore execution is not implemented"),
-        "{stderr}"
-    );
+    // Then: the CLI plans a dry-run restore and leaves the ledger unchanged.
+    assert_success(&output)?;
+    let stdout = String::from_utf8(output.stdout)?;
+    assert!(stdout.contains(r#""mode": "dry_run""#), "{stdout}");
+    assert!(stdout.contains(r#""will_mutate": false"#), "{stdout}");
     let after = fs::read(LEDGER_FIXTURE)?;
     assert_eq!(before, after);
     Ok(())

@@ -1,0 +1,103 @@
+PureADRemoverModule review-wave4-final3-security
+Date: 2026-06-18
+Mode: read-only security review; no source changes, no commit/push, no git config. Only this required evidence file was written.
+
+Verdict: PASS
+Confidence: high, with residual caveat that this review used diff/file reasoning and rg only, not cargo test, and did not prove adversarial non-cooperating filesystem TOCTOU resistance beyond the explicit pre-mutation guards in scope.
+
+Inputs reviewed:
+- git status --short --ignored
+- git diff HEAD --stat
+- git diff HEAD -- scoped paths: no scoped diff output because many scoped files are untracked additions.
+- git ls-files --others --exclude-standard for scope confirmed untracked reviewed files:
+  crates/puread-android/src/profiles/executor/appops_components.rs
+  crates/puread-android/tests/appops_components.rs
+  crates/puread-android/tests/appops_components/durable.rs
+  crates/puread-cli/src/lock.rs
+  crates/puread-cli/src/profile.rs
+  crates/puread-cli/src/profile_execute/profile_restore.rs
+  crates/puread-cli/src/profile_execute/profile_restore/final_state.rs
+  crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+  crates/puread-cli/src/profile_execute/profile_restore/report.rs
+  crates/puread-cli/src/profile_execute/profile_runtime.rs
+  crates/puread-cli/tests/cli_profile_restore.rs
+  crates/puread-cli/tests/support/cli_profile_restore.rs
+- Direct line-number review with nl -ba for all scoped files and supporting dispatch/runtime files.
+- rg scans for lock order, symlink/no-follow guards, pm hide/unhide state, confirmed-ledger failure, and forbidden production capabilities.
+
+Worktree context:
+- Existing worktree contains many modified/untracked files and ignored AgentLogs/Example/target directories.
+- I did not revert, format, test-write, commit, push, or set git config.
+
+Check 1: profile-restore --execute obtains global lock before reading ledger and before rewrite; cannot overwrite entries appended after an old snapshot.
+Result: PASS.
+Evidence:
+- crates/puread-cli/src/profile_execute/profile_restore.rs:40-47 builds the profile ledger path, then for execute obtains lock_path and GlobalLock::acquire before ledger::read_entries.
+- crates/puread-cli/src/profile_execute/profile_restore.rs:47-55 reads entries after the lock, computes restore actions from that snapshot, then calls ledger::rewrite_restored while the _lock guard is still in scope.
+- crates/puread-cli/src/profile.rs:79-96 shows apply-profile --execute also acquires the same GlobalLock before profile ledger preflight and before execute_android_profile_surface can append profile records.
+- crates/puread-cli/tests/cli_profile_restore.rs:212-214 and tests/support/cli_profile_restore.rs:163-170 cover lock contention preventing even ledger read by deleting the ledger while a held lock should fail first.
+Assessment:
+- Cooperative PureAD profile writers and restore now serialize on the same module global lock, so restore no longer reads an old snapshot before lock acquisition and then truncates over later command-appended records.
+
+Check 2: profile ledger append/read/rewrite and lock path reject state/run/leaf symlinks and path escapes before mutation.
+Result: PASS.
+Evidence:
+- Append path: crates/puread-cli/src/profile_execute/profile_runtime.rs:78-85 calls ensure_module_child_path, safe_create_dir_all, and ensure_profile_ledger_leaf_is_not_symlink before append; lines 96-103 open with O_NOFOLLOW and append.
+- Append parent guards: profile_runtime.rs:128-134 rejects path escapes/parent components; lines 137-169 walk every parent component using symlink_metadata, reject symlinks/non-directories, and create missing dirs one component at a time.
+- Read path: crates/puread-cli/src/profile_execute/profile_restore/ledger.rs:35-47 calls ensure_safe_read_path before open; lines 54-58 combine module-child, existing-parent, and leaf symlink checks; line 42 opens with O_NOFOLLOW.
+- Rewrite path: profile_restore/ledger.rs:60-92 rewrites only after the same restore execution path has successfully passed read safety checks under lock; lines 78-86 reopen the leaf with O_NOFOLLOW before truncate/write. Failures skip rewrite entirely at lines 65-67.
+- Lock path: crates/puread-cli/src/lock.rs:45-49 rejects lock paths outside module root; lines 20-23 ensure safe parent and non-symlink leaf before opening; lines 101-135 reject symlinked run parent components; lines 137-149 reject a symlink lock leaf; line 170 opens with O_NOFOLLOW.
+- Tests: crates/puread-cli/tests/cli_profile_restore.rs:185-208 cover state symlink, profile ledger leaf symlink, run symlink, and lock leaf symlink before mutation. support/cli_profile_restore.rs:117-160 builds those cases and asserts no runner mutation.
+Assessment:
+- The required state/run/leaf symlink and lexical path escape protections are present before command mutation and ledger mutation in the reviewed public flows.
+
+Check 3: component pm hide success durable JSONL can restore unhide; provisional + confirmed folding restores final state once.
+Result: PASS.
+Evidence:
+- crates/puread-android/src/profiles/executor/appops_components.rs:63-75 writes a provisional component record before hide/disable and appends a confirmed record when HideApplyStatus::Applied.
+- appops_components.rs:90-103 restores component records; lines 95-99 run pm unhide only when original_hidden is visible and hide_status is applied, then lines 100-102 enable the component when originally enabled.
+- crates/puread-cli/src/profile_execute/profile_restore/final_state.rs:19-37 folds component entries by final state; lines 65-85 key component records by rule_id/package/component; lines 48-63 mark all un-restored entries for the same component key as restored together.
+- crates/puread-cli/tests/cli_profile_restore.rs:80-128 verifies provisional + confirmed JSONL exists, restore uses confirmed hide state, and each logical component restores once. The test expects two unhide calls for two logical rules and four enable calls for four logical component rules.
+- crates/puread-android/tests/appops_components.rs:181-237 verifies a successful pm hide persists two records and restore calls pm unhide then pm enable.
+Assessment:
+- A confirmed durable pm hide record is sufficient for profile-restore to unhide, and provisional+confirmed entries are folded into one final restore action per logical component key.
+
+Check 4: mutation-after-provisional-confirmed flow does not falsely claim recoverability if confirmed append fails.
+Result: PASS.
+Evidence:
+- crates/puread-android/src/profiles/executor/appops_components.rs:70-82 runs pm hide, builds the confirmed record, and if hide_status is Applied, requires self.ledger.append(record.clone())? before proceeding.
+- Because the confirmed append uses ?, failure returns Err from apply_component before disable-user at line 82 and before returning a ProfileOperation at lines 83-86.
+- crates/puread-android/tests/appops_components/durable.rs:7-49 uses a ledger that fails after one successful provisional append. It asserts the operation errors with ledger sink failed, only the conservative skipped_unavailable provisional record remains, and the runner calls stop after pm hide with no disable-user.
+Assessment:
+- The operation no longer reports a safely applied/recoverable profile result if the confirmed durable record cannot be appended. It still leaves the already attempted pm hide outside durable confirmation, but the reviewed criterion was false recoverability reporting; that is closed.
+
+Check 5: failure/unavailable path remains safe and does not unhide.
+Result: PASS.
+Evidence:
+- crates/puread-android/src/profiles/executor/appops_components.rs:111-117 maps failed/unavailable TryHide to HideApplyStatus::SkippedUnavailable.
+- appops_components.rs:95-99 gates pm unhide on hide_status == Applied, so skipped_unavailable and not_requested records cannot unhide.
+- crates/puread-android/tests/appops_components.rs:52-106 verifies unavailable pm hide persists skipped_unavailable and restore only enables, with no pm unhide.
+- crates/puread-android/tests/appops_components.rs:108-157 verifies non-zero pm hide attempt is recorded as skipped_unavailable.
+- crates/puread-android/tests/appops_components.rs:159-179 verifies a persisted skipped_unavailable record restores enable only and does not call pm unhide.
+- crates/puread-cli/tests/cli_profile_restore.rs:130-160 verifies CLI restore of skipped-only record has no pm unhide and one pm enable.
+Assessment:
+- Unavailable/failure paths remain conservative and do not issue pm unhide from records that did not durably confirm pm hide success.
+
+Check 6: No DNS/domain/hosts/proxy/iptables/AdGuardHome/root hiding/anti-detection production capability.
+Result: PASS.
+Evidence:
+- rg scan over crates/puread-cli/src, crates/puread-android/src, and rules for hosts/DNS/dns/domain/域名/proxy/代理/iptables/AdGuardHome/adguard/mount_hosts/ad_reward/zygisk/root hide/hide root/反检测/anti-detection/Zygisk found only:
+  - crates/puread-android/src/command_runner/settings.rs:105-120 explicit deny logic for private_dns/dns, hosts, and proxy settings.
+  - rules/rom/miui-ad-settings.toml:35 note saying private DNS/network/etc are not included.
+  - rules/components/sdk-ad-components.toml references a package/component string containing proxy in an Android class/package name and a note that it is not domain/network blocking.
+- No rg hit for iptables, AdGuardHome/adguard, mount_hosts, ad_reward, Zygisk/root hiding/anti-detection in the reviewed production source/rules scan.
+Assessment:
+- The reviewed production capability surface remains inside local profile/appops/component/ROM settings behavior and explicitly rejects network-layer DNS/hosts/proxy settings.
+
+Blocking security issues:
+- None found for the six required rechecks.
+
+Residual risks / non-blocking notes:
+- This was a no-big-tests review by instruction; I did not run cargo tests.
+- Because several scoped files are untracked, git diff HEAD alone does not show their contents. This evidence relies on direct file reads plus git ls-files --others to cover them.
+- The lock serialization proof applies to cooperating PureAD commands using the global lock. The reviewed code still uses path prechecks plus O_NOFOLLOW rather than stronger descriptor-relative openat-style traversal, so this review does not claim full resistance against a non-cooperating local actor racing parent-directory replacement between checks and opens.

@@ -1,0 +1,130 @@
+PureAD Wave4 T20/T23/T24 final goal and constraint review
+Generated at: 2026-06-18T19:24:00+08:00
+Workspace: /root/Projects/Ling/PureADRemoverModule
+Base HEAD: a346b08ac067bc3a06ed7711708970d1cc4401af
+Verdict: FAIL
+Confidence: HIGH
+
+Review mode
+- This was a read-only implementation review except for writing this requested evidence file.
+- No product files were modified.
+- No commit, push, or git config command was run.
+- No large test suite was run in this review, per task instruction. Existing evidence files were inspected, but the verdict is based on source/diff review.
+
+Inputs checked
+- git status --short
+- git status --short --ignored
+- git diff --name-status HEAD
+- git diff HEAD for tracked changes
+- rg --files over CLI, Android, rule, test, and evidence scopes
+- fast-context semantic search for Wave4 restore/profile/ledger paths
+- AgentLogs search/read via MCP:
+  - 0158 PureAD profile execute runner ledger 修复完成
+  - 0147 PureAD T20 restore execute safe I/O 修复
+  - 0146 PureAD T23-T24 Android profile closure 完成
+- Evidence:
+  - .omo/evidence/task-20-final-green.txt
+  - .omo/evidence/task-23-24-final-green.txt
+  - .omo/evidence/review-wave4-final-qa.txt
+  - .omo/evidence/review-wave4-final-qa2.txt
+  - .omo/evidence/review-wave4-final-context.txt
+
+Worktree scope observed
+- git status --short shows Wave4 tracked modifications in Cargo.lock, puread-android command runner files, puread-cli CLI/scan/ledger files, plus many untracked Wave4 files under:
+  - crates/puread-cli/src/{lock.rs,profile.rs,profile_execute.rs,profile_execute/*,restore.rs,restore_fs.rs,rule_plan.rs,rule_plan/*}
+  - crates/puread-cli/tests/{cli_execute_security.rs,cli_profiles.rs,support/*}
+  - crates/puread-android/src/profiles.rs and crates/puread-android/src/profiles/*
+  - crates/puread-android/tests/{appops_components.rs,appops_components/*,command_runner/*,rom_profiles.rs,rom_profiles/*}
+  - rules/appops, rules/components, rules/rom
+  - .omo/evidence/task-20*, task-23*, task-24*, and review-wave4* evidence files
+- git diff --name-status HEAD only reports tracked files; the Wave4 implementation includes untracked source/rule/test files, so both tracked diff and filesystem reads were required.
+- git status --short --ignored shows Example/ only as ignored: "!! Example/"; git diff --name-only HEAD | rg '^Example/' produced no output.
+
+Goal/constraint breakdown
+
+T20 CLI manual scan/execute/restore/status/report
+- PASS: CLI commands exist in crates/puread-cli/src/cli.rs:
+  - ApplyProfile, DumpReport, Ledger, Restore, Rules, Scan, Status.
+- PASS: Default dry-run behavior is implemented:
+  - scan without --execute writes dry-run document in crates/puread-cli/src/scan.rs.
+  - apply-profile without --execute writes dry-run document in crates/puread-cli/src/profile.rs.
+  - restore without --execute routes to dry-run in crates/puread-cli/src/ledger.rs.
+- PASS: Mutating CLI paths acquire a global lock:
+  - apply-profile --execute acquires GlobalLock before execution in crates/puread-cli/src/profile.rs:77-86.
+  - scan --execute acquires GlobalLock in crates/puread-cli/src/scan.rs.
+  - restore --execute derives module lock from ledger path and acquires GlobalLock in crates/puread-cli/src/restore.rs.
+- PASS: restore --execute no-follow/root-bound blocker was rechecked:
+  - crates/puread-cli/src/restore.rs:96-104 routes RestoreStep::RemovePlaceholder through remove_placeholder.
+  - crates/puread-cli/src/restore_fs.rs:96-107 calls root.guard_existing_path(path) before remove_file/remove_dir_all.
+  - crates/puread-cli/src/restore_fs.rs uses guard_existing_parent_chain, reject_symlink, GuardedBackup::new, and O_NOFOLLOW reads/writes.
+- PASS with residual note: restore supports file/dir content, missing file/dir recreation, placeholder removal, and mode restore. SetOwner, SetSelinuxContext, and SetImmutable remain no-ops in restore.rs:105-107; this may be acceptable if not part of T20 Wave4 target, but it is not full metadata restore.
+
+T23 AppOps/components profile
+- PASS: apply-profile --execute production path defaults to RealAndroidCommandRunner:
+  - crates/puread-cli/src/profile_execute/profile_runtime.rs:19-24 only selects ScriptedProfileRunner when PUREAD_TEST_PROFILE_RUNNER is set; otherwise RealAndroidCommandRunner is used.
+- PASS: persistent profile ledger path exists:
+  - crates/puread-cli/src/profile_execute.rs defines state/profile-actions.jsonl.
+  - JsonlProfileLedger appends JSONL in crates/puread-cli/src/profile_execute/profile_runtime.rs:38-66.
+- PASS: ledger append failure blocks component mutation:
+  - AndroidProfileExecutor::operation appends ledger before returning operation in crates/puread-android/src/profiles/executor.rs:45-52.
+  - apply_component runs read-only probes, constructs record, then calls self.applied(&record)? before apply_hide_policy and disable-user in crates/puread-android/src/profiles/executor/appops_components.rs:57-75.
+  - CLI/Android tests assert ledger failure produces no pm hide/disable-user argv.
+- FAIL: component profile persists an inaccurate ledger record for pm hide unavailable/failure.
+  - In crates/puread-android/src/profiles/executor/appops_components.rs:63-73, apply_component computes hide_status with hide_status_for_policy(rule.hide_policy) before the runner-backed pm hide attempt. For TryHide, hide_status_for_policy returns Applied at lines 122-126.
+  - self.applied(&record)? at line 73 serializes and appends this pre-attempt record to the persistent ledger.
+  - Only after ledger append, line 74 runs apply_hide_policy(&package, rule.hide_policy), which can return SkippedUnavailable.
+  - Lines 76-87 return a new ProfileOperation record with the actual hide_status, but that returned record is not the persisted ledger line.
+  - restore_component uses persisted record.hide_status at lines 96-99 to decide whether to run pm unhide. If the ledger says Applied while the real pm hide attempt failed, restore will unnecessarily run pm unhide. Because line 99 uses run_required(...)? this can fail and prevent the later pm enable at lines 101-102.
+  - Existing tests check apply.record contains skipped_unavailable, but do not assert the ledger.records()[0] content for the unavailable/non-zero pm hide cases. This lets the durable recovery record drift from the reported operation.
+
+T24 ROM settings/shared_prefs profile
+- PASS: ROM settings path records original value before mutation:
+  - crates/puread-android/src/profiles/executor/rom.rs:77-101 probes, appends record, then applies settings.
+- PASS: shared_prefs XML path has preflight + ledger-before-mutation:
+  - crates/puread-android/src/profiles/executor/rom.rs:29-47 calls plan_bool, preflight_bool_commit, builds record, calls self.applied(&record)?, then commit_bool.
+  - crates/puread-android/src/profiles/xml.rs uses no-follow opens, file identity checks, backup collision checks, and symlink-aware backup parent validation.
+- PASS: ROM profile rules are default_enabled=false and manual profile scoped.
+- REVIEW RISK: There is no CLI surface found for restoring state/profile-actions.jsonl profile records. AndroidProfileExecutor has restore_appop/restore_component/restore_rom methods, but crates/puread-cli/src/cli.rs only exposes restore over a --ledger path routed to puread_core::restore_ledger file-action records. dump-report also reads RestoreLedger, not profile-actions.jsonl. If T23/T24 "可回滚" requires end-user CLI rollback, that is incomplete. If "可回滚" only means recovery records and lower-level restore methods exist for future integration, this is a residual design gap rather than a strict blocker. Given the current Wave targets say CLI restore ability and T23/T24 reversible profiles, this should be treated as blocking or at least explicitly resolved.
+
+Forbidden scope and Example
+- PASS: No Example/ tracked diff found.
+- PASS: .gitignore contains Example/.
+- PASS: forbidden token scan over production/test/rule scope found no production DNS/domain/hosts/proxy/iptables/AdGuardHome/mount_hosts/ad_reward capability. Hits were:
+  - explicit denial in SettingsAdapter for private_dns_mode/private_dns_specifier/dns/hosts/proxy keys.
+  - tests for those denials.
+  - rule notes saying no private DNS/network/proxy and local component profile notes saying not domain/network blocking.
+  - pm hide/unhide runner-backed package capability, not root hiding/anti-detection/Zygisk hiding.
+
+QA evidence assessment
+- Existing evidence reports fmt/clippy/tests/rules validate green after the latest fixes:
+  - .omo/evidence/task-20-final-green.txt reports fmt, clippy, cli_profiles, cli_execute_security, rules validate PASS.
+  - .omo/evidence/task-23-24-final-green.txt reports fmt, clippy, cli_profiles, cli_execute_security, appops_components, rom_profiles, rules validate, LOC, forbidden scan PASS.
+  - .omo/evidence/review-wave4-final-qa2.txt reports cargo fmt, clippy, targeted CLI tests, targeted Android tests PASS.
+- However, those tests do not prove the durable profile ledger contains the post-attempt pm hide status. The reviewed source shows it does not.
+
+Blocking issues
+1. Component profile durable ledger can falsely record pm hide as applied when pm hide was unavailable or failed.
+   - File/logic: crates/puread-android/src/profiles/executor/appops_components.rs:63-87 and restore_component at 96-102.
+   - Why blocking: T23 requires ledger-first, reversible component profile behavior and pm hide unavailable should be skipped and recorded. Current durable ledger is written before the capability attempt and contains the optimistic status. The report returned to CLI is corrected, but the persisted recovery source remains wrong.
+   - Exact evidence needed after fix: a failing-then-passing test that exercises pm hide unavailable/non-zero failure and asserts the ProfileLedgerSink persisted record contains "hide_status":"skipped_unavailable"; also assert restore from that persisted record does not call pm unhide and still calls pm enable when original_enabled was enabled.
+
+2. Profile ledger has no reviewed CLI restore path for state/profile-actions.jsonl records.
+   - File/logic: crates/puread-cli/src/cli.rs:13-20 exposes Restore only; crates/puread-cli/src/ledger.rs:27-35 routes restore to puread_core::restore_ledger; crates/puread-cli/src/profile.rs:98-110 dump-report also reads RestoreLedger. No CLI command reads profile-actions.jsonl and dispatches restore_appop/restore_component/restore_rom.
+   - Why blocking: The Wave goal says T20 includes restore/status/report and T23/T24 must be reversible/rollback-capable. Lower-level restore methods exist in puread-android, but no end-user CLI restore/report surface for profile records was found.
+   - Exact evidence needed after fix: a CLI integration test that applies appops/component/rom profile records to state/profile-actions.jsonl and then restores through the CLI using the real Android profile executor seam, proving appops set default/original, pm enable/unhide as applicable, and ROM setting/XML backup restoration are driven from the persisted profile ledger.
+
+Minimum fix recommendations
+1. Fix component ledger truthfulness without regressing ledger-before-mutation:
+   - Split component state into two ledger phases or avoid mutating pm hide before durable truth can be known.
+   - Minimal conservative option: do not include TryHide optimistic Applied in the ledger. Persist hide_status=NotRequested or SkippedUnavailable before mutation, run pm hide as best-effort after ledger append, then only record/report Applied if a second durable profile ledger event can be appended before/with the hide mutation recovery semantics. The key invariant is that the persisted ledger must never claim Applied for a mutation that has not actually happened.
+   - If keeping one record, move pm hide attempt before ledger append only if it is treated as pure capability probing with no mutation; but "pm hide" is itself a mutation, so this would violate the ledger-before-mutation constraint. Prefer a separate reversible record per mutation or skip pm hide in the same ledger-before-mutation transaction until the ledger format supports an update/append finalization model.
+   - Add tests asserting ledger.records()[0], not only apply.record.
+
+2. Add or explicitly scope profile restore CLI:
+   - Add a profile restore/report command or extend restore with a profile-ledger mode that reads state/profile-actions.jsonl, parses ProfileRecord variants, dispatches AndroidProfileExecutor::restore_appop/restore_component/restore_rom, and updates/marks restored records safely.
+   - Ensure it acquires the same global lock and uses the real Android runner by default, with test-only injected runner only under explicit env.
+   - Add CLI tests for appops, component, ROM settings, and shared_prefs restore from persisted profile ledger.
+
+Final verdict
+<verdict>FAIL</verdict>
+confidence: HIGH

@@ -1,0 +1,16 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+[1m[92m     Running[0m tests/cli_profiles.rs (target/debug/deps/cli_profiles-b77e19d4e3e4c3ab)
+
+running 10 tests
+test cli_profiles_dump_report_uses_existing_ledger_report_without_mutation ... ok
+test cli_profiles_restore_keeps_existing_dry_run_contract ... ok
+test cli_profiles_status_outputs_paths_and_lock_state_when_module_root_is_fixture ... ok
+test cli_profiles_profile_ledger_failure_blocks_android_mutation ... ok
+test cli_profiles_scan_defaults_to_dry_run_when_flag_is_omitted ... ok
+test cli_profiles_explicit_profiles_plan_disabled_android_rules ... ok
+test cli_profiles_execute_dispatches_android_profiles_with_injected_runner ... ok
+test cli_profiles_apply_profile_defaults_to_dry_run_when_execute_is_omitted ... ok
+test cli_profiles_apply_profile_execute_reports_lock_conflict_when_lock_is_held ... ok
+test cli_profiles_apply_profile_execute_uses_global_lock_under_fixture ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s

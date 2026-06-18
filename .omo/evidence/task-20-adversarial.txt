@@ -1,0 +1,98 @@
+# PureAD T20 adversarial evidence
+generated_at: 2026-06-18T07:54:26Z
+
+## malformed input: invalid profile is rejected
+$ cargo run -p puread-cli -- apply-profile not-a-profile --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+[1m[92m     Running[0m `target/debug/puread-cli apply-profile not-a-profile --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module`
+profile has unsupported value: not-a-profile
+exit_status=1
+
+## stale state: existing stale lock file is not treated as held
+$ cargo run -p puread-cli -- status --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m `target/debug/puread-cli status --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module`
+{
+  "schema_version": 1,
+  "command": "status",
+  "root_path": "/tmp/tmp.PKCkBOlvvM/android-fs",
+  "module_root": "/tmp/tmp.PKCkBOlvvM/module",
+  "lock_path": "/tmp/tmp.PKCkBOlvvM/module/run/puread.lock",
+  "lock_held": false
+}
+exit_status=0
+
+## dirty worktree: command evidence captures concurrent non-CLI changes without modifying them
+$ git status --short --ignored
+ M Cargo.lock
+ M crates/puread-android/Cargo.toml
+ M crates/puread-android/src/command_runner.rs
+ M crates/puread-android/src/command_runner/pm.rs
+ M crates/puread-android/src/command_runner/settings.rs
+ M crates/puread-android/src/lib.rs
+ M crates/puread-cli/Cargo.toml
+ M crates/puread-cli/src/cli.rs
+ M crates/puread-cli/src/error.rs
+ M crates/puread-cli/src/ledger.rs
+ M crates/puread-cli/src/main.rs
+ M crates/puread-cli/src/scan.rs
+?? .omo/evidence/task-20-adversarial.txt
+?? .omo/evidence/task-20-cli-profiles.txt
+?? .omo/evidence/task-20-cli-scan.json
+?? .omo/evidence/task-20-execute-lock.txt
+?? .omo/evidence/task-20-red.txt
+?? .omo/evidence/task-23-appops-components.txt
+?? .omo/evidence/task-23-default-enabled-grep.txt
+?? .omo/evidence/task-23-red.txt
+?? .omo/evidence/task-24-forbidden-rom-scan.txt
+?? .omo/evidence/task-24-red.txt
+?? .omo/evidence/task-24-rom-profiles.txt
+?? crates/puread-android/src/profiles.rs
+?? crates/puread-android/src/profiles/
+?? crates/puread-android/tests/appops_components.rs
+?? crates/puread-android/tests/rom_profiles.rs
+?? crates/puread-cli/src/lock.rs
+?? crates/puread-cli/src/profile.rs
+?? crates/puread-cli/src/profile_execute.rs
+?? crates/puread-cli/src/rule_plan.rs
+?? crates/puread-cli/tests/cli_profiles.rs
+?? rules/appops/
+?? rules/components/
+?? rules/rom/
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/
+exit_status=0
+
+## long command: oversized profile argument fails as invalid input, not success
+$ cargo run -p puread-cli -- apply-profile <180-char-profile> --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m `target/debug/puread-cli apply-profile conservative-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module`
+profile has unsupported value: conservative-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
+exit_status=1
+
+## misleading success output: scan/apply execute is verified against a copied fixture
+note: Earlier evidence said `scan --execute` was rejected. Current T20 behavior supports real execution behind an explicit `--execute` flag and global lock. The refreshed final-green evidence records the current contract: dry-run scan on the repository fixture, then apply/restore/lock behavior on a copied temporary fixture only.
+
+Current evidence:
+- `.omo/evidence/task-20-final-green.txt` contains `cargo run -p puread-cli -- scan --dry-run --root tests/fixtures/android-fs` with `will_mutate=false`.
+- `.omo/evidence/task-20-final-green.txt` contains `apply-profile conservative --execute` against `/tmp/.../android-fs` with `applied=2`, empty target cache directories, and later `restore --execute` with `restored=2`.
+- `.omo/evidence/task-20-final-green.txt` holds the same lock path while executing a second apply command and observes `global lock is already held`, which is the expected non-zero outcome.
+
+## mid-operation interrupt: SIGINT injection and post-interrupt lock check
+note: CLI has no artificial delay/test hook, so this verifies signal interruption does not leave the global lock held; exact between-action interruption is not deterministic without changing production CLI.
+$ timeout -s INT 0.001s cargo run -p puread-cli -- apply-profile conservative --execute --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module
+exit_status=124
+$ cargo run -p puread-cli -- status --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m `target/debug/puread-cli status --root /tmp/tmp.PKCkBOlvvM/android-fs --module-root /tmp/tmp.PKCkBOlvvM/module`
+{
+  "schema_version": 1,
+  "command": "status",
+  "root_path": "/tmp/tmp.PKCkBOlvvM/android-fs",
+  "module_root": "/tmp/tmp.PKCkBOlvvM/module",
+  "lock_path": "/tmp/tmp.PKCkBOlvvM/module/run/puread.lock",
+  "lock_held": false
+}
+exit_status=0

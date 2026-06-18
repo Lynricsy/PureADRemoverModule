@@ -1,0 +1,7 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+[1m[92m     Running[0m tests/rom_profiles.rs (target/debug/deps/rom_profiles-d3af8eeccaf47c44)
+
+running 1 test
+test rom_shared_prefs_does_not_mutate_or_backup_when_ledger_sink_fails ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s

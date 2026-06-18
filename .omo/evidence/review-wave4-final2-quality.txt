@@ -1,0 +1,59 @@
+Wave4 final2 quality review
+===========================
+
+Verdict: FAIL
+Confidence: high
+Reviewed at: 2026-06-18 Asia/Hong_Kong
+Scope: read-only quality review of current uncommitted Wave4 workspace changes.
+
+Commands run
+------------
+- git status --short --ignored
+- git diff --stat HEAD
+- git diff HEAD -- crates/puread-cli/src crates/puread-cli/tests crates/puread-android/src/profiles crates/puread-android/tests/appops_components.rs crates/puread-android/src/command_runner.rs crates/puread-android/src/command_runner/pm.rs crates/puread-android/src/lib.rs
+- cargo metadata --no-deps --format-version 1
+- rg -n "PUREAD_TEST_PROFILE_RUNNER|std::env::var|env::var|var_os|set_var" crates/puread-cli/src crates/puread-cli/tests crates/puread-android/src crates/puread-android/tests
+- rg -n "unwrap\\(|expect\\(|panic!|todo!|unimplemented!" crates/puread-cli/src crates/puread-cli/tests crates/puread-android/src/profiles crates/puread-android/tests/appops_components.rs crates/puread-android/src/command_runner
+- pure LOC count for all touched/untracked Rust files
+- rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward|domain|proxy|zygisk|hide" crates/puread-cli/src crates/puread-android/src/profiles rules/appops rules/components rules/rom
+- cargo test -p puread-android --test appops_components
+- cargo test -p puread-cli --test cli_profile_restore -p puread-cli --test cli_profiles
+
+Verification results
+--------------------
+- cargo metadata --no-deps passed.
+- cargo test -p puread-android --test appops_components passed: 7 tests.
+- cargo test -p puread-cli --test cli_profile_restore -p puread-cli --test cli_profiles passed: 18 tests.
+- PUREAD_TEST_PROFILE_RUNNER appears only in crates/puread-cli/tests/support/cli_profile_restore.rs; no crates/puread-cli/src or crates/puread-android/src env var read was found.
+- unwrap/expect/panic scan in scoped source only found expect calls in crates/puread-android/src/profiles/xml/tests.rs, under test code.
+- touched Rust pure LOC maximums are under 250. Highest observed: crates/puread-cli/src/restore_fs.rs 247, crates/puread-cli/tests/cli_profiles.rs 241, crates/puread-android/tests/appops_components.rs 239.
+- forbidden capability scan did not show DNS/hosts/iptables/Clash/AdGuardHome/mount_hosts/ad_reward/root-hiding implementation in scoped production paths. Hits were expected rule notes/target text or pm hide/profile logic.
+
+Old blocker recheck
+-------------------
+1. PASS: apply-profile --execute no longer switches fake runner via PUREAD_TEST_PROFILE_RUNNER in production src. The test seam is explicit hidden debug CLI flags, and env usage remains only in test support.
+2. FAIL: component profile persistent ledger/report consistency is still incomplete for successful pm hide. The unavailable/failure path is covered and consistent, but the success path persists the wrong hide_status in the ledger.
+3. PASS with security-scope caveat: profile restore trust-boundary evidence remains acceptable for this quality pass. Symlink tests for state, profile ledger, run, and lock paths pass.
+4. PARTIAL PASS: profile restore CLI shape is understandable and reports stable JSON/text summaries. Errors are diagnosable enough for current surface.
+5. PASS: touched Rust files are below 250 pure LOC and responsibility split is generally reasonable.
+
+Blocking issue
+--------------
+1. crates/puread-android/src/profiles/executor/appops_components.rs:63-87 writes a component ledger record before attempting pm hide, using hide_status_for_policy(TryHide) which returns skipped_unavailable. If pm hide later succeeds, only the returned report record is rebuilt with hide_status=applied; the already-appended persistent ledger record remains skipped_unavailable.
+
+Why this blocks approval:
+- restore_component only runs pm unhide when the persisted record has original_hidden=visible and hide_status=applied at crates/puread-android/src/profiles/executor/appops_components.rs:96-99.
+- The real CLI profile-restore path reads persisted JSONL entries from state/profile-actions.jsonl, not the apply-profile in-memory report record.
+- Therefore a successful pm hide can leave a package hidden after profile-restore because the durable restore ledger says hide was skipped.
+- The existing passing test component_profile_applies_and_restores_available_pm_hide restores from apply.record, not from ledger.records()[0], so it does not prove the real persistent restore path.
+
+Required evidence to clear:
+- Add or update a test proving that when pm hide succeeds, the persistent ledger record contains "hide_status":"applied".
+- Add or update a CLI/integration-level test where apply-profile --execute persists a successful TryHide component record, then profile-restore --execute reads the JSONL ledger and invokes pm unhide.
+- Adjust implementation so durable ledger and report record agree for pm hide success and failure/unavailable paths without allowing mutation before a recoverable ledger entry exists.
+
+Non-blocking observations
+-------------------------
+- The current design correctly rejects fake runner activation through PUREAD_TEST_PROFILE_RUNNER in production src.
+- Existing tests prove pm hide failed/unavailable paths do not unhide on restore and do still re-enable the component.
+- Existing restore symlink boundary tests are passing and were not expanded beyond the requested quality review scope.

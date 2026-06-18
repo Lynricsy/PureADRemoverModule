@@ -1,0 +1,43 @@
+[[rules]]
+id = "luna-music-ad-related-appops"
+category = "appops"
+package = "com.luna.music"
+action = "set_appop"
+appop = "MONITOR_LOCATION"
+appop_mode = "ignore"
+risk_level = "medium"
+default_enabled = false
+profile = "appops"
+observed_behavior = "The upstream script applies AppOps restrictions to Luna Music advertising and telemetry related capabilities."
+rollback_strategy = "restore_appop"
+introduced_by = "task-23"
+reviewed_at = "2026-06-18"
+notes = "Representative manual AppOps profile extracted from the upstream Luna Music script. Execution records original mode or default before mutation."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/com.luna.music.sh"
+source_line_or_pattern = "deny_appops \"com.luna.music\" \"ignore\""
+
+[[rules]]
+id = "shuqi-reader-ad-related-appops"
+category = "appops"
+package = "com.shuqi.controller"
+action = "set_appop"
+appop = "MONITOR_LOCATION"
+appop_mode = "ignore"
+risk_level = "medium"
+default_enabled = false
+profile = "appops"
+observed_behavior = "The upstream AppOps helper targets reader apps with location and device capability restrictions associated with ad behavior."
+rollback_strategy = "restore_appop"
+introduced_by = "task-23"
+reviewed_at = "2026-06-18"
+notes = "Manual-only profile; not enabled by default because AppOps changes are broader than file cache cleanup."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/APPOPS.sh"
+source_line_or_pattern = "deny_appops \"com.shuqi.controller\" \"ignore\""

@@ -1,0 +1,450 @@
+# Wave4 final2 context/evidence/plan consistency review
+
+generated_at: 2026-06-18T19:51:18+08:00
+workspace: /root/Projects/Ling/PureADRemoverModule
+mode: read-only context/evidence/plan audit; no product file edits, no commit, no push, no git config
+verdict: FAIL
+confidence: HIGH
+
+timestamp_note: second-round evidence files were produced by parallel reviewers; this context pass incorporated the final2 files present in the workspace at review time.
+
+## Required preflight
+
+- Sent required user-facing preflight line:
+  - `WORKING: final context2 - mining evidence and plan`
+- This pass wrote only this required evidence file.
+- Product source/rules/plan files were not modified by this reviewer.
+
+## AgentLogs lookup
+
+Required history lookup was attempted through AgentLogs MCP `search_logs`, not by manually searching log files.
+
+First query:
+
+```text
+Wave4 final blockers fixed task20 profile ledger restore security component hide ledger LOC final review second
+```
+
+Result:
+
+```text
+fast-context 搜索失败：resource_exhausted
+```
+
+Retry query:
+
+```text
+Wave4 final blockers fixed task20 task23 task24 second review evidence PASS FAIL
+```
+
+Result: 8 related logs found. Relevant logs read:
+
+- `0170-PureADRemoverModule-task20-profile-ledger-restore-security-fix.md`
+- `0171-Wave4-final-blockers-fixed-ready-for-review2.md`
+- `0163-PureAD-Wave4-T20-T23-T24-final-context2-复审-FAIL.md`
+- `0166-PureAD-Wave4-T20-T23-T24-最终安全复审-FAIL.md`
+- `0160-PureAD-Wave4-T20-T23-T24-最终代码质量复审-FAIL.md`
+- `0162-PureAD-Wave4-final-goal-review-FAIL.md`
+
+History summary:
+
+- First-round context FAIL was primarily caused by `crates/puread-cli/tests/cli_profiles.rs` over 250 pure LOC and stale green evidence.
+- First-round security FAIL was primarily profile ledger/lock symlink-follow risk before real Android mutations.
+- First-round quality/goal FAIL also included production fake runner risk, component `pm hide` persistent ledger mismatch, incomplete profile restore CLI surface, and restore ledger/root-bound concerns.
+- Later logs/evidence claimed fixes for LOC, profile ledger/lock safe I/O, profile restore CLI, production fake runner negative proof, and component hide ledger failure-path consistency.
+
+## Evidence read
+
+Required new/fix evidence:
+
+- `.omo/evidence/task-20-cli-profiles-loc-fix.txt`
+- `.omo/evidence/task-23-component-hide-ledger-fix.txt`
+- `.omo/evidence/task-20-profile-ledger-restore-security.txt`
+
+Second-round final evidence currently present:
+
+- `.omo/evidence/review-wave4-final2-goal.txt`
+- `.omo/evidence/review-wave4-final2-qa.txt`
+- `.omo/evidence/review-wave4-final2-quality.txt`
+- `.omo/evidence/review-wave4-final2-security.txt`
+
+Old FAIL evidence read as historical input only:
+
+- `.omo/evidence/review-wave4-final-quality.txt`
+- `.omo/evidence/review-wave4-final-security.txt`
+- `.omo/evidence/review-wave4-final-goal.txt`
+- `.omo/evidence/review-wave4-final-context2.txt`
+- `.omo/evidence/review-wave4-final-qa2.txt`
+
+Repository constraint files read:
+
+- `.omo/plans/puread-rust-module.md`
+- `.gitignore`
+- `AGENTS.md`
+
+Focused implementation snippets were read to validate that new evidence is grounded:
+
+- `crates/puread-cli/src/profile_execute/profile_runtime.rs`
+- `crates/puread-cli/src/profile_execute/profile_restore.rs`
+- `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs`
+- `crates/puread-cli/src/lock.rs`
+- `crates/puread-android/src/profiles/executor/appops_components.rs`
+- `crates/puread-android/tests/appops_components.rs`
+- `crates/puread-cli/src/restore.rs`
+- `crates/puread-cli/src/restore_fs.rs`
+- `crates/puread-core/src/restore_ledger/store.rs`
+
+## Required repository checks
+
+### AGENTS upstream/sync instructions
+
+PASS.
+
+`AGENTS.md` contains sufficient upstream update and synchronization policy:
+
+- Project boundary and forbidden capabilities.
+- Upstream source table and snapshot metadata fields.
+- Rule classification matrix and required provenance fields.
+- Sync workflow that treats upstream scripts as untrusted data.
+- `Example/` read-only convention.
+- Required validation commands.
+- AgentLogs usage rules.
+- Git remote/local identity constraints.
+
+### `.gitignore` and `Example/`
+
+PASS.
+
+`.gitignore` contains:
+
+```text
+Example/
+```
+
+Command:
+
+```sh
+git status --short --ignored -- Example
+```
+
+Result:
+
+```text
+!! Example/
+```
+
+Additional checks:
+
+```sh
+git diff --name-only -- Example
+git ls-files Example
+```
+
+Both produced no output. `Example/` is not in tracked diff and remains ignored.
+
+### Git remote
+
+PASS.
+
+Command:
+
+```sh
+git remote -v
+```
+
+Result:
+
+```text
+origin	git@github.com:Lynricsy/PureADRemoverModule.git (fetch)
+origin	git@github.com:Lynricsy/PureADRemoverModule.git (push)
+```
+
+### Local git config
+
+PASS.
+
+Command:
+
+```sh
+git config --local --list --show-origin
+```
+
+Result only contains repository core, remote, and branch settings:
+
+```text
+file:.git/config	core.repositoryformatversion=0
+file:.git/config	core.filemode=true
+file:.git/config	core.bare=false
+file:.git/config	core.logallrefupdates=true
+file:.git/config	remote.origin.url=git@github.com:Lynricsy/PureADRemoverModule.git
+file:.git/config	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config	branch.main.remote=origin
+file:.git/config	branch.main.merge=refs/heads/main
+```
+
+No local `user.name` or `user.email` is present.
+
+### Plan state
+
+T20/T23/T24 remain unchecked:
+
+```text
+292:- [ ] 20. CLI 手动扫描和应用 profile
+316:- [ ] 23. 实现 AppOps 与组件 profile
+324:- [ ] 24. 实现 ROM profile 与 settings/XML 修改
+```
+
+Per user instruction, unchecked plan items alone are not a FAIL while final QA/review remains in progress or red. They are a closure todo after all second-round evidence is green.
+
+## Current worktree context
+
+`git status --short --ignored` shows existing Wave4 tracked and untracked changes across Cargo/Rust/rules/evidence. This reviewer did not restore or overwrite them.
+
+Ignored paths include:
+
+```text
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/
+```
+
+## First-round FAIL coverage assessment
+
+### 1. LOC gate: `crates/puread-cli/tests/cli_profiles.rs`
+
+Covered by new evidence.
+
+Old blocker:
+
+- `.omo/evidence/review-wave4-final-context2.txt` and old QA2 evidence recorded `cli_profiles.rs = 262` pure LOC and final verdict FAIL.
+
+New coverage:
+
+- `.omo/evidence/task-20-cli-profiles-loc-fix.txt` records moving fixture helpers into support and `cli_profiles.rs = 237`.
+- `.omo/evidence/task-20-profile-ledger-restore-security.txt` records checked files all <=250.
+- `.omo/evidence/review-wave4-final2-qa.txt` records all touched Rust files <=250, with `cli_profiles.rs = 241`.
+
+Current direct checks in this review:
+
+```text
+crates/puread-cli/tests/cli_profiles.rs: 229
+crates/puread-cli/tests/support/cli_profiles.rs: 151
+PASS: no Rust file exceeds 250 pure LOC
+```
+
+The exact number differs slightly depending on block-comment handling and whether only touched files or all Rust files are counted, but every current check is <=250. The old LOC FAIL is covered.
+
+### 2. Production fake runner via `PUREAD_TEST_PROFILE_RUNNER`
+
+Covered by new evidence.
+
+Old blocker:
+
+- First-round quality review said production `apply-profile --execute` could switch to fake runner through `PUREAD_TEST_PROFILE_RUNNER`.
+
+New coverage:
+
+- `.omo/evidence/task-20-profile-ledger-restore-security.txt` records `PUREAD_TEST_PROFILE_RUNNER` only in test helper and direct negative CLI proof.
+- `.omo/evidence/review-wave4-final2-goal.txt` records production `src` scan PASS.
+- `.omo/evidence/review-wave4-final2-quality.txt` records PASS for this old blocker.
+- `.omo/evidence/review-wave4-final2-security.txt` records production source does not read the env var.
+
+Current direct scan:
+
+```text
+PUREAD_TEST_PROFILE_RUNNER only appears under crates/puread-cli/tests/support/cli_profile_restore.rs.
+```
+
+The hidden test runner seam is now explicit through debug/test flags; ordinary environment pollution no longer fakes production success.
+
+### 3. Profile ledger/lock symlink-follow before mutation
+
+Covered for static symlink/path-escape cases.
+
+Old blocker:
+
+- First-round security review found profile ledger append and lock open followed symlinked state/run paths or final files.
+
+New coverage:
+
+- `.omo/evidence/task-20-profile-ledger-restore-security.txt` records append/read preflight, final ledger symlink rejection, lock final symlink rejection, and `O_NOFOLLOW`.
+- `.omo/evidence/review-wave4-final2-security.txt` marks static ledger append/read and lock symlink checks PASS.
+- `.omo/evidence/review-wave4-final2-qa.txt` records `cli_profile_restore` 8 passed, including state symlink, final ledger symlink, run symlink, final lock symlink, and default fake-runner negative case.
+
+Current source confirmation:
+
+- `JsonlProfileLedger::ensure_safe_for_append()` checks module child path, safe parent creation, and final ledger symlink.
+- `JsonlProfileLedger::append()` opens with `O_NOFOLLOW` and mode `0600`.
+- `GlobalLock::acquire()` checks parent, final lock symlink, and opens with `O_NOFOLLOW` and mode `0600`.
+- `profile_restore/ledger.rs` checks parent components and final ledger symlink before `O_NOFOLLOW` read/rewrite.
+
+This old static symlink blocker is covered. A new second-round concurrency issue remains; see blockers below.
+
+### 4. Component `pm hide` persistent ledger mismatch for failure/unavailable path
+
+Covered for failure/unavailable path, but not fully covered for successful `pm hide`.
+
+Old blocker:
+
+- First-round reviews found `TryHide` persisted `hide_status:"applied"` before `pm hide`, so failure/unavailable paths could later call `pm unhide` incorrectly.
+
+New coverage:
+
+- `.omo/evidence/task-23-component-hide-ledger-fix.txt` records changing pre-mutation `TryHide` ledger status to `skipped_unavailable`.
+- Tests now assert persistent ledger matches report when `pm hide` is unavailable or exits non-zero.
+- A test verifies persisted `skipped_unavailable` restore calls `pm enable` but not `pm unhide`.
+
+Current source/test confirmation:
+
+- `hide_status_for_policy(PmHidePolicy::TryHide)` now returns `HideApplyStatus::SkippedUnavailable`.
+- Tests contain:
+  - `persistent ledger must match report when pm hide is unavailable`
+  - `persistent ledger must match report when pm hide exits non-zero`
+  - `component_profile_restore_keeps_enable_when_persisted_hide_was_skipped`
+
+However, second-round quality and security both found the inverse successful-hide path now remains unsafe: if `pm hide` succeeds, the transient report says `applied`, but the durable ledger already contains `skipped_unavailable`. That new blocker is not covered.
+
+### 5. Profile restore CLI surface for `state/profile-actions.jsonl`
+
+Covered for basic CLI surface and record-kind dispatch.
+
+Old blocker:
+
+- First-round goal review did not find a CLI surface to restore `state/profile-actions.jsonl`.
+
+New coverage:
+
+- `profile-restore` and `profile-report` now exist through CLI routing.
+- `profile_restore.rs` reads `state/profile-actions.jsonl` and dispatches:
+  - `app_op` -> `restore_appop`
+  - `component` -> `restore_component`
+  - `rom_setting`, `shared_prefs_bool`, `rom_skipped` -> `restore_rom`
+- `.omo/evidence/review-wave4-final2-goal.txt` and `.omo/evidence/review-wave4-final2-qa.txt` record `cli_profile_restore` PASS, 8 tests.
+
+Current direct source confirmation:
+
+- `crates/puread-cli/src/profile_execute/profile_restore.rs` implements `restore_profile()`, `restore_entries()`, and `restore_entry()`.
+- `crates/puread-cli/tests/cli_profile_restore.rs` covers the CLI surface.
+
+This old missing-surface blocker is covered. The second-round security review still finds a concurrency ordering issue in `profile-restore --execute`; see blockers below.
+
+### 6. Restore target/backup no-follow/root-bound
+
+Partially covered and not the current decisive blocker for this context pass.
+
+Old quality review flagged restore ledger/root-bound design concerns, including ledger reading before stronger no-follow/root-bound proof and check-then-use deletion risk.
+
+Evidence now shows:
+
+- `cli_execute_security` passes 15 tests.
+- Covered target/backup cases include target symlink, target parent symlink, directory restore parent symlink, RemovePlaceholder parent symlink, backup symlink, backup parent symlink, backup path escape, missing parent recreation, and permission restore.
+- First-round security review already treated restore target/backup checks as PASS with a residual TOCTOU note.
+
+Remaining note:
+
+- `puread_core::RestoreLedger` still uses ordinary `File::open`, `OpenOptions::open`, and `File::create` for the file-action ledger. The decisive second-round FAILs currently focus on profile ledger concurrency and component hide success recovery, not this older residual design concern.
+
+## Second-round evidence status
+
+Second-round final review evidence is not all green:
+
+```text
+.omo/evidence/review-wave4-final2-goal.txt: PASS
+.omo/evidence/review-wave4-final2-qa.txt: PASS
+.omo/evidence/review-wave4-final2-quality.txt: FAIL
+.omo/evidence/review-wave4-final2-security.txt: FAIL
+```
+
+QA and goal review establish that many first-round items are fixed. They do not override the explicit second-round quality/security blockers.
+
+## Current blockers
+
+### Blocker 1: successful `pm hide` is not recoverable from durable profile ledger
+
+Evidence:
+
+- `.omo/evidence/review-wave4-final2-quality.txt`: FAIL.
+- `.omo/evidence/review-wave4-final2-security.txt`: FAIL.
+- Current source:
+  - `apply_component()` persists a component record before `pm hide`.
+  - For `PmHidePolicy::TryHide`, the persisted pre-mutation record uses `hide_status:"skipped_unavailable"`.
+  - If `pm hide` later succeeds, only the returned transient report record is rebuilt with `hide_status:"applied"`.
+  - `profile-restore --execute` reads the durable JSONL ledger, not the transient apply report.
+  - `restore_component()` only calls `pm unhide` when durable `hide_status == applied`.
+
+Impact:
+
+- A successful `pm hide` can leave the package hidden after profile restore.
+- This violates the project invariant that real mutations must be recoverable from module-local ledger state.
+
+Required closure evidence:
+
+- Add/update a test proving successful `pm hide` produces a durable ledger record that drives `pm unhide` during restore, or change production behavior so `pm hide` is not executed unless its recoverable durable record can be written.
+- The test must inspect persisted `ledger.records()` or the CLI `state/profile-actions.jsonl`, not only transient `apply.record`.
+- Rerun and record:
+  - `cargo test -p puread-android --test appops_components -- --nocapture`
+  - `cargo test -p puread-cli --test cli_profile_restore -- --nocapture` if CLI restore path is affected.
+
+### Blocker 2: `profile-restore --execute` reads profile ledger before acquiring global lock
+
+Evidence:
+
+- `.omo/evidence/review-wave4-final2-security.txt`: FAIL.
+- Current source:
+  - `profile_restore.rs` reads entries before `GlobalLock::acquire()`.
+  - On success, `rewrite_restored()` truncates and rewrites based on the pre-lock entries snapshot.
+
+Risk:
+
+1. `profile-restore --execute` reads old entries without holding lock.
+2. Concurrent `apply-profile --execute` obtains the same lock first, appends a new record, and performs a real mutation.
+3. Restore then obtains lock and rewrites from the old snapshot.
+4. The new apply record can be lost while the mutation remains live.
+
+Impact:
+
+- Module-local recovery ledger can lose real mutation records.
+- This violates the same recoverability invariant.
+
+Required closure evidence:
+
+- Move execute-mode profile ledger read inside the global lock.
+- Add an interleaving/concurrency test or equivalent controlled test proving a record appended before restore obtains the lock is not dropped by stale `entries` rewrite.
+- Rerun and record `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`.
+
+## Closure todos
+
+1. Fix successful `pm hide` durable-ledger recovery semantics.
+2. Fix `profile-restore --execute` lock/read/rewrite ordering.
+3. Rerun the targeted second-round QA and review gates:
+   - `cargo fmt --all -- --check`
+   - `cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings`
+   - `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`
+   - `cargo test -p puread-cli --test cli_profiles -- --nocapture`
+   - `cargo test -p puread-cli --test cli_execute_security -- --nocapture`
+   - `cargo test -p puread-android --test appops_components -- --nocapture`
+   - `cargo test -p puread-android --test rom_profiles -- --nocapture`
+   - `cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom`
+   - touched/full Rust pure LOC check.
+4. Refresh second-round evidence after fixes, especially:
+   - `.omo/evidence/review-wave4-final2-quality.txt`
+   - `.omo/evidence/review-wave4-final2-security.txt`
+   - `.omo/evidence/review-wave4-final2-qa.txt`
+   - this final2 context evidence or a final green context successor.
+5. Only after all second-round final evidence is PASS, update `.omo/plans/puread-rust-module.md` to check T20/T23/T24.
+6. Refresh final green/ledger evidence after all reviews are green.
+7. Keep `Example/` ignored and out of tracked diff.
+8. Keep remote as `git@github.com:Lynricsy/PureADRemoverModule.git`.
+9. Continue not setting local git identity.
+
+## Final verdict
+
+<verdict>FAIL</verdict>
+
+Blocking items:
+
+1. Successful `pm hide` is not recoverable from the durable profile ledger.
+2. `profile-restore --execute` reads profile ledger before acquiring the global lock and can rewrite away concurrent apply records.
+
+Old first-round FAIL items are mostly covered by new evidence for LOC, fake runner, static profile ledger/lock symlink rejection, failure/unavailable `pm hide` ledger behavior, and profile restore CLI surface. Current second-round quality/security evidence still contains blocking FAILs, so T20/T23/T24 must not be checked off yet.

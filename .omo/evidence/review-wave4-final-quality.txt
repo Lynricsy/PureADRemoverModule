@@ -1,0 +1,142 @@
+# PureAD Wave4 T20/T23/T24 最终代码质量复审
+
+reviewed_at: 2026-06-18
+head: a346b08
+scope: HEAD 后未提交变更，只读复审；未修改实现文件、未 commit/push、未设置 git config
+verdict: FAIL
+confidence: 高
+
+## 复审输入与方法
+
+- 按用户要求审查 `crates/puread-cli/src/scan.rs`, `lock.rs`, `profile.rs`, `profile_execute/*`, `restore.rs`, `restore_fs.rs`, `rule_plan/*`, tests/support。
+- 审查 `crates/puread-android/src/command_runner/*`, `profiles/*`, tests/support。
+- 审查 Cargo 依赖和 `rules/appops`, `rules/components`, `rules/rom`。
+- 使用 `search_logs` 查阅历史阻塞记录：0130、0156、0158。
+- 使用 `git diff HEAD`、`rg`、逐文件阅读、LOC 统计、轻量 cargo 验证。
+
+## 已运行验证
+
+- `git status --short --ignored`: 工作区存在 Wave4 未提交变更和 evidence 文件；未执行恢复、提交或推送。
+- `git rev-parse --short HEAD`: `a346b08`。
+- `git diff --stat HEAD`: 当前 diff 覆盖 CLI、Android adapter、Cargo.lock；另有大量未跟踪新增源码/规则/测试。
+- `cargo metadata --no-deps --format-version 1`: PASS。
+- `cargo fmt --all -- --check`: PASS。
+- `cargo test -p puread-android --test appops_components -- --nocapture`: PASS，6 passed。
+- LOC 重点文件均 <=250 pure LOC，例如：
+  - `crates/puread-cli/src/restore_fs.rs`: 245
+  - `crates/puread-cli/src/rules.rs`: 234
+  - `crates/puread-cli/src/profile_execute/android_dispatch.rs`: 175
+  - `crates/puread-android/src/profiles/xml.rs`: 199
+  - `crates/puread-android/src/profiles/executor/appops_components.rs`: 145
+
+## 通过项
+
+- 新增/拆分后的 Rust 源文件整体 LOC 控制符合 <=250 pure LOC。
+- `cargo metadata` 与 `cargo fmt --check` 通过。
+- appops/components 单测通过，覆盖了 ledger sink 失败时不触发后续 mutation 的基本路径。
+- 高风险 `appops`、`component`、`rom_profile` 规则均 `default_enabled = false`，默认行为保持 conservative。
+- `restore --execute` 已补充多组 symlink/parent/backup 对抗测试，普通父链 no-follow 行为比上一轮有明显改善。
+
+## 阻塞问题
+
+### 1. 生产 `apply-profile --execute` 仍可通过环境变量切到 fake runner
+
+文件: `crates/puread-cli/src/profile_execute/profile_runtime.rs`
+位置: lines 19-24, 76-110
+函数: `SelectedProfileRunner::from_env`, `ScriptedProfileRunner::run`
+
+问题:
+- `SelectedProfileRunner::from_env()` 在普通生产二进制里只要看到 `PUREAD_TEST_PROFILE_RUNNER` 就返回 `ScriptedProfileRunner`。
+- `ScriptedProfileRunner` 会记录命令并直接返回成功输出，`pm path` 还会伪造 package 存在。
+- 这不是 `#[cfg(test)]`、不是测试专用 feature，也不是不可进入生产构建的 seam。
+- 用户质量标准明确要求：`apply-profile --execute` 生产路径必须是真实 runner + 持久 ledger；测试 seam 必须明显且不会误入生产。当前 seam 明显，但会误入生产。
+
+影响:
+- 在真实 root 环境中，环境变量污染即可让 `apply-profile --execute` 报告成功、写 profile ledger，但不执行真实 Android 命令。
+- 这会破坏审计和恢复可信度，属于生产执行路径的 fake-success 风险。
+
+最小修复建议:
+- 将 `ScriptedProfileRunner` 与 `PUREAD_TEST_PROFILE_RUNNER*` 入口编译期隔离，例如 `#[cfg(any(test, feature = "test-profile-runner"))]`，默认和 release/生产构建不可用。
+- 集成测试显式启用测试 feature 或改用单元级 seam；生产 `from_env()` 默认只能返回 `RealAndroidCommandRunner`。
+- 增加测试或构建检查，证明默认构建中设置 `PUREAD_TEST_PROFILE_RUNNER=1` 也不会启用 fake runner。
+
+需要的证据:
+- `rg -n "PUREAD_TEST_PROFILE_RUNNER|ScriptedProfileRunner" crates/puread-cli/src` 显示测试 runner 不在默认生产路径。
+- 对应 CLI 测试仍能覆盖 Android dispatch，且生产默认路径无 fake-success 分支。
+
+### 2. component profile 持久 ledger 与实际 `pm hide` 结果不一致
+
+文件: `crates/puread-android/src/profiles/executor/appops_components.rs`
+位置: lines 63-87, 96-99, 122-127
+函数: `apply_component`, `restore_component`, `hide_status_for_policy`
+
+问题:
+- `apply_component()` 在 line 63 用 `hide_status_for_policy()` 预先把 `TryHide` 记录为 `HideApplyStatus::Applied`。
+- line 73 立即调用 `self.applied(&record)`，把该记录写入 ledger。
+- line 74 才真正执行 `pm hide`，如果失败，返回给调用者的 `apply.record` 会被重建为 `skipped_unavailable`。
+- 但是已经持久化的 ledger 仍是旧记录：`hide_status = applied`。
+- `restore_component()` line 96-99 根据 ledger 中的 `hide_status == Applied` 决定是否执行 `pm unhide`。因此持久 ledger 会驱动错误恢复动作。
+
+现有测试缺口:
+- `component_profile_skips_pm_hide_when_capability_attempt_fails` 只断言 `apply.record` 包含 `skipped_unavailable`。
+- 它没有断言 `ledger.records()[0]` 的内容；因此测试没有证明持久账本与 report 一致。
+
+影响:
+- 不满足“profile executor 要 ledger-before-mutation，record 足够恢复/审计”。
+- 不满足“CLI 输出/JSON report 稳定；错误可诊断”，因为 report 与持久账本可能互相矛盾。
+- 恢复/审计工具读取持久 profile ledger 时，会认为 package 已 hidden 并尝试 unhide，即使 `pm hide` 实际不可用或未成功。
+
+最小修复建议:
+- 不要在真实 `pm hide` 结果未知时持久化 `hide_status = applied`。
+- 可选方案：
+  - 将 `TryHide` 建模为独立、可审计的两阶段记录：先 ledger-before-mutation 写入 planned/attempted，再 mutation 后写入 confirmed/skipped outcome；恢复逻辑只根据 confirmed applied 执行 unhide。
+  - 或取消 opportunistic `pm hide` mutation，只保留 `pm disable-user`，直到 ledger schema 支持 mutation outcome。
+  - 或扩展 `ComponentRecord` 字段，把“计划尝试 hide”和“确认 hide 成功”区分开，并让 restore 只使用确认字段。
+- 添加测试：`pm hide` 失败时，持久 ledger 记录必须包含 `skipped_unavailable` 或等价的 non-restorable outcome；恢复该 ledger 不得调用 `pm unhide`。
+
+需要的证据:
+- `cargo test -p puread-android --test appops_components -- --nocapture` 新增测试覆盖 ledger.records 内容。
+- 如 CLI 持久 JSONL 有对应测试，需证明 `.omo` 或 temp module 下 `state/profile-actions.jsonl` 与 JSON report 中 component record 一致。
+
+### 3. `restore --execute` 仍依赖 ledger 路径后缀和词法路径判断，ledger 本身未 no-follow 绑定
+
+文件: `crates/puread-cli/src/restore.rs`
+位置: lines 50-63, 113-160
+函数: `execute`, `restore_module_root`, `restore_root_from_module`, `RestoreContext::new`
+
+文件: `crates/puread-cli/src/restore_fs.rs`
+位置: lines 38-42, 51-60, 96-108, 147-156, 215-253
+函数: `RestoreRoot::ensure_root_bound`, `GuardedBackup::new`, `remove_placeholder`, `write_file`, `walk_directory_chain`
+
+问题:
+- `restore_module_root()` 通过 `module_dir.ends_with("data/adb/modules/puread")` 接受 ledger 所在模块目录，`restore_root_from_module()` 再用 `ancestors().nth(4)` 推导 root。这是路径形状约定，不是强绑定的已验证 root。
+- `execute()` 在构造 `RestoreContext` 前已经用 `RestoreLedger::at(ledger_path).records_for_restore()` 读取 ledger；ledger 文件本身没有 no-follow 打开，也没有在读取前证明它位于真实 module state 下。
+- `RestoreRoot::ensure_root_bound()` 使用 `Path::starts_with()` 做词法边界检查；后续 no-follow 父链检查有帮助，但 root 绑定仍由字符串形状与调用顺序支撑。
+- 删除路径 `remove_placeholder()` 是 check-then-use：line 97 校验后，line 98-100 再 `symlink_metadata`/`remove_dir_all`/`remove_file`。它不是 fd-relative/openat 风格，仍有可避免的 TOCTOU 面。
+
+现有测试覆盖:
+- 已覆盖目标 symlink、目标父 symlink、backup symlink、backup parent symlink、backup path escape、missing parent、permission restore。
+- 未看到覆盖 ledger symlink/ledger parent symlink、相对 ledger 路径、ledger 路径被替换、读取 ledger 后 state/module 目录被替换的测试。
+
+影响:
+- 不完全满足“restore 删除前校验逻辑不能靠字符串拼接或脆弱路径判断；避免 TOCTOU 能力过大”。
+- 当前实现对普通静态 symlink 攻击已有改善，但最终质量复审不能把它视为完整 root-bound/no-follow 模型。
+
+最小修复建议:
+- 先引入 `RestoreLedgerPath`/`RestoreStateRoot` 这类强类型解析器：用 no-follow/父链 no-follow 验证 ledger 文件、state dir、module dir 后，再读取 ledger。
+- 避免基于 `ends_with` 和 `ancestors().nth(4)` 推导 trust boundary；从已验证的 module root/state root 构造 restore root。
+- 对删除/写入路径使用 fd-relative 或等价不可跟随父链替换的接口；至少增加 ledger symlink、ledger parent symlink、相对 ledger path、restore 期间目录替换的对抗测试。
+
+需要的证据:
+- 新增 `cli_execute_security` adversarial tests，证明 ledger symlink/ledger parent symlink 不会读取或清理 root 外文件。
+- 代码中 ledger 读取与 ledger rewrite 前均经过 no-follow/root-bound guard。
+
+## 非阻塞观察
+
+- `rules/rom/miui-ad-settings.toml` 的 note 中出现 `private DNS`，目前只在说明排除范围，不是生产执行能力。
+- `restore` 当前对 `SetOwner`, `SetSelinuxContext`, `SetImmutable` 是 no-op；这可能是阶段性限制，但未来需要明确 report 中的 skipped/unsupported，而不是默默忽略。
+- `scan --execute` 只执行 path target，Android profile target 需要走 `apply-profile --execute`；当前命令边界可以接受，但文档/CLI help 后续应明确。
+
+## 最终结论
+
+FAIL。虽然格式、LOC、默认高风险规则和若干测试已经过关，但生产 fake runner seam、component 持久账本不一致、restore ledger/root 绑定模型仍存在阻塞级质量风险。

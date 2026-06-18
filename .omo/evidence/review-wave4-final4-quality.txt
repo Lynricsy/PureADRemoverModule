@@ -1,0 +1,96 @@
+final4 quality review verdict: FAIL
+
+Scope reviewed:
+- crates/puread-cli/src/profile_execute/profile_restore/final_state.rs
+- crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+- crates/puread-cli/src/profile_execute/profile_restore/report.rs
+- crates/puread-cli/src/profile_execute/profile_restore.rs
+- crates/puread-cli/tests/cli_profile_restore.rs
+- crates/puread-cli/tests/support/cli_profile_restore.rs
+- crates/puread-android/tests/appops_components.rs
+- crates/puread-android/tests/appops_components/durable.rs
+- crates/puread-android/tests/appops_components/support.rs
+- crates/puread-android/src/profiles/executor/appops_components.rs
+- crates/puread-android/src/command_runner/pm.rs
+- crates/puread-cli/src/profile_execute/profile_runtime.rs
+- crates/puread-cli/src/cli.rs
+- crates/puread-cli/src/profile_execute/android_dispatch.rs
+
+Read-only review notes:
+- No code edits, no commit, no push, no git config changes.
+- This evidence file is the only filesystem change made by the reviewer.
+
+Checks performed:
+1. History lookup:
+   - search_logs query: PureADRemoverModule final3 final4 profile_restore final_state rewrite_restored component key user_id restored appops pm hide fake runner
+   - Relevant logs found: 0181 Wave4 final3 quality review failed on component user_id folding; 0184 task-23 final-state user_id folding and appops_components LOC fixed.
+
+2. Worktree / diff context:
+   - git status --short --ignored
+   - git diff --stat HEAD
+   - git diff --name-only HEAD
+   - git diff over the scoped tracked files
+   - Important caveat: several scoped files are untracked, so review read the files directly rather than relying only on git diff HEAD.
+
+3. Component final-state key:
+   - crates/puread-cli/src/profile_execute/profile_restore/final_state.rs defines ComponentActionKey with rule_id, user_id, package, component.
+   - component_action_key parses user_id via u32_field and uses it in target matching and restored index folding.
+   - Result: final3 narrow fix is present; different Android users are not folded together by this key.
+
+4. rewrite_restored / folding behavior:
+   - final_state::entries filters already restored entries before final-state selection.
+   - restored_indexes_for marks all unrestored entries sharing the same full component key, including user_id.
+   - Non-component records return only their own index.
+   - ledger::rewrite_restored returns without rewriting if any action failed, and otherwise rewrites every original line, only adding restore_status to successful action entry_indexes.
+   - Result: review did not find deletion of unrecovered, later, different-user, or different-action records.
+
+5. pm hide confirmed/provisional behavior:
+   - apply_component writes the conservative provisional record before hide.
+   - TryHide maps failed/unavailable pm hide to SkippedUnavailable and does not require unhide later.
+   - Applied hide appends a confirmed record before disable-user; if confirmed append fails, apply_component returns an error and disable-user is not attempted.
+   - restore_component only calls pm unhide when original_hidden is Visible and hide_status is Applied.
+   - Result: confirmed/provisional semantics are conservative; confirmed append failure is not reported as safely applied.
+
+6. Production fake runner / forbidden capability scan:
+   - Debug-only hidden CLI flags select ScriptedProfileRunner only when --test-profile-runner is explicitly provided.
+   - No production env fake-runner selection was found in crates/puread-cli/src.
+   - rg scan for hosts/DNS/dns/domain/proxy/iptables/root hiding/zygisk/mount_hosts/AdGuardHome/Clash/Mihomo/PRIVATE_DNS/private_dns/fake runner/FAKE/TEST_RUNNER/test-profile-runner/profile-runner-log across src/tests/rules found:
+     - test-only runner flags and comments;
+     - settings guard rejecting DNS/hosts/proxy keys;
+     - rules notes saying DNS/domain are out of scope;
+     - command_runner tests asserting forbidden settings are rejected.
+   - Result: no new production DNS/domain/hosts/proxy/iptables/root-hiding capability observed.
+
+7. Targeted tests run:
+   - cargo test -p puread-cli --test cli_profile_restore -- cli_profile_restore_keeps_component_final_state_per_user_id cli_profile_restore_folds_component_provisional_and_confirmed_records cli_profile_restore_keeps_component_skipped_only_record_without_unhide cli_profile_restore_default_runner_ignores_env_fake_runner
+   - Result: 4 passed; 0 failed.
+   - cargo test -p puread-android --test appops_components -- component_profile_reports_error_when_confirmed_hide_record_cannot_persist component_profile_applies_and_restores_available_pm_hide component_profile_skips_pm_hide_when_capability_attempt_fails component_profile_restore_keeps_enable_when_persisted_hide_was_skipped
+   - Result: 4 passed; 0 failed.
+
+8. Pure LOC check:
+   Command:
+   for f in crates/puread-cli/src/profile_execute/profile_restore/final_state.rs crates/puread-cli/src/profile_execute/profile_restore/ledger.rs crates/puread-cli/src/profile_execute/profile_restore/report.rs crates/puread-cli/src/profile_execute/profile_restore.rs crates/puread-cli/tests/cli_profile_restore.rs crates/puread-cli/tests/support/cli_profile_restore.rs crates/puread-android/tests/appops_components.rs crates/puread-android/tests/appops_components/durable.rs crates/puread-android/tests/appops_components/support.rs crates/puread-android/src/profiles/executor/appops_components.rs crates/puread-android/src/command_runner/pm.rs crates/puread-cli/src/profile_execute/profile_runtime.rs crates/puread-cli/src/cli.rs crates/puread-cli/src/profile_execute/android_dispatch.rs; do awk 'BEGIN{count=0} !/^[[:space:]]*$/ && !/^[[:space:]]*\/\//{count++} END{printf "%4d %s\n", count, FILENAME}' "$f"; done | sort -nr
+
+   Output:
+   255 crates/puread-cli/tests/cli_profile_restore.rs
+   230 crates/puread-cli/tests/support/cli_profile_restore.rs
+   215 crates/puread-android/tests/appops_components.rs
+   207 crates/puread-cli/src/profile_execute/android_dispatch.rs
+   205 crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+   201 crates/puread-cli/src/profile_execute/profile_runtime.rs
+   160 crates/puread-android/src/profiles/executor/appops_components.rs
+   159 crates/puread-cli/src/cli.rs
+   144 crates/puread-android/tests/appops_components/support.rs
+   123 crates/puread-cli/src/profile_execute/profile_restore.rs
+   119 crates/puread-cli/src/profile_execute/profile_restore/report.rs
+    95 crates/puread-android/src/command_runner/pm.rs
+    94 crates/puread-cli/src/profile_execute/profile_restore/final_state.rs
+    43 crates/puread-android/tests/appops_components/durable.rs
+
+Blocking issue:
+- crates/puread-cli/tests/cli_profile_restore.rs is 255 pure LOC, exceeding the required <=250 pure LOC ceiling for touched Rust files.
+
+Final decision:
+- FAIL.
+- Behavior evidence supports that final3's user_id folding fix is closed.
+- Quality gate fails because one touched Rust test file exceeds the 250 pure LOC limit.

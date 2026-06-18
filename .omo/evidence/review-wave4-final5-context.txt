@@ -1,0 +1,109 @@
+# review-wave4-final5-context
+
+recorded_at: 2026-06-18T20:48:16+08:00
+
+Verdict: PASS
+Confidence: high
+
+Scope:
+- final5 context/evidence/plan consistency review for T20/T23/T24.
+- Read-only audit of product files and repo context.
+- No product file edits, no commit/push, no git config changes.
+- This evidence file is the only intentional repository file write from this review.
+
+Required start message:
+- Sent: `WORKING: final5 context - checking final evidence`
+
+History:
+- `search_logs` found the required related logs:
+  - `0190-task-20-cli_profile_restore-LOC-final-fix.md`
+  - `0186-final4-quality-review-failed-on-cli_profile_restore-LOC-ceiling.md`
+  - `0184-task-23-final-state-user_id-folding-and-appops_components-LOC-fixed.md`
+  - `0191-Wave4-final4-LOC-blocker-fixed-ready-for-final5.md`
+  - `0189-Wave4-final4-context-evidence-review-failed-on-LOC-gate.md`
+- Read logs 0190, 0186, 0184, 0191, and 0189.
+
+Evidence reviewed:
+- `.omo/evidence/task-20-cli-profile-restore-loc-final-fix.txt`: present.
+  - Records no production file changes for the final LOC fix.
+  - Records LOC closure:
+    - `crates/puread-cli/tests/cli_profile_restore.rs`: 234 pure LOC.
+    - `crates/puread-cli/tests/support/cli_profile_restore.rs`: 230 pure LOC.
+    - `crates/puread-cli/tests/support/cli_profile_restore_apply.rs`: 38 pure LOC.
+  - Records:
+    - `cargo fmt --all -- --check`: passed.
+    - `cargo clippy -p puread-cli --all-targets -- -D warnings`: passed.
+    - `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`: passed, 12 passed.
+- `.omo/evidence/review-wave4-final5-quality.txt`: present.
+  - Verdict: PASS.
+  - Blocking issues: none.
+  - Confirms LOC closure, preserved coverage, no new quality issue, no production logic change, and no forbidden capability in the final5 reviewed surface.
+  - Confirms final4 security carry-forward because no production source/rule file was newer than final4 security evidence.
+- `.omo/evidence/review-wave4-final5-qa.txt`: present.
+  - Verdict: PASS.
+  - Confirms final5 QA gates passed:
+    - `cargo fmt --all -- --check`: PASS.
+    - `cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings`: PASS.
+    - `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`: PASS, 12 passed.
+    - `cargo test -p puread-cli --test cli_profiles -- --nocapture`: PASS, 10 passed.
+    - `cargo test -p puread-cli --test cli_execute_security -- --nocapture`: PASS, 15 passed.
+    - `cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture`: PASS, 8 + 11 passed.
+    - `cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom`: PASS, valid true, 0 errors, 9 rules.
+    - touched Rust LOC gate: PASS, no touched Rust file exceeds 250 pure LOC.
+    - forbidden scan classification: PASS, guard/rejection/explanatory metadata only.
+    - test seam scan: PASS after classification.
+    - cleanup/pollution check: PASS, no `*/data/adb` pollution.
+- `.omo/evidence/review-wave4-final4-security.txt`: present.
+  - Verdict: PASS.
+  - Confidence: high.
+  - Blocking security issues: none.
+  - Confirms component final-state key includes `user_id`, restore locks before mutating, symlink/path protections remain, durable `pm hide`/`pm unhide` behavior is conservative, and no forbidden production capability was observed.
+- Historical final4 FAIL evidence:
+  - `.omo/evidence/review-wave4-final4-qa.txt`: FAIL due `crates/puread-cli/tests/cli_profile_restore.rs` 255 pure LOC.
+  - `.omo/evidence/review-wave4-final4-quality.txt`: FAIL due the same 255 pure LOC blocker.
+  - These old LOC FAIL items are covered by `task-20-cli-profile-restore-loc-final-fix.txt`, `review-wave4-final5-quality.txt`, and `review-wave4-final5-qa.txt`.
+
+Direct checks:
+- Final5 QA evidence presence:
+  - `present .omo/evidence/review-wave4-final5-qa.txt`
+  - `verdict: PASS`
+- Final5 quality evidence presence:
+  - `present .omo/evidence/review-wave4-final5-quality.txt`
+  - `Verdict: PASS`
+- LOC recheck:
+  - `crates/puread-cli/tests/cli_profile_restore.rs 234`
+  - `crates/puread-cli/tests/support/cli_profile_restore.rs 230`
+  - `crates/puread-cli/tests/support/cli_profile_restore_apply.rs 38`
+- Production/rules newer-than-final4-security check:
+  - `find crates/puread-cli/src crates/puread-android/src crates/puread-core/src crates/puread-rules/src rules -type f -newer .omo/evidence/review-wave4-final4-security.txt -print | sort`
+  - Output: empty.
+  - Interpretation: final4 security PASS was not invalidated by newer production/rule changes in the reviewed scope.
+
+Plan state:
+- `.omo/plans/puread-rust-module.md` currently has:
+  - `292:- [ ] 20. CLI 手动扫描和应用 profile`
+  - `316:- [ ] 23. 实现 AppOps 与组件 profile`
+  - `324:- [ ] 24. 实现 ROM profile 与 settings/XML 修改`
+- T20/T23/T24 are currently unchecked.
+
+Repository context constraints:
+- `.gitignore` contains `Example/`:
+  - `.gitignore:2:Example/`
+- `git check-ignore -v Example Example/ads288.zip Example/Adguard-Home-For-Magisk-Mod` confirms `Example/` ignores those paths.
+- `git ls-files Example | wc -l` returned `0`; Example is not tracked.
+- `git remote -v`:
+  - `origin git@github.com:Lynricsy/PureADRemoverModule.git (fetch)`
+  - `origin git@github.com:Lynricsy/PureADRemoverModule.git (push)`
+- Local git identity:
+  - `git config --local --get-regexp '^(user\.name|user\.email)$' || true` produced no output.
+  - `git config --local --list --show-origin | rg -n 'user\.name|user\.email' || true` produced no output.
+- AGENTS context sections are present:
+  - project boundary, forbidden capabilities, upstream source list, sync flow, task log requirements, Example read-only convention, and required remote.
+- Start/end worktree status contains many pre-existing modified/untracked implementation and evidence files plus ignored `AgentLogs/`, `Example/`, and `target/`; this review did not revert or overwrite them.
+
+Blocking items:
+- None.
+
+Recommendation:
+- Check T20/T23/T24.
+- Evidence now satisfies the required gate: final5 QA PASS, final5 quality PASS, final4 security PASS not invalidated by newer production/rule changes, old final4 FAIL evidence covered by newer final5 evidence, and repository context constraints pass.

@@ -1,0 +1,177 @@
+# review-wave4-final3-quality
+
+## verdict
+
+FAIL
+
+Confidence: high.
+
+本轮是只读质量复审。没有修改源码、没有 commit/push、没有设置 git config；只新增本 evidence 文件。
+
+## scope checked
+
+- `crates/puread-android/src/profiles/executor/appops_components.rs`
+- `crates/puread-android/tests/appops_components.rs`
+- `crates/puread-android/tests/appops_components/{durable.rs,support.rs}`
+- `crates/puread-cli/src/profile_execute/profile_restore.rs`
+- `crates/puread-cli/src/profile_execute/profile_restore/{ledger.rs,final_state.rs,report.rs}`
+- `crates/puread-cli/tests/cli_profile_restore.rs`
+- `crates/puread-cli/tests/support/cli_profile_restore.rs`
+
+Note: several scoped files are currently untracked relative to HEAD, so `git diff HEAD -- <new file>` does not show their content. Review used the actual working-tree file contents with `sed`, `nl`, `rg`, and a targeted CLI reproduction.
+
+## commands run
+
+```sh
+pwd && git status --short --ignored && git diff --stat HEAD
+git diff HEAD -- crates/puread-android/src/profiles/executor/appops_components.rs crates/puread-android/tests/appops_components.rs crates/puread-cli/src/profile_execute/profile_restore.rs crates/puread-cli/src/profile_execute/profile_restore/ledger.rs crates/puread-cli/src/profile_execute/profile_restore/final_state.rs crates/puread-cli/src/profile_execute/profile_restore/report.rs crates/puread-cli/tests/cli_profile_restore.rs crates/puread-cli/tests/support
+sed -n '1,260p' crates/puread-android/src/profiles/executor/appops_components.rs
+sed -n '1,280p' crates/puread-android/tests/appops_components.rs
+sed -n '1,280p' crates/puread-android/tests/appops_components/durable.rs
+sed -n '1,300p' crates/puread-android/tests/appops_components/support.rs
+sed -n '1,260p' crates/puread-cli/src/profile_execute/profile_restore.rs
+sed -n '1,260p' crates/puread-cli/src/profile_execute/profile_restore/final_state.rs
+sed -n '1,280p' crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+sed -n '1,300p' crates/puread-cli/src/profile_execute/profile_restore/report.rs
+sed -n '1,320p' crates/puread-cli/tests/cli_profile_restore.rs
+sed -n '1,360p' crates/puread-cli/tests/support/cli_profile_restore.rs
+rg -n "test-profile-runner|PUREAD_TEST_PROFILE_RUNNER|profile-runner-log|SelectedProfileRunner|scripted\(|real\(" crates/puread-cli/src crates/puread-cli/tests crates/puread-android/src crates/puread-android/tests
+rg -n "dns|domain|hosts|proxy|iptables|root hiding|zygisk|hide|adguard|clash|mihomo|box" crates/puread-cli/src crates/puread-android/src rules crates/puread-cli/tests crates/puread-android/tests
+rg -n "unwrap\(|expect\(|panic!|todo!|unimplemented!" crates/puread-android/src/profiles/executor/appops_components.rs crates/puread-android/tests/appops_components.rs crates/puread-android/tests/appops_components/durable.rs crates/puread-android/tests/appops_components/support.rs crates/puread-cli/src/profile_execute/profile_restore.rs crates/puread-cli/src/profile_execute/profile_restore/ledger.rs crates/puread-cli/src/profile_execute/profile_restore/final_state.rs crates/puread-cli/src/profile_execute/profile_restore/report.rs crates/puread-cli/tests/cli_profile_restore.rs crates/puread-cli/tests/support/cli_profile_restore.rs
+for f in crates/puread-android/src/profiles/executor/appops_components.rs crates/puread-android/tests/appops_components.rs crates/puread-android/tests/appops_components/durable.rs crates/puread-android/tests/appops_components/support.rs crates/puread-cli/src/profile_execute/profile_restore.rs crates/puread-cli/src/profile_execute/profile_restore/ledger.rs crates/puread-cli/src/profile_execute/profile_restore/final_state.rs crates/puread-cli/src/profile_execute/profile_restore/report.rs crates/puread-cli/tests/cli_profile_restore.rs crates/puread-cli/tests/support/cli_profile_restore.rs; do printf '%s ' "$f"; awk '!/^[[:space:]]*$/ && !/^[[:space:]]*\/\//' "$f" | wc -l; done
+cargo metadata --no-deps --format-version 1
+```
+
+Targeted reproduction for the final-state `user_id` issue:
+
+```sh
+tmp=$(mktemp -d /tmp/puread-review-userid.XXXXXX)
+mkdir -p "$tmp/module/state" "$tmp/module/run"
+: > "$tmp/module/run/puread.lock"
+cat > "$tmp/module/state/profile-actions.jsonl" <<'JSONL'
+{"kind":"component","rule_id":"same-rule","user_id":0,"package":"com.example.app","component":"com.example.app/.AdActivity","original_enabled":"enabled","original_hidden":"visible","hide_status":"not_requested"}
+{"kind":"component","rule_id":"same-rule","user_id":10,"package":"com.example.app","component":"com.example.app/.AdActivity","original_enabled":"enabled","original_hidden":"visible","hide_status":"not_requested"}
+JSONL
+cargo run -q -p puread-cli -- profile-restore --execute --module-root "$tmp/module" --test-profile-runner --profile-runner-log "$tmp/runner.log" > "$tmp/out.json"
+cat "$tmp/out.json"
+cat "$tmp/runner.log"
+cat "$tmp/module/state/profile-actions.jsonl"
+```
+
+Observed output:
+
+```json
+{
+  "schema_version": 1,
+  "command": "profile_restore",
+  "mode": "execute",
+  "record_count": 2,
+  "pending_restore_count": 1,
+  "will_mutate": true,
+  "restored": 1,
+  "skipped": 0,
+  "failed": 0
+}
+```
+
+Observed runner log:
+
+```text
+/system/bin/pm enable --user 10 com.example.app/.AdActivity
+```
+
+Observed ledger after restore:
+
+```jsonl
+{"component":"com.example.app/.AdActivity","hide_status":"not_requested","kind":"component","original_enabled":"enabled","original_hidden":"visible","package":"com.example.app","restore_status":"restored","rule_id":"same-rule","user_id":0}
+{"component":"com.example.app/.AdActivity","hide_status":"not_requested","kind":"component","original_enabled":"enabled","original_hidden":"visible","package":"com.example.app","restore_status":"restored","rule_id":"same-rule","user_id":10}
+```
+
+## passing checks
+
+1. Component TryHide success path preserves ledger-before-mutation and appends durable confirmed state:
+   - `crates/puread-android/src/profiles/executor/appops_components.rs:63-75` writes the conservative record before `pm hide`; when `HideApplyStatus::Applied`, it serializes and appends a second confirmed record.
+   - `crates/puread-android/tests/appops_components.rs:203-223` asserts the first ledger record remains `skipped_unavailable` and the second contains `hide_status=applied`.
+
+2. Confirmed append failure is not silently reported as safely applied:
+   - `crates/puread-android/src/profiles/executor/appops_components.rs:73-82` uses `self.ledger.append(record.clone())?` before `disable-user`, so append failure returns an error and does not continue to component disable.
+   - `crates/puread-android/tests/appops_components/durable.rs:6-49` covers this path and asserts no `disable-user` command ran.
+
+3. Failure/unavailable TryHide path remains skipped and restore does not unhide:
+   - `crates/puread-android/tests/appops_components.rs:52-157` covers unavailable and non-zero `pm hide`, with single skipped ledger record.
+   - `crates/puread-android/tests/appops_components.rs:159-179` covers skipped restore calling only `pm enable`.
+   - `crates/puread-cli/tests/cli_profile_restore.rs:130-159` covers durable skipped-only CLI restore with no `pm unhide`.
+
+4. `profile-restore --execute` locks before reading the ledger:
+   - `crates/puread-cli/src/profile_execute/profile_restore.rs:45-47` acquires `GlobalLock` before `ledger::read_entries`.
+   - Existing test `crates/puread-cli/tests/cli_profile_restore.rs:220-223` delegates to `execute_lock_contention_prevents_ledger_read`.
+
+5. Production fake-runner env does not appear in production source:
+   - `PUREAD_TEST_PROFILE_RUNNER` appears only in test support (`crates/puread-cli/tests/support/cli_profile_restore.rs:29`), not `crates/puread-cli/src`.
+   - Production runner selection in `profile_restore.rs:119-124` uses the explicit debug-only `--test-profile-runner` flag and otherwise `SelectedProfileRunner::real()`.
+
+6. Targeted forbidden-capability scan found no new production DNS/domain/hosts/proxy/iptables/root-hiding capability in the scoped files. Matches are existing guards, test forbidden tokens, `pm hide` package hide support, or hidden CLI test flags.
+
+7. No `unwrap`, `expect`, `panic!`, `todo!`, or `unimplemented!` matches were found in scoped implementation files or scoped test/support files by targeted `rg`.
+
+8. `cargo metadata --no-deps --format-version 1`: PASS.
+
+## blocking issues
+
+### 1. `profile-restore` folds distinct component records across Android users
+
+Severity: high.
+
+`crates/puread-cli/src/profile_execute/profile_restore/final_state.rs:75-96` builds `ComponentActionKey` from only:
+
+- `rule_id`
+- `package`
+- `component`
+
+It omits `user_id`, even though component apply/restore is explicitly user-scoped:
+
+- `crates/puread-android/src/profiles/executor/appops_components.rs:82` applies `pm disable-user --user <user_id>`.
+- `crates/puread-android/src/profiles/executor/appops_components.rs:101` restores `pm enable --user <user_id>`.
+
+Because `component_target_position` and `restored_indexes_for` both use this incomplete key (`final_state.rs:48-72`), two durable component records with the same rule/package/component but different `user_id` are treated as one logical restore action. The targeted CLI reproduction proved the real surface impact:
+
+- pending restore count became 1 for 2 records.
+- only `/system/bin/pm enable --user 10 ...` ran.
+- both `user_id=0` and `user_id=10` ledger rows were marked `restore_status=restored`.
+
+This violates MUST RECHECK item 3: final-state folding must not mis-delete/mis-restore other actions, and `rewrite_restored` must preserve unrecovered records. Here it marks an unrecovered user-0 action restored.
+
+Required evidence to pass:
+
+- Add `user_id` to the component final-state action key.
+- Add a regression test with two component JSONL records that differ only by `user_id`, proving restore executes both `pm enable --user 0 ...` and `pm enable --user 10 ...`, and both are marked restored only after both commands succeed.
+
+### 2. Scoped touched Rust test file exceeds the 250 pure LOC ceiling
+
+Severity: medium, blocking by repository/reviewer rules.
+
+Pure LOC command output:
+
+```text
+crates/puread-android/src/profiles/executor/appops_components.rs 160
+crates/puread-android/tests/appops_components.rs 255
+crates/puread-android/tests/appops_components/durable.rs 43
+crates/puread-android/tests/appops_components/support.rs 89
+crates/puread-cli/src/profile_execute/profile_restore.rs 123
+crates/puread-cli/src/profile_execute/profile_restore/ledger.rs 205
+crates/puread-cli/src/profile_execute/profile_restore/final_state.rs 86
+crates/puread-cli/src/profile_execute/profile_restore/report.rs 119
+crates/puread-cli/tests/cli_profile_restore.rs 203
+crates/puread-cli/tests/support/cli_profile_restore.rs 230
+```
+
+`crates/puread-android/tests/appops_components.rs` is 255 pure LOC. The active Rust programming/review rule treats files above 250 pure LOC as an architectural defect, including test files, unless justified as an allowed exception. No exception comment or rationale is present.
+
+Required evidence to pass:
+
+- Split `crates/puread-android/tests/appops_components.rs` by cohesive behavior cluster so each Rust file is <=250 pure LOC, or add a valid explicit exception if the project accepts one.
+- Re-run the pure LOC check and include output.
+
+## conclusion
+
+FAIL. The final two fixes addressed the prior durable confirmed-state blocker, but the current restore folding can incorrectly skip and falsely mark component records for other Android users, and one scoped Rust test file exceeds the enforced 250 pure LOC ceiling.

@@ -1,0 +1,10 @@
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+[1m[92m     Running[0m `target/debug/puread-cli rules validate rules/appops rules/components rules/rom`
+{
+  "schema_version": 1,
+  "command": "rules_validate",
+  "valid": true,
+  "error_count": 0,
+  "rule_file_count": 5,
+  "rule_count": 9
+}

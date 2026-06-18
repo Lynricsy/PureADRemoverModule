@@ -1,0 +1,83 @@
+PureAD Wave4 T20/T23/T24 context-mining review
+generated_at: 2026-06-18
+lane: 5 context mining
+verdict: FAIL
+
+Sources searched
+- AgentLogs via search_logs first:
+  - 0125-PureAD-T23-T24-Android-profiles-clippy-与-adversarial-收尾.md
+  - 0121-PureADRemoverModule-T23-T24-红测完成.md
+  - 0122-PureAD-Wave4-T20-T23-T24-中间阻塞与重派.md
+  - 0109-PureADRemoverModule-T19-Android-命令适配层完成.md
+  - 0115-PureADRemoverModule-T19-Android-命令适配层复审阻塞修复.md
+- .omo/plans/puread-rust-module.md lines 292-330 and 332-374.
+- AGENTS.md lines 1-220.
+- git log --oneline -20.
+- git diff --name-only and git status --short --ignored.
+- Evidence files:
+  - task-20-red.txt
+  - task-20-cli-profiles.txt
+  - task-20-adversarial.txt
+  - task-20-execute-lock.txt
+  - task-23-appops-components.txt
+  - task-23-default-enabled-grep.txt
+  - task-23-24-adversarial.txt
+  - task-24-rom-profiles.txt
+  - task-24-forbidden-rom-scan.txt
+- Relevant implementation/rules:
+  - crates/puread-cli/src/{cli.rs,main.rs,scan.rs,profile.rs,profile_execute.rs,lock.rs,rule_plan.rs}
+  - crates/puread-android/src/profiles/**
+  - crates/puread-rules/src/{raw.rs,validation.rs,rule.rs,parse.rs}
+  - rules/appops/**
+  - rules/components/**
+  - rules/rom/**
+
+Discovered context
+- T19 logs require T23/T24 to reuse command_runner and not add scattered shell execution. The Android profile implementation appears to use command_runner adapters and fake-runner tests.
+- T20 evidence shows the CLI now has status/apply-profile/dump-report and apply-profile --execute lock coverage.
+- T23/T24 evidence shows fake-runner AppOps/component behavior and ROM XML/settings tests pass.
+- AGENTS.md allows appops/component/rom_profile categories, but requires conservative defaults, explicit profile, rollback, and source metadata.
+
+Blocking issues
+1. New appops/components/rom rules do not parse through the existing rules schema.
+   Commands:
+   - cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom
+   - cargo run -p puread-cli -- rules validate rules/components
+   - cargo run -p puread-cli -- rules validate rules/rom
+   Results:
+   - rules/appops/luna-and-reader-appops.toml fails on unknown field `op`; schema expects `appop` / `appop_mode`.
+   - rules/components/mi-market-components.toml fails on unknown field `component`; schema expects `target_component`.
+   - rules/rom/miui-ad-settings.toml fails on unknown field `rom`.
+   Context:
+   - crates/puread-rules/src/raw.rs defines deny_unknown_fields and does not include op/mode/component/user_id/pm_hide/rom/setting_* / xml_* fields.
+   - crates/puread-rules/src/validation.rs currently accepts only profiles component/appops/rom and only rom_profile action rom_setting.
+   Impact:
+   - The new rules are not usable by `rules validate` or by CLI profile planning.
+   - This misses AGENTS.md rule-schema/source-metadata enforcement at the parser boundary, even though the TOML text includes many required metadata fields.
+
+2. T20 scan --execute is explicitly unimplemented, but the plan says CLI e2e tests must cover dry-run default and --execute branch.
+   Command:
+   - cargo run -p puread-cli -- scan --execute --root tests/fixtures/android-fs
+   Result:
+   - real scan execution is not implemented; pass --dry-run
+   Context:
+   - .omo/plans/puread-rust-module.md lines 292-297 require status/scan/apply-profile/restore/dump-report, default dry-run, explicit --execute for real execution, global lock for all modification actions, and CLI e2e coverage of --execute branch.
+   - crates/puread-cli/src/scan.rs lines 20-23 returns RealScanUnsupported for --execute.
+   Impact:
+   - If T20 intended only apply-profile as the mutation path, the plan/evidence should say so. As written, this is a missed T20 requirement.
+
+Non-blocking observations
+- rules/appops, rules/components, and rules/rom all use allowed categories and default_enabled=false. Source metadata is present textually, but cannot be validated because parser compatibility fails first.
+- T23/T24 implementation tests cover AppOps original mode/default restore, component enabled/hidden record, pm hide unavailable skip, ROM getprop skip, and shared_prefs backup/hash restore.
+- No evidence found that forbidden hosts/DNS/proxy/iptables/root-hiding behavior was implemented. The forbidden scan hits are notes or deny guards.
+- `git diff --name-only -- Example` returned no tracked diff. `git status --short --ignored -- Example` shows `!! Example/`, and `.gitignore` contains `Example/`.
+- Nested upstream Example git status is clean. ads288 zip sha256 observed: bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7. AdGuard example HEAD observed: 098ba8c78cf57dbd180fe2c72b05405b76eaa769.
+
+Future-task dependencies to note
+- T25 packaging depends on T20/T23/T24 outputs; packaging should not proceed until profile rules validate and scan/apply semantics are resolved.
+- T26 verify-local should include rules/appops rules/components rules/rom validation, otherwise the current schema mismatch can slip through.
+- T27 Android smoke should exercise profile dry-run/apply via the final CLI route and collect device-unavailable artifact if no rooted device is available.
+- T29 upstream regression should preserve report-only behavior and not auto-merge these profile rules until schema compatibility and source metadata validation are fixed.
+
+Final verdict
+- FAIL: there are blocking missed requirements in rule schema compatibility for T23/T24 and scan --execute behavior for T20.

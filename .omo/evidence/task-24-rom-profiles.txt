@@ -1,0 +1,6 @@
+
+running 2 tests
+test rom_profile_skips_miui_settings_when_getprop_does_not_match ... ok
+test rom_profile_modifies_and_restores_shared_prefs_xml_with_backup_and_hash ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

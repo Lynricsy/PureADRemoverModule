@@ -1,0 +1,77 @@
+# task-23 final-state user_id + LOC fix evidence
+
+## Scope
+- Fixed `crates/puread-cli/src/profile_execute/profile_restore/final_state.rs`.
+- Added CLI regression coverage in `crates/puread-cli/tests/cli_profile_restore.rs`.
+- Reduced `crates/puread-android/tests/appops_components.rs` by moving ledger-failure helper bodies into `crates/puread-android/tests/appops_components/support.rs`.
+- Did not commit, push, set git config, or edit Android production files.
+- Did not introduce DNS/domain/hosts/proxy/iptables/root hiding/anti-detection behavior.
+
+## Root Cause
+- `ComponentActionKey` only used `rule_id`, `package`, and `component`.
+- Two component records that differed only by `user_id` folded into one final-state restore action.
+- `rewrite_restored` then received the folded action indexes and could mark an un-restored user record as restored.
+
+## Red Test
+- Command:
+  `cargo test -p puread-cli --test cli_profile_restore cli_profile_restore_keeps_component_final_state_per_user_id -- --nocapture`
+- Before fix result:
+  - test failed.
+  - report assertion observed `restored = Number(1)` but expected `2`.
+  - earlier runner-log assertion showed only one `pm enable --user 10 ...` call, proving user 0 was not actually restored.
+
+## Fix
+- Added `user_id` to `ComponentActionKey`.
+- Parsed `user_id` from component JSONL records as `u32`.
+- The final-state fold now treats user 0 and user 10 as distinct logical restore keys.
+
+## Regression Test Coverage
+- `cli_profile_restore_keeps_component_final_state_per_user_id` writes two component records whose only logical difference is `user_id`.
+- It executes real CLI `profile-restore --execute` via the integration-test binary.
+- It asserts:
+  - JSON report has `restored = 2`.
+  - runner log contains exactly one `pm enable --user 0 ...`.
+  - runner log contains exactly one `pm enable --user 10 ...`.
+  - rewritten ledger contains exactly two restored records.
+  - each user-specific ledger line has its own `restore_status=restored`.
+
+## Verification
+- `cargo fmt --all -- --check`
+  - passed.
+- `cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings`
+  - passed.
+- `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`
+  - passed: 12 passed, 0 failed.
+- `cargo test -p puread-android --test appops_components -- --nocapture`
+  - passed: 8 passed, 0 failed.
+
+## LOC Check
+Command:
+`for f in crates/puread-cli/src/profile_execute/profile_restore/final_state.rs crates/puread-cli/tests/cli_profile_restore.rs crates/puread-cli/tests/support/cli_profile_restore.rs crates/puread-android/tests/appops_components.rs crates/puread-android/tests/appops_components/support.rs; do printf '%s ' "$f"; awk '!/^[[:space:]]*$/ && !/^[[:space:]]*(\/\/|#|--)/' "$f" | wc -l; done`
+
+Result:
+```text
+crates/puread-cli/src/profile_execute/profile_restore/final_state.rs 92
+crates/puread-cli/tests/cli_profile_restore.rs 234
+crates/puread-cli/tests/support/cli_profile_restore.rs 223
+crates/puread-android/tests/appops_components.rs 205
+crates/puread-android/tests/appops_components/support.rs 141
+```
+
+## Forbidden Capability Scan
+Command:
+`rg -n "hosts|DNS|domain|proxy|iptables|root hiding|anti-detection|AdGuardHome|Clash|mount_hosts|ad_reward" crates/puread-cli/src/profile_execute/profile_restore/final_state.rs crates/puread-cli/tests/cli_profile_restore.rs crates/puread-cli/tests/support/cli_profile_restore.rs crates/puread-android/tests/appops_components.rs crates/puread-android/tests/appops_components/support.rs || true`
+
+Result:
+```text
+no matches
+```
+
+## LSP Note
+- Post-edit LSP hook could not run Rust diagnostics because `rust-analyzer` is not installed in the current toolchain.
+- `mcp__lsp.status` reported `rust: missing` and `Active LSP clients: 0`.
+- Compiler-backed validation was covered by `cargo fmt`, `cargo clippy -D warnings`, and the two target test suites above.
+
+## Worktree Note
+- `git status --short --ignored` showed many pre-existing modified and untracked files from parallel work before this task.
+- This task preserved those changes and did not restore unrelated files.

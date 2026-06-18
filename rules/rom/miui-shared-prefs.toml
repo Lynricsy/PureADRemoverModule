@@ -1,0 +1,20 @@
+[[rules]]
+id = "miui-weather-content-promotion"
+category = "rom_profile"
+package = "com.miui.weather2"
+action = "rom_setting"
+target_template = "/data/system/users/0/package-restrictions.xml"
+risk_level = "high"
+default_enabled = false
+profile = "rom"
+observed_behavior = "The upstream XML modifier disables MIUI Weather promotional content preference."
+rollback_strategy = "restore_rom_value"
+introduced_by = "task-24"
+reviewed_at = "2026-06-18"
+notes = "Manual-only shared_prefs XML profile. Execution records original XML hash, original value, and backup path before mutation."
+
+[rules.source]
+source = "ads288.zip"
+source_file = "Example/ads288.zip"
+zip_entry = "mod/modtify_xml.sh"
+source_line_or_pattern = "modtify_ad_xml \"${i}\" \"key_content_promotion\""

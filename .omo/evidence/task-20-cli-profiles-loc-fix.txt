@@ -1,0 +1,52 @@
+Task: task-20 cli_profiles LOC fix
+Date: 2026-06-18
+
+Scope:
+- Only test structure was changed.
+- No production files were modified by this task.
+- No git config, commit, or push was performed.
+
+Changed files:
+- crates/puread-cli/tests/cli_profiles.rs
+- crates/puread-cli/tests/support/cli_profiles.rs
+
+Change summary:
+- Moved CLI profile fixture path helpers from the integration test body into the existing support module:
+  - LEDGER_FIXTURE
+  - appops_rules()
+  - component_rules()
+  - rom_rules()
+- Test names and assertion semantics were kept unchanged.
+
+Pure LOC check:
+Command:
+for file in crates/puread-cli/tests/cli_profiles.rs crates/puread-cli/tests/support/cli_profiles.rs; do printf '%s: ' "$file"; awk '!/^[[:space:]]*$/ && !/^[[:space:]]*(\/\/|#)/' "$file" | wc -l; done
+
+Result:
+crates/puread-cli/tests/cli_profiles.rs: 237
+crates/puread-cli/tests/support/cli_profiles.rs: 139
+
+cloc:
+- Not installed in this environment, so the project awk pure LOC check was used.
+
+Verification:
+Command:
+cargo fmt --all -- --check
+Result:
+PASS
+
+Command:
+cargo test -p puread-cli --test cli_profiles -- --nocapture
+Result:
+PASS
+10 passed; 0 failed; 0 ignored; finished in 0.01s
+
+Command:
+cargo clippy -p puread-cli --all-targets -- -D warnings
+Result:
+PASS
+
+Notes:
+- The Rust LSP hook reported that rust-analyzer is missing from the local stable toolchain:
+  error: Unknown binary 'rust-analyzer' in official toolchain 'stable-x86_64-unknown-linux-gnu'.
+  Cargo fmt/test/clippy were used as the authoritative verification for this task.

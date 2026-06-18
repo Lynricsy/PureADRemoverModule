@@ -1,0 +1,159 @@
+# task-20 profile restore lock order fix evidence
+
+## Scope
+- Fixed only CLI profile restore lock ordering.
+- Touched implementation/test files:
+  - `crates/puread-cli/src/profile_execute/profile_restore.rs`
+  - `crates/puread-cli/tests/cli_profile_restore.rs`
+  - `crates/puread-cli/tests/support/cli_profile_restore.rs`
+- Did not modify Android appops/components files.
+- Did not commit, push, or set git config.
+
+## Root Cause
+`profile-restore --execute` read `state/profile-actions.jsonl` before acquiring `GlobalLock`.
+If another `apply-profile --execute` appended to the profile ledger while holding the lock after restore had read stale entries, restore could later truncate/rewrite the ledger from stale entries and drop the new append.
+
+## Fix
+`profile-restore --execute` now:
+1. computes the profile ledger path;
+2. resolves and acquires the global lock;
+3. reads the profile ledger;
+4. restores pending profile records;
+5. rewrites restored records.
+
+Non-execute dry/report behavior remains read-only and does not acquire the global lock.
+
+## Regression Test
+Added `cli_profile_restore_execute_lock_contention_prevents_ledger_read`.
+
+The test holds `run/puread.lock`, deletes `state/profile-actions.jsonl`, then runs:
+
+```sh
+cargo test -p puread-cli --test cli_profile_restore cli_profile_restore_execute_lock_contention_prevents_ledger_read -- --nocapture
+```
+
+Red before fix:
+
+```text
+thread 'cli_profile_restore_execute_lock_contention_prevents_ledger_read' panicked at crates/puread-cli/tests/support/cli_profile_restore.rs:77:5:
+filesystem error at /tmp/.../module/state/profile-actions.jsonl: No such file or directory (os error 2)
+test cli_profile_restore_execute_lock_contention_prevents_ledger_read ... FAILED
+```
+
+Green after fix:
+
+```text
+running 1 test
+test cli_profile_restore_execute_lock_contention_prevents_ledger_read ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out
+```
+
+This proves execute lock contention is observed before profile ledger read and before runner mutation.
+
+## Verification
+
+```sh
+cargo fmt --all -- --check
+```
+
+Result: PASS.
+
+```sh
+cargo clippy -p puread-cli --all-targets -- -D warnings
+```
+
+Result: PASS.
+
+```sh
+cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+```
+
+Result:
+
+```text
+running 9 tests
+test cli_profile_restore_rejects_lock_symlink_before_mutation ... ok
+test cli_profile_restore_execute_lock_contention_prevents_ledger_read ... ok
+test cli_profile_restore_rejects_profile_ledger_symlink_before_mutation ... ok
+test cli_profile_restore_rejects_run_symlink_before_mutation ... ok
+test cli_profile_restore_reports_persisted_records_without_mutation ... ok
+test cli_profile_restore_rejects_state_symlink_before_mutation ... ok
+test cli_profile_restore_default_runner_ignores_env_fake_runner ... ok
+test cli_profile_restore_restores_all_profile_record_kinds ... ok
+test cli_apply_profile_rejects_state_symlink_before_android_mutation ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+```sh
+cargo test -p puread-cli --test cli_profiles -- --nocapture
+```
+
+Result:
+
+```text
+running 10 tests
+test cli_profiles_restore_keeps_existing_dry_run_contract ... ok
+test cli_profiles_status_outputs_paths_and_lock_state_when_module_root_is_fixture ... ok
+test cli_profiles_dump_report_uses_existing_ledger_report_without_mutation ... ok
+test cli_profiles_profile_ledger_failure_blocks_android_mutation ... ok
+test cli_profiles_explicit_profiles_plan_disabled_android_rules ... ok
+test cli_profiles_apply_profile_execute_reports_lock_conflict_when_lock_is_held ... ok
+test cli_profiles_apply_profile_execute_uses_global_lock_under_fixture ... ok
+test cli_profiles_scan_defaults_to_dry_run_when_flag_is_omitted ... ok
+test cli_profiles_apply_profile_defaults_to_dry_run_when_execute_is_omitted ... ok
+test cli_profiles_execute_dispatches_android_profiles_with_injected_runner ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+Manual CLI QA:
+
+```sh
+flock "$module/run/puread.lock" target/debug/puread-cli profile-restore --execute --module-root "$module" --test-profile-runner --profile-runner-log "$fixture/runner.log"
+```
+
+Observed:
+
+```text
+status=1
+stdout=
+stderr=global lock is already held: /tmp/puread-profile-lock-qa.htrZWR/module/run/puread.lock
+runner_log=absent
+```
+
+The QA fixture intentionally removed `state/profile-actions.jsonl`; the command still failed on lock contention first, proving no profile ledger read or runner mutation occurred while the lock was held externally.
+
+## LOC Check
+
+```text
+103 crates/puread-cli/src/profile_execute/profile_restore.rs
+114 crates/puread-cli/tests/cli_profile_restore.rs
+223 crates/puread-cli/tests/support/cli_profile_restore.rs
+```
+
+All touched Rust files are <=250 pure LOC.
+
+## Forbidden Capability Scan
+
+```sh
+rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward|domain|proxy" \
+  crates/puread-cli/src/profile_execute/profile_restore.rs \
+  crates/puread-cli/tests/cli_profile_restore.rs \
+  crates/puread-cli/tests/support/cli_profile_restore.rs
+```
+
+Result: no matches.
+
+## LSP
+Rust LSP diagnostics were unavailable:
+
+```text
+LSP server 'rust' (.rs) is NOT INSTALLED; user previously declined installation - proceed without LSP.
+```
+
+Cargo fmt, clippy, and tests were used as the effective verification gates.
+
+## Worktree Note
+`git status --short --ignored` showed many prior/parallel worker changes before this task, including Android-side files and untracked CLI/profile files. This task did not restore, format, or modify unrelated files.

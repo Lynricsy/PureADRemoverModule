@@ -1,0 +1,110 @@
+# review-wave4-final4-security
+
+Verdict: PASS
+Confidence: high
+Blocking security issues: none
+
+Scope:
+- final4 read-only security re-review for final3 narrow fix.
+- No code edits, no commit/push, no git config changes.
+- Evidence file is the only intentional filesystem write.
+
+Commands / evidence:
+- `git status --short --ignored`
+  - Worktree already contains many modified and untracked implementation/test/evidence files.
+  - Ignored `AgentLogs/`, `Example/`, `target/`, `xtask/upstream-report/target/` remain ignored.
+- `search_logs` query: `PureADRemoverModule final3 component final-state folding user_id profile-restore ledger lock symlink pm hide security review`
+  - No concrete historical log was located.
+- `git diff HEAD --stat`
+  - Only tracked modifications are shown by Git; many relevant source files are untracked, so direct file reading and `git ls-files --others --exclude-standard` were also used.
+- Direct file reads:
+  - `crates/puread-cli/src/profile_execute/profile_restore.rs`
+  - `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs`
+  - `crates/puread-cli/src/profile_execute/profile_restore/final_state.rs`
+  - `crates/puread-cli/src/profile_execute/profile_runtime.rs`
+  - `crates/puread-cli/src/lock.rs`
+  - `crates/puread-cli/tests/cli_profile_restore.rs`
+  - `crates/puread-cli/tests/support/cli_profile_restore.rs`
+  - `crates/puread-android/src/profiles/executor/appops_components.rs`
+  - `crates/puread-android/src/profiles/record.rs`
+  - `crates/puread-android/src/command_runner/pm.rs`
+  - `crates/puread-android/tests/appops_components.rs`
+- `rg` scans:
+  - `ComponentActionKey|final.?state|fold|user_id|pm hide|hide|unhide|profile-restore|lock|symlink|canonical|ledger|restore`
+  - production forbidden capability scan for `hosts|DNS|domain|proxy|iptables|AdGuardHome|mount_hosts|ad_reward|zygisk|root_hide|anti-detection|反检测`
+  - command invocation scan for `CommandInvocation::new`, `pm hide`, `pm unhide`, `iptables`.
+
+MUST RECHECK results:
+
+1. Component final-state folding key includes `user_id`.
+- PASS.
+- `crates/puread-cli/src/profile_execute/profile_restore/final_state.rs:75-85` parses component action key from `rule_id`, `user_id`, `package`, and `component`.
+- `ComponentActionKey` stores `user_id: u32` at `final_state.rs:99-104`.
+- `restored_indexes_for` and `component_target_position` compare the full `ComponentActionKey`, so user 0 and user 10 no longer fold together.
+- Regression evidence exists in `crates/puread-cli/tests/cli_profile_restore.rs:163-218`, asserting separate restore and separate `restore_status` marking for user 0 and user 10.
+
+2. `profile-restore --execute` still locks before reading, and folding/rewrite does not drop concurrent/after/different-user records.
+- PASS, with the expected project-lock precondition.
+- Execute path:
+  - `profile_restore.rs:45-47` resolves lock path, acquires `GlobalLock`, then reads profile ledger.
+  - Dry-run path reads without lock at `profile_restore.rs:41-43`, but does not mutate.
+- Lock contention is tested at `crates/puread-cli/tests/cli_profile_restore.rs:269-273` and helper `crates/puread-cli/tests/support/cli_profile_restore.rs:163-170`, where the ledger file is removed while the lock is held; restore fails on lock before reading or runner mutation.
+- Rewrite behavior:
+  - `ledger.rs:60-92` only rewrites when all restore actions succeeded; failures leave the ledger untouched.
+  - It emits every entry from the locked read set in original order and only injects `restore_status` for `restored_indexes`.
+  - Final-state folding returns indexes for matching component keys only; different user keys are preserved independently by the key above.
+  - This preserves later/different records already present in the ledger read under lock.
+- Concurrency precondition:
+  - Production CLI apply path acquires the same global lock before profile ledger append (`crates/puread-cli/src/profile.rs:79-83`).
+  - Restore uses the same lock before reading/rewrite (`profile_restore.rs:45-55`).
+  - Therefore no production CLI writer should append between restore read and rewrite. External writers bypassing the module lock are outside the reviewed production surface.
+
+3. Profile ledger/lock symlink/path escape protections remain.
+- PASS.
+- Lock:
+  - `crates/puread-cli/src/lock.rs:45-49` constrains lock path under module root.
+  - `lock.rs:20-23` checks safe parent and leaf symlink before open.
+  - `lock.rs:101-135` rejects symlink or non-directory parent path components.
+  - `lock.rs:137-150` rejects a symlink lock file.
+  - `lock.rs:163-171` opens with `O_NOFOLLOW`.
+- Profile ledger read/rewrite:
+  - `profile_restore/ledger.rs:35-43` validates safe path and opens the ledger with `O_NOFOLLOW`.
+  - `ledger.rs:54-58` requires module-child path, safe existing parents, and non-symlink leaf.
+  - `ledger.rs:161-168` rejects path escape or `..`.
+  - `ledger.rs:171-204` rejects symlink/non-directory parent components.
+  - `ledger.rs:206-219` rejects symlink ledger leaf.
+  - `ledger.rs:78-82` also rewrites with `O_NOFOLLOW`.
+- Profile ledger append:
+  - `profile_runtime.rs:78-85` applies the same path/symlink checks before append.
+  - `profile_runtime.rs:96-101` appends with `O_NOFOLLOW`.
+- Tests cover state, ledger, run dir, lock symlink rejection before mutation at `cli_profile_restore.rs:243-266` and helpers `support/cli_profile_restore.rs:118-160`.
+
+4. `pm hide` success durable confirmed restore unhide; failure skipped does not unhide.
+- PASS.
+- Apply:
+  - `appops_components.rs:63-69` writes a provisional component record before mutation with conservative `hide_status_for_policy`, which is `skipped_unavailable` for `TryHide`.
+  - `appops_components.rs:70-81` attempts `pm hide`; only `HideApplyStatus::Applied` appends a second durable confirmed record.
+  - `appops_components.rs:82` disables the component after durable hide state handling.
+- Restore:
+  - `appops_components.rs:95-99` runs `pm unhide` only when original hidden state was `visible` and `hide_status == applied`.
+  - `appops_components.rs:100-102` still restores component enable state independently.
+- Tests:
+  - `crates/puread-android/tests/appops_components.rs:171-190` proves skipped persisted record does not call `pm unhide`.
+  - `appops_components.rs:193-249` proves successful hide creates a confirmed `applied` record and restore calls `pm unhide`.
+  - `crates/puread-cli/tests/cli_profile_restore.rs:80-128` verifies CLI restore folds provisional+confirmed component records and uses confirmed final hide state for unhide.
+  - `cli_profile_restore.rs:130-160` verifies skipped-only record does not unhide.
+
+5. No DNS/domain/hosts/proxy/iptables/AdGuardHome/root hiding/anti-detection production capability.
+- PASS.
+- Narrow production scan hits are guards, validation rejections, or notes:
+  - `crates/puread-rules/src/parse.rs` and `category.rs` contain forbidden category/field lists.
+  - `crates/puread-android/src/command_runner/settings.rs:105-120` rejects private DNS, DNS, hosts, and proxy settings keys.
+  - `rules/rom/miui-ad-settings.toml` note says no private DNS/network keys are included.
+  - `rules/components/sdk-ad-components.toml` contains Android package/component names with `proxy` in a legitimate SDK component string and notes that it is not domain/network blocking.
+- Command invocation scan found `pm`, `appops`, `settings`, `getprop`, metadata/chattr helpers, and no `/system/bin/iptables` production invocation.
+- `pm hide`/`pm unhide` are component/package state operations under explicit component profile handling, not root hiding or anti-detection.
+
+Residual risk / assumptions:
+- `git diff HEAD` does not include untracked source files; this review explicitly read relevant untracked files and listed them via `git ls-files --others --exclude-standard`.
+- No test suite was run in this final4 pass because the task requested read-only security audit by diff/file reading/rg. Prior test names and source assertions were reviewed, not re-executed.
+- Ledger rewrite concurrency safety depends on production writers honoring the module global lock, which the reviewed CLI apply/restore paths do.

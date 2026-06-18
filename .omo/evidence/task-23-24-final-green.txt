@@ -1,0 +1,39 @@
+task: PureAD Android AppOps/component/ROM profile final verification
+date: 2026-06-18T20:55:00+08:00
+status: GREEN
+
+scope:
+- AppOps and component profiles execute through the Android command runner abstraction and persist profile JSONL records under module state.
+- Component profiles remain default-disabled rules and reversible through durable profile records.
+- pm hide remains a runner-backed capability attempt, not root hiding or anti-detection.
+- TryHide writes a conservative provisional record before mutation; successful pm hide appends a confirmed durable record. Confirmed append failure returns an error and does not continue as safely applied.
+- profile-restore folds provisional/confirmed component records by kind, rule_id, package, component, and user_id, so multi-user records restore independently.
+- ROM profiles cover whitelisted advertising settings/shared_prefs only, with original value/hash/backup evidence and no private DNS/proxy/network modifications.
+- Example/ remains ignored/read-only and was not changed.
+
+final5_verification:
+- cargo fmt --all -- --check: PASS
+- cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings: PASS
+- cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture: PASS, appops_components 8 passed, rom_profiles 11 passed
+- cargo test -p puread-cli --test cli_profile_restore -- --nocapture: PASS, 12 passed
+- cargo test -p puread-cli --test cli_profiles -- --nocapture: PASS, 10 passed
+- cargo test -p puread-cli --test cli_execute_security -- --nocapture: PASS, 15 passed
+- cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom: PASS, valid=true, error_count=0, rule_file_count=5, rule_count=9
+- touched Rust pure LOC gate: PASS, no touched file over 250 pure LOC
+- forbidden capability scan: PASS, no executable hosts/DNS/domain/proxy/iptables/AdGuardHome/mount_hosts/ad_reward/root hiding/anti-detection capability introduced
+
+security_and_review:
+- final4 security review: PASS, .omo/evidence/review-wave4-final4-security.txt
+- final5 quality review: PASS, .omo/evidence/review-wave4-final5-quality.txt
+- final5 QA review: PASS, .omo/evidence/review-wave4-final5-qa.txt
+- final5 context review: PASS, .omo/evidence/review-wave4-final5-context.txt
+
+key_evidence:
+- .omo/evidence/task-23-component-hide-ledger-fix.txt
+- .omo/evidence/task-23-component-hide-durable-final-state.txt
+- .omo/evidence/task-23-final-state-user-loc-fix.txt
+- .omo/evidence/task-24-rom-profiles.txt
+- .omo/evidence/task-24-shared-prefs-ledger-failure.txt
+- .omo/evidence/review-wave4-final5-qa.txt
+- .omo/evidence/review-wave4-final5-quality.txt
+- .omo/evidence/review-wave4-final5-context.txt

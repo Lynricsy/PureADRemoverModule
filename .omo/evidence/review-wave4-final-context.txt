@@ -1,0 +1,65 @@
+PureAD Wave4 T20/T23/T24 final context mining
+generated_at: 2026-06-18T18:22:43+08:00
+verdict: FAIL
+
+Scope
+- Read-only context mining, except this optional evidence file.
+- No commit, no push, no git config change.
+- AgentLogs were searched first via search_logs.
+
+History
+- search_logs query:
+  PureAD Wave4 T20 T23 T24 final evidence requirements implementation Example ignored read-only
+- Relevant logs read:
+  0124, 0127, 0128, 0133, 0146, 0149, 0152, 0153.
+- Later logs 0152/0153 show the earlier full-repo Rust LOC blocker was fixed.
+
+AGENTS.md
+- Project boundary and forbidden capability sections are present.
+- Example/ is documented as ignored and read-only.
+- AgentLogs must be searched via MCP, not by manual file grep.
+
+Plan check
+- .omo/plans/puread-rust-module.md still lists T20, T23, and T24 as unchecked:
+  - [ ] 20. CLI manual scan and apply profile
+  - [ ] 23. AppOps and component profile
+  - [ ] 24. ROM profile and settings/XML
+- This is a closure artifact mismatch with the current implementation/evidence state.
+
+Final evidence check
+- .omo/evidence/task-20-final-green.txt is newer and reports PASS for fmt, clippy, tests, focused CLI tests, and full-repo Rust pure LOC.
+- .omo/evidence/task-23-24-final-green.txt still says:
+  status: BLOCKED
+  full_repo_rust_pure_loc_check: FAIL
+  summary_failures=1
+- The T23/T24 final evidence is stale relative to later LOC-fix logs/evidence, but the final evidence file itself remains blocking.
+
+Current implementation spot check
+- T20 CLI surface exists: status, scan, apply-profile, restore, dump-report.
+- scan defaults to dry-run and has an --execute path guarded by global lock.
+- apply-profile defaults to dry-run and --execute uses the global lock.
+- restore --execute exists and applies ledger restore attempts under lock.
+- T23/T24 implementation exists in puread-android profiles:
+  appops records original mode before mutation.
+  component profiles record enabled/hidden state and runner-backed pm hide/unhide behavior.
+  ROM settings/shared_prefs XML paths record original value/hash/backup path and avoid side effects on ledger sink failure.
+- rules/appops, rules/components, and rules/rom all use default_enabled = false in the inspected files.
+- Current pure LOC scan over Rust files produced no file above 250 pure LOC.
+
+Forbidden scope / Example
+- Forbidden-token hits inspected were in guard, classifier, test, rejection, or explicit local profile contexts.
+- .gitignore contains Example/.
+- git ls-files Example returned 0.
+- git diff --name-only -- Example returned no tracked diff.
+- git status --short --ignored -- Example showed only:
+  !! Example/
+- Example/ remains ignored/read-only from this review.
+
+Git status
+- Worktree contains many existing modified and untracked Wave4 files/evidence.
+- This review did not restore, commit, push, or set git config.
+- Local git config did not show user.name or user.email.
+
+Blocking conclusion
+- No missed implementation requirement was found in the sampled current code.
+- However, final closure cannot PASS because the plan still marks T20/T23/T24 incomplete and the named T23/T24 final evidence still records BLOCKED/summary_failures=1.

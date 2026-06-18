@@ -1,0 +1,21 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+[1m[92m     Running[0m tests/cli_execute_security.rs (target/debug/deps/cli_execute_security-3e70bb641f119bc7)
+
+running 15 tests
+test cli_restore_execute_rejects_backup_parent_symlink ... ok
+test cli_restore_execute_rejects_backup_path_escape ... ok
+test cli_restore_execute_recreates_missing_parent_directory_safely ... ok
+test cli_restore_execute_rejects_target_symlink ... ok
+test cli_restore_execute_rejects_remove_placeholder_parent_symlink ... ok
+test cli_restore_execute_restores_permissions_safely ... ok
+test cli_restore_execute_rejects_backup_symlink ... ok
+test cli_restore_execute_rejects_directory_restore_parent_symlink ... ok
+test cli_restore_execute_rejects_target_parent_symlink ... ok
+test cli_execute_rejects_target_symlink_without_mutating_escape ... ok
+test cli_execute_restore_fails_when_global_lock_is_held_without_restoring_or_clearing_ledger ... ok
+test cli_execute_scan_reports_applied_and_failed_actions ... ok
+test cli_execute_rejects_parent_symlink ... ok
+test cli_execute_restore_recovers_directory_from_ledger ... ok
+test cli_execute_rejects_backup_symlink_and_keeps_prior_ledger ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s

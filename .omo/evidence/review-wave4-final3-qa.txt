@@ -1,0 +1,672 @@
+# Wave4 final3 QA evidence
+started_at: 2026-06-18T20:18:08+08:00
+cwd: /root/Projects/Ling/PureADRemoverModule
+head: a346b08ac067bc3a06ed7711708970d1cc4401af
+remote:
+origin	git@github.com:Lynricsy/PureADRemoverModule.git (fetch)
+origin	git@github.com:Lynricsy/PureADRemoverModule.git (push)
+
+## Initial git status --short --ignored
+ M Cargo.lock
+ M crates/puread-android/Cargo.toml
+ M crates/puread-android/src/command_runner.rs
+ M crates/puread-android/src/command_runner/pm.rs
+ M crates/puread-android/src/command_runner/settings.rs
+ M crates/puread-android/src/lib.rs
+ M crates/puread-android/tests/command_runner.rs
+ M crates/puread-cli/Cargo.toml
+ M crates/puread-cli/src/cli.rs
+ M crates/puread-cli/src/error.rs
+ M crates/puread-cli/src/ledger.rs
+ M crates/puread-cli/src/main.rs
+ M crates/puread-cli/src/scan.rs
+ M crates/puread-cli/tests/ledger.rs
+?? .omo/evidence/review-wave4-context.txt
+?? .omo/evidence/review-wave4-final-context.txt
+?? .omo/evidence/review-wave4-final-context2.txt
+?? .omo/evidence/review-wave4-final-goal.txt
+?? .omo/evidence/review-wave4-final-qa.txt
+?? .omo/evidence/review-wave4-final-qa2.txt
+?? .omo/evidence/review-wave4-final-quality.txt
+?? .omo/evidence/review-wave4-final-security.txt
+?? .omo/evidence/review-wave4-final2-context.txt
+?? .omo/evidence/review-wave4-final2-goal.txt
+?? .omo/evidence/review-wave4-final2-qa.txt
+?? .omo/evidence/review-wave4-final2-quality.txt
+?? .omo/evidence/review-wave4-final2-security.txt
+?? .omo/evidence/review-wave4-final3-qa.txt
+?? .omo/evidence/review-wave4-postfix-context.txt
+?? .omo/evidence/review-wave4-postfix-qa.txt
+?? .omo/evidence/review-wave4-t20-t24-qa.txt
+?? .omo/evidence/task-20-adversarial.txt
+?? .omo/evidence/task-20-cargo-test.txt
+?? .omo/evidence/task-20-cli-execute-security.txt
+?? .omo/evidence/task-20-cli-fmt-check.txt
+?? .omo/evidence/task-20-cli-profiles-loc-fix.txt
+?? .omo/evidence/task-20-cli-profiles.txt
+?? .omo/evidence/task-20-cli-scan.json
+?? .omo/evidence/task-20-clippy.txt
+?? .omo/evidence/task-20-execute-lock.txt
+?? .omo/evidence/task-20-final-green.txt
+?? .omo/evidence/task-20-fmt-check.txt
+?? .omo/evidence/task-20-loc-check.txt
+?? .omo/evidence/task-20-profile-ledger-restore-security.txt
+?? .omo/evidence/task-20-profile-restore-lock-order-fix.txt
+?? .omo/evidence/task-20-red.txt
+?? .omo/evidence/task-23-24-adversarial.txt
+?? .omo/evidence/task-23-24-android-fmt-check.txt
+?? .omo/evidence/task-23-24-clippy.txt
+?? .omo/evidence/task-23-24-final-green.txt
+?? .omo/evidence/task-23-24-fmt-check.txt
+?? .omo/evidence/task-23-24-forbidden-scan.txt
+?? .omo/evidence/task-23-24-loc-check.txt
+?? .omo/evidence/task-23-24-rules-validate.txt
+?? .omo/evidence/task-23-24-tests.txt
+?? .omo/evidence/task-23-appops-components.txt
+?? .omo/evidence/task-23-component-hide-durable-final-state.txt
+?? .omo/evidence/task-23-component-hide-ledger-fix.txt
+?? .omo/evidence/task-23-default-enabled-grep.txt
+?? .omo/evidence/task-23-pm-hide-capability.txt
+?? .omo/evidence/task-23-pm-hide-unavailable-runner.txt
+?? .omo/evidence/task-23-red.txt
+?? .omo/evidence/task-24-forbidden-rom-scan.txt
+?? .omo/evidence/task-24-red.txt
+?? .omo/evidence/task-24-rom-profiles.txt
+?? .omo/evidence/task-24-shared-prefs-ledger-failure.txt
+?? crates/puread-android/src/profiles.rs
+?? crates/puread-android/src/profiles/
+?? crates/puread-android/tests/appops_components.rs
+?? crates/puread-android/tests/appops_components/
+?? crates/puread-android/tests/command_runner/
+?? crates/puread-android/tests/rom_profiles.rs
+?? crates/puread-android/tests/rom_profiles/
+?? crates/puread-cli/src/lock.rs
+?? crates/puread-cli/src/profile.rs
+?? crates/puread-cli/src/profile_execute.rs
+?? crates/puread-cli/src/profile_execute/
+?? crates/puread-cli/src/restore.rs
+?? crates/puread-cli/src/restore_fs.rs
+?? crates/puread-cli/src/rule_plan.rs
+?? crates/puread-cli/src/rule_plan/
+?? crates/puread-cli/tests/cli_execute_security.rs
+?? crates/puread-cli/tests/cli_profile_restore.rs
+?? crates/puread-cli/tests/cli_profiles.rs
+?? crates/puread-cli/tests/support/
+?? rules/appops/
+?? rules/components/
+?? rules/rom/
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/
+
+## Pre-run cleanup baseline: */data/adb
+/tmp/puread-review-wave4.IHjmBx/root/data/adb
+/tmp/puread-review-wave4.dDO2av/root/data/adb
+/tmp/tmp.HTplw9LFst/android-fs/data/adb
+/tmp/tmp.Hqmcnn6L8H/android-fs/data/adb
+/tmp/tmp.ml1W8LvGOW/android/data/adb
+
+## COMMAND: cargo fmt --all -- --check
+cmd: cargo fmt --all -- --check
+started_at: 2026-06-18T20:18:08+08:00
+finished_at: 2026-06-18T20:18:08+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings
+cmd: cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings
+started_at: 2026-06-18T20:18:08+08:00
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+finished_at: 2026-06-18T20:18:08+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+cmd: cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+started_at: 2026-06-18T20:18:08+08:00
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/cli_profile_restore.rs (target/debug/deps/cli_profile_restore-f3652bc7ffdc0d92)
+
+running 11 tests
+test cli_profile_restore_execute_lock_contention_prevents_ledger_read ... ok
+test cli_profile_restore_rejects_profile_ledger_symlink_before_mutation ... ok
+test cli_profile_restore_rejects_run_symlink_before_mutation ... ok
+test cli_profile_restore_reports_persisted_records_without_mutation ... ok
+test cli_profile_restore_rejects_state_symlink_before_mutation ... ok
+test cli_profile_restore_rejects_lock_symlink_before_mutation ... ok
+test cli_profile_restore_default_runner_ignores_env_fake_runner ... ok
+test cli_profile_restore_keeps_component_skipped_only_record_without_unhide ... ok
+test cli_apply_profile_rejects_state_symlink_before_android_mutation ... ok
+test cli_profile_restore_restores_all_profile_record_kinds ... ok
+test cli_profile_restore_folds_component_provisional_and_confirmed_records ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 1
+
+## COMMAND: cargo test -p puread-cli --test cli_profiles -- --nocapture
+cmd: cargo test -p puread-cli --test cli_profiles -- --nocapture
+started_at: 2026-06-18T20:18:09+08:00
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/cli_profiles.rs (target/debug/deps/cli_profiles-b77e19d4e3e4c3ab)
+
+running 10 tests
+test cli_profiles_dump_report_uses_existing_ledger_report_without_mutation ... ok
+test cli_profiles_status_outputs_paths_and_lock_state_when_module_root_is_fixture ... ok
+test cli_profiles_restore_keeps_existing_dry_run_contract ... ok
+test cli_profiles_profile_ledger_failure_blocks_android_mutation ... ok
+test cli_profiles_execute_dispatches_android_profiles_with_injected_runner ... ok
+test cli_profiles_explicit_profiles_plan_disabled_android_rules ... ok
+test cli_profiles_apply_profile_defaults_to_dry_run_when_execute_is_omitted ... ok
+test cli_profiles_scan_defaults_to_dry_run_when_flag_is_omitted ... ok
+test cli_profiles_apply_profile_execute_reports_lock_conflict_when_lock_is_held ... ok
+test cli_profiles_apply_profile_execute_uses_global_lock_under_fixture ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: cargo test -p puread-cli --test cli_execute_security -- --nocapture
+cmd: cargo test -p puread-cli --test cli_execute_security -- --nocapture
+started_at: 2026-06-18T20:18:09+08:00
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/cli_execute_security.rs (target/debug/deps/cli_execute_security-3e70bb641f119bc7)
+
+running 15 tests
+test cli_restore_execute_recreates_missing_parent_directory_safely ... ok
+test cli_restore_execute_rejects_remove_placeholder_parent_symlink ... ok
+test cli_restore_execute_rejects_backup_parent_symlink ... ok
+test cli_restore_execute_rejects_backup_symlink ... ok
+test cli_restore_execute_rejects_target_symlink ... ok
+test cli_restore_execute_rejects_backup_path_escape ... ok
+test cli_restore_execute_rejects_directory_restore_parent_symlink ... ok
+test cli_restore_execute_restores_permissions_safely ... ok
+test cli_restore_execute_rejects_target_parent_symlink ... ok
+test cli_execute_rejects_parent_symlink ... ok
+test cli_execute_rejects_target_symlink_without_mutating_escape ... ok
+test cli_execute_rejects_backup_symlink_and_keeps_prior_ledger ... ok
+test cli_execute_restore_recovers_directory_from_ledger ... ok
+test cli_execute_scan_reports_applied_and_failed_actions ... ok
+test cli_execute_restore_fails_when_global_lock_is_held_without_restoring_or_clearing_ledger ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: cargo test -p puread-cli cli_profiles -- --nocapture
+cmd: cargo test -p puread-cli cli_profiles -- --nocapture
+started_at: 2026-06-18T20:18:09+08:00
+   Compiling puread-cli v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.30s
+     Running unittests src/lib.rs (target/debug/deps/puread_cli-ca5c6e3118805a36)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/puread_cli-981253312b5b62b0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli_execute_security.rs (target/debug/deps/cli_execute_security-3e70bb641f119bc7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.00s
+
+     Running tests/cli_profile_restore.rs (target/debug/deps/cli_profile_restore-f3652bc7ffdc0d92)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/cli_profiles.rs (target/debug/deps/cli_profiles-b77e19d4e3e4c3ab)
+
+running 10 tests
+test cli_profiles_status_outputs_paths_and_lock_state_when_module_root_is_fixture ... ok
+test cli_profiles_restore_keeps_existing_dry_run_contract ... ok
+test cli_profiles_dump_report_uses_existing_ledger_report_without_mutation ... ok
+test cli_profiles_profile_ledger_failure_blocks_android_mutation ... ok
+test cli_profiles_apply_profile_execute_reports_lock_conflict_when_lock_is_held ... ok
+test cli_profiles_explicit_profiles_plan_disabled_android_rules ... ok
+test cli_profiles_execute_dispatches_android_profiles_with_injected_runner ... ok
+test cli_profiles_scan_defaults_to_dry_run_when_flag_is_omitted ... ok
+test cli_profiles_apply_profile_defaults_to_dry_run_when_execute_is_omitted ... ok
+test cli_profiles_apply_profile_execute_uses_global_lock_under_fixture ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/ledger.rs (target/debug/deps/ledger-597ee80ac40af186)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/rules.rs (target/debug/deps/rules-240f8e8d48f35ffd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/scan_dry_run.rs (target/debug/deps/scan_dry_run-cc9a75d6c5d13d97)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture
+cmd: cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture
+started_at: 2026-06-18T20:18:09+08:00
+   Compiling puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running tests/appops_components.rs (target/debug/deps/appops_components-ef6d2763ebcabb69)
+
+running 8 tests
+test appops_profile_does_not_mutate_when_ledger_sink_fails ... ok
+test appops_profile_records_original_mode_and_restores_default_when_missing ... ok
+test component_profile_applies_and_restores_available_pm_hide ... ok
+test component_profile_does_not_mutate_when_ledger_sink_fails ... ok
+test component_profile_disables_enables_and_skips_unavailable_pm_hide ... ok
+test component_profile_restore_keeps_enable_when_persisted_hide_was_skipped ... ok
+test durable::component_profile_reports_error_when_confirmed_hide_record_cannot_persist ... ok
+test component_profile_skips_pm_hide_when_capability_attempt_fails ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rom_profiles.rs (target/debug/deps/rom_profiles-d3af8eeccaf47c44)
+
+running 11 tests
+test rom_profile_skips_miui_settings_when_getprop_does_not_match ... ok
+test rom_rule_rejects_unsafe_rule_ids_before_backup_path ... ok
+test rom_settings_does_not_mutate_when_ledger_sink_fails ... ok
+test security::rom_shared_prefs_rejects_backup_dir_symlink_without_ledger ... ok
+test security::rom_shared_prefs_rejects_relative_and_traversal_paths ... ok
+test security::rom_shared_prefs_rejects_parent_symlink_without_ledger_or_backup ... ok
+test rom_profile_modifies_and_restores_shared_prefs_xml_with_backup_and_hash ... ok
+test security::rom_shared_prefs_rejects_backup_file_symlink_without_ledger ... ok
+test security::rom_shared_prefs_rejects_xml_symlink_target ... ok
+test rom_shared_prefs_does_not_mutate_or_backup_when_ledger_sink_fails ... ok
+test security::rom_shared_prefs_rejects_existing_backup_without_ledger ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom
+cmd: cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom
+started_at: 2026-06-18T20:18:09+08:00
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running `target/debug/puread-cli rules validate rules/appops rules/components rules/rom`
+{
+  "schema_version": 1,
+  "command": "rules_validate",
+  "valid": true,
+  "error_count": 0,
+  "rule_file_count": 5,
+  "rule_count": 9
+}
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: LOC check: touched Rust source/test files pure LOC <=250
+cmd: bash -lc $'set +e\nfiles=$(git status --short -- "*.rs" | awk "{print \\\\$2}" | sed "s#^##" | sort -u)\nif [ -z "$files" ]; then echo "no touched Rust files"; exit 0; fi\nfail=0\nmax_file=""\nmax_count=0\nprintf "%-80s %s\\n" "file" "pure_loc"\nwhile IFS= read -r file; do\n  [ -f "$file" ] || continue\n  count=$(awk "BEGIN{inblock=0; n=0} { line=\\$0; gsub(/^[[:space:]]+|[[:space:]]+$/, \\"\\", line); if (inblock) { if (line ~ /\\\\*\\\\//) { sub(/^.*\\\\*\\\\//, \\"\\", line); inblock=0; gsub(/^[[:space:]]+|[[:space:]]+$/, \\"\\", line); } else next } while (line ~ /\\\\/\\\\*/) { pre=line; sub(/\\\\/\\\\*.*$/, \\"\\", pre); post=line; if (post ~ /\\\\*\\\\//) { sub(/^.*\\\\*\\\\//, \\"\\", post); line=pre post; } else { line=pre; inblock=1; break } } gsub(/^[[:space:]]+|[[:space:]]+$/, \\"\\", line); if (line == \\"\\" || line ~ /^\\\\/\\\\//) next; n++ } END{print n}" "$file")\n  printf "%-80s %s\\n" "$file" "$count"\n  if [ "$count" -gt "$max_count" ]; then max_count=$count; max_file="$file"; fi\n  if [ "$count" -gt 250 ]; then echo "FAIL: $file pure LOC $count > 250"; fail=1; fi\ndone <<EOF\n$files\nEOF\necho "highest_file: $max_file"\necho "highest_pure_loc: $max_count"\nif [ "$fail" -eq 0 ]; then echo "LOC_CHECK: PASS"; else echo "LOC_CHECK: FAIL"; fi\nexit "$fail"'
+started_at: 2026-06-18T20:18:09+08:00
+awk: cmd. line:1: {print \}
+awk: cmd. line:1:        ^ backslash not last character on line
+no touched Rust files
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: Forbidden scan: no forbidden production capability
+cmd: bash -lc $'set +e\npaths="crates/puread-cli/src crates/puread-android/src rules scripts module.prop service.sh post-fs-data.sh customize.sh uninstall.sh"\nexisting=""\nfor p in $paths; do [ -e "$p" ] && existing="$existing $p"; done\npattern="DNS|domain|private[-_ ]?DNS|private[-_ ]?dns|adblock[ -_]?host[ -_]?list|host[ -_]?list|proxy|iptables|AdGuardHome|root[ -_]?hiding|anti[-_ ]?detection|zygisk|hide[ -_]?root|hosts"\nif [ -z "$existing" ]; then echo "no production paths found"; exit 1; fi\nmatches=$(rg -n -i "$pattern" $existing 2>/dev/null)\nrc=$?\nif [ $rc -eq 1 ]; then\n  echo "FORBIDDEN_SCAN: PASS (no matches in production paths)"\n  exit 0\nfi\nif [ $rc -ne 0 ]; then\n  echo "FORBIDDEN_SCAN: ERROR rg exit $rc"\n  exit $rc\nfi\necho "$matches"\necho "FORBIDDEN_SCAN: REVIEW_REQUIRED/FAIL (matches found in production paths)"\nexit 1'
+started_at: 2026-06-18T20:18:09+08:00
+scripts/verify-local.sh:4:FORBIDDEN_PATTERN='hosts|DNS|dns|iptables|Clash|clash|AdGuardHome|adguardhome|mount_hosts|ad_reward|private_dns|mihomo|proxy|ProxyConfig|domain'
+scripts/verify-local.sh:5:ALLOWED_FORBIDDEN_GUARD_PATTERN='^crates/puread-rules/src/(parse|category)\.rs:[0-9]+:[[:space:]]+"(hosts|host|dns|private_dns|domain|domains|proxy|clash|mihomo|adguardhome|iptables|iptables_network|mount_hosts|ad_reward|ad_reward_domain|ifw_clear|zygisk|root_hide)",[[:space:]]*$'
+rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/apps/com.tencent.mobileqq.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/ctrip.android.view.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/ctrip.android.view.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.taobao.idlefish.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.netease.cloudmusic.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.netease.cloudmusic.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.autonavi.minimap.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.autonavi.minimap.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+rules/apps/com.zhihu.android.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/tv.danmaku.bili.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/tv.danmaku.bili.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/common/sdk-cache.toml:102:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+FORBIDDEN_SCAN: REVIEW_REQUIRED/FAIL (matches found in production paths)
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 1
+duration_seconds: 0
+
+## COMMAND: Test seam scan: puread-cli src must not read PUREAD_TEST_PROFILE_RUNNER
+cmd: bash -lc $'set +e\nmatches=$(rg -n "PUREAD_TEST_PROFILE_RUNNER" crates/puread-cli/src 2>/dev/null)\nrc=$?\nif [ $rc -eq 1 ]; then echo "TEST_SEAM_SCAN: PASS (no production matches)"; exit 0; fi\nif [ $rc -eq 0 ]; then echo "$matches"; echo "TEST_SEAM_SCAN: FAIL"; exit 1; fi\necho "TEST_SEAM_SCAN: ERROR rg exit $rc"; exit $rc'
+started_at: 2026-06-18T20:18:09+08:00
+TEST_SEAM_SCAN: PASS (no production matches)
+finished_at: 2026-06-18T20:18:09+08:00
+exit_code: 0
+duration_seconds: 0
+
+## COMMAND: Cleanup check: no lingering */data/adb QA pollution
+cmd: bash -lc $'set +e\nafter=$(find . /tmp -path "*/data/adb" -type d 2>/dev/null | sort)\nprintf "after_scan:\\n"\nif [ -n "$after" ]; then printf "%s\\n" "$after"; else printf "none\\n"; fi\nnew=""\nif [ -n "$after" ]; then\n  while IFS= read -r p; do\n    [ -z "$p" ] && continue\n    if ! printf "%s\\n" "$BEFORE_ADB" | grep -Fx -- "$p" >/dev/null 2>&1; then new="$new\\n$p"; fi\n  done <<EOF\n$after\nEOF\nfi\nif [ -n "$new" ]; then\n  echo "new QA pollution candidates:$new"\n  cleanup_fail=0\n  while IFS= read -r p; do\n    [ -z "$p" ] && continue\n    case "$p" in\n      /tmp/*|./target/*)\n        parent=$(dirname "$p")\n        rm -rf -- "$p" || cleanup_fail=1\n        echo "cleanup_removed: $p"\n        rmdir --ignore-fail-on-non-empty "$parent" 2>/dev/null || true\n        ;;\n      *)\n        echo "cleanup_skipped_non_temp: $p"\n        cleanup_fail=1\n        ;;\n    esac\n  done <<EOF\n$(printf "%b\\n" "$new")\nEOF\n  final=$(find . /tmp -path "*/data/adb" -type d 2>/dev/null | sort)\n  echo "final_scan:"\n  if [ -n "$final" ]; then printf "%s\\n" "$final"; else echo "none"; fi\n  exit "$cleanup_fail"\nfi\necho "CLEANUP_CHECK: PASS (no new lingering QA data/adb pollution)"\nexit 0'
+started_at: 2026-06-18T20:18:09+08:00
+after_scan:
+/tmp/puread-review-wave4.IHjmBx/root/data/adb
+/tmp/puread-review-wave4.dDO2av/root/data/adb
+/tmp/tmp.HTplw9LFst/android-fs/data/adb
+/tmp/tmp.Hqmcnn6L8H/android-fs/data/adb
+/tmp/tmp.ml1W8LvGOW/android/data/adb
+new QA pollution candidates:\n/tmp/puread-review-wave4.IHjmBx/root/data/adb\n/tmp/puread-review-wave4.dDO2av/root/data/adb\n/tmp/tmp.HTplw9LFst/android-fs/data/adb\n/tmp/tmp.Hqmcnn6L8H/android-fs/data/adb\n/tmp/tmp.ml1W8LvGOW/android/data/adb
+cleanup_removed: /tmp/puread-review-wave4.IHjmBx/root/data/adb
+cleanup_removed: /tmp/puread-review-wave4.dDO2av/root/data/adb
+cleanup_removed: /tmp/tmp.HTplw9LFst/android-fs/data/adb
+cleanup_removed: /tmp/tmp.Hqmcnn6L8H/android-fs/data/adb
+cleanup_removed: /tmp/tmp.ml1W8LvGOW/android/data/adb
+final_scan:
+none
+finished_at: 2026-06-18T20:18:10+08:00
+exit_code: 0
+duration_seconds: 1
+
+## Final git status --short --ignored
+ M Cargo.lock
+ M crates/puread-android/Cargo.toml
+ M crates/puread-android/src/command_runner.rs
+ M crates/puread-android/src/command_runner/pm.rs
+ M crates/puread-android/src/command_runner/settings.rs
+ M crates/puread-android/src/lib.rs
+ M crates/puread-android/tests/command_runner.rs
+ M crates/puread-cli/Cargo.toml
+ M crates/puread-cli/src/cli.rs
+ M crates/puread-cli/src/error.rs
+ M crates/puread-cli/src/ledger.rs
+ M crates/puread-cli/src/main.rs
+ M crates/puread-cli/src/scan.rs
+ M crates/puread-cli/tests/ledger.rs
+?? .omo/evidence/review-wave4-context.txt
+?? .omo/evidence/review-wave4-final-context.txt
+?? .omo/evidence/review-wave4-final-context2.txt
+?? .omo/evidence/review-wave4-final-goal.txt
+?? .omo/evidence/review-wave4-final-qa.txt
+?? .omo/evidence/review-wave4-final-qa2.txt
+?? .omo/evidence/review-wave4-final-quality.txt
+?? .omo/evidence/review-wave4-final-security.txt
+?? .omo/evidence/review-wave4-final2-context.txt
+?? .omo/evidence/review-wave4-final2-goal.txt
+?? .omo/evidence/review-wave4-final2-qa.txt
+?? .omo/evidence/review-wave4-final2-quality.txt
+?? .omo/evidence/review-wave4-final2-security.txt
+?? .omo/evidence/review-wave4-final3-qa.txt
+?? .omo/evidence/review-wave4-postfix-context.txt
+?? .omo/evidence/review-wave4-postfix-qa.txt
+?? .omo/evidence/review-wave4-t20-t24-qa.txt
+?? .omo/evidence/task-20-adversarial.txt
+?? .omo/evidence/task-20-cargo-test.txt
+?? .omo/evidence/task-20-cli-execute-security.txt
+?? .omo/evidence/task-20-cli-fmt-check.txt
+?? .omo/evidence/task-20-cli-profiles-loc-fix.txt
+?? .omo/evidence/task-20-cli-profiles.txt
+?? .omo/evidence/task-20-cli-scan.json
+?? .omo/evidence/task-20-clippy.txt
+?? .omo/evidence/task-20-execute-lock.txt
+?? .omo/evidence/task-20-final-green.txt
+?? .omo/evidence/task-20-fmt-check.txt
+?? .omo/evidence/task-20-loc-check.txt
+?? .omo/evidence/task-20-profile-ledger-restore-security.txt
+?? .omo/evidence/task-20-profile-restore-lock-order-fix.txt
+?? .omo/evidence/task-20-red.txt
+?? .omo/evidence/task-23-24-adversarial.txt
+?? .omo/evidence/task-23-24-android-fmt-check.txt
+?? .omo/evidence/task-23-24-clippy.txt
+?? .omo/evidence/task-23-24-final-green.txt
+?? .omo/evidence/task-23-24-fmt-check.txt
+?? .omo/evidence/task-23-24-forbidden-scan.txt
+?? .omo/evidence/task-23-24-loc-check.txt
+?? .omo/evidence/task-23-24-rules-validate.txt
+?? .omo/evidence/task-23-24-tests.txt
+?? .omo/evidence/task-23-appops-components.txt
+?? .omo/evidence/task-23-component-hide-durable-final-state.txt
+?? .omo/evidence/task-23-component-hide-ledger-fix.txt
+?? .omo/evidence/task-23-default-enabled-grep.txt
+?? .omo/evidence/task-23-pm-hide-capability.txt
+?? .omo/evidence/task-23-pm-hide-unavailable-runner.txt
+?? .omo/evidence/task-23-red.txt
+?? .omo/evidence/task-24-forbidden-rom-scan.txt
+?? .omo/evidence/task-24-red.txt
+?? .omo/evidence/task-24-rom-profiles.txt
+?? .omo/evidence/task-24-shared-prefs-ledger-failure.txt
+?? crates/puread-android/src/profiles.rs
+?? crates/puread-android/src/profiles/
+?? crates/puread-android/tests/appops_components.rs
+?? crates/puread-android/tests/appops_components/
+?? crates/puread-android/tests/command_runner/
+?? crates/puread-android/tests/rom_profiles.rs
+?? crates/puread-android/tests/rom_profiles/
+?? crates/puread-cli/src/lock.rs
+?? crates/puread-cli/src/profile.rs
+?? crates/puread-cli/src/profile_execute.rs
+?? crates/puread-cli/src/profile_execute/
+?? crates/puread-cli/src/restore.rs
+?? crates/puread-cli/src/restore_fs.rs
+?? crates/puread-cli/src/rule_plan.rs
+?? crates/puread-cli/src/rule_plan/
+?? crates/puread-cli/tests/cli_execute_security.rs
+?? crates/puread-cli/tests/cli_profile_restore.rs
+?? crates/puread-cli/tests/cli_profiles.rs
+?? crates/puread-cli/tests/support/
+?? rules/appops/
+?? rules/components/
+?? rules/rom/
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/
+
+## Summary
+
+- cargo fmt --all -- --check: exit=0 duration=0s
+- cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings: exit=0 duration=0s
+- cargo test -p puread-cli --test cli_profile_restore -- --nocapture: exit=0 duration=1s
+- cargo test -p puread-cli --test cli_profiles -- --nocapture: exit=0 duration=0s
+- cargo test -p puread-cli --test cli_execute_security -- --nocapture: exit=0 duration=0s
+- cargo test -p puread-cli cli_profiles -- --nocapture: exit=0 duration=0s
+- cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture: exit=0 duration=0s
+- cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom: exit=0 duration=0s
+- LOC check: touched Rust source/test files pure LOC <=250: exit=0 duration=0s
+- Forbidden scan: no forbidden production capability: exit=1 duration=0s
+- Test seam scan: puread-cli src must not read PUREAD_TEST_PROFILE_RUNNER: exit=0 duration=0s
+- Cleanup check: no lingering */data/adb QA pollution: exit=0 duration=1s
+total_failed_commands: 1
+verdict: FAIL
+finished_at: 2026-06-18T20:18:10+08:00
+
+## Corrected evidence append: LOC and classified forbidden scan
+started_at: 2026-06-18T20:21:23+08:00
+
+### Corrected LOC check command
+cmd: git ls-files --modified --others --exclude-standard -- "*.rs" | pure LOC counter
+255 crates/puread-android/tests/appops_components.rs
+247 crates/puread-cli/src/restore_fs.rs
+241 crates/puread-cli/tests/cli_profiles.rs
+234 crates/puread-cli/tests/cli_execute_security.rs
+230 crates/puread-cli/tests/support/cli_profile_restore.rs
+212 crates/puread-android/tests/command_runner.rs
+208 crates/puread-android/src/profiles/xml.rs
+207 crates/puread-cli/src/profile_execute/android_dispatch.rs
+205 crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+203 crates/puread-cli/tests/cli_profile_restore.rs
+201 crates/puread-cli/src/profile_execute/profile_runtime.rs
+186 crates/puread-cli/src/rule_plan/targets.rs
+184 crates/puread-android/src/profiles/rules.rs
+182 crates/puread-cli/tests/support/cli_restore_adversarial.rs
+178 crates/puread-cli/src/profile.rs
+177 crates/puread-cli/src/restore.rs
+160 crates/puread-android/src/profiles/executor/appops_components.rs
+159 crates/puread-cli/src/lock.rs
+159 crates/puread-cli/src/cli.rs
+157 crates/puread-cli/tests/support/cli_execute_security.rs
+153 crates/puread-cli/tests/support/cli_profiles.rs
+142 crates/puread-android/tests/rom_profiles/security.rs
+142 crates/puread-android/tests/rom_profiles.rs
+125 crates/puread-android/src/command_runner/settings.rs
+123 crates/puread-cli/src/profile_execute/profile_restore.rs
+119 crates/puread-cli/src/profile_execute/profile_restore/report.rs
+110 crates/puread-android/src/profiles/xml_bool.rs
+110 crates/puread-android/src/profiles/executor/rom.rs
+103 crates/puread-cli/tests/ledger.rs
+103 crates/puread-android/tests/rom_profiles/support.rs
+95 crates/puread-android/src/command_runner/pm.rs
+91 crates/puread-cli/src/rule_plan/discovery.rs
+89 crates/puread-android/tests/appops_components/support.rs
+88 crates/puread-cli/src/profile_execute/report.rs
+86 crates/puread-cli/src/scan.rs
+86 crates/puread-cli/src/profile_execute/profile_restore/final_state.rs
+85 crates/puread-android/src/profiles/record.rs
+75 crates/puread-cli/src/error.rs
+72 crates/puread-cli/src/rule_plan.rs
+65 crates/puread-cli/src/ledger.rs
+62 crates/puread-cli/src/profile_execute/file_actions.rs
+62 crates/puread-cli/src/profile_execute.rs
+55 crates/puread-android/tests/command_runner/support.rs
+54 crates/puread-android/src/profiles/error.rs
+48 crates/puread-android/src/profiles/xml/tests.rs
+45 crates/puread-cli/src/main.rs
+43 crates/puread-android/tests/appops_components/durable.rs
+43 crates/puread-android/src/profiles/executor.rs
+42 crates/puread-android/src/profiles/xml_hooks.rs
+26 crates/puread-android/src/profiles/executor/shared.rs
+21 crates/puread-android/src/lib.rs
+21 crates/puread-android/src/command_runner.rs
+14 crates/puread-android/src/profiles.rs
+highest: 255 crates/puread-android/tests/appops_components.rs
+LOC_CHECK_CORRECTED: FAIL
+corrected_loc_exit_code: 1
+
+### Classified forbidden scan
+cmd: rg -n -i forbidden tokens over production paths, then classify whether any hit is a production capability
+raw_rg_exit_code: 2
+raw_matches:
+scripts/verify-local.sh:4:FORBIDDEN_PATTERN='hosts|DNS|dns|iptables|Clash|clash|AdGuardHome|adguardhome|mount_hosts|ad_reward|private_dns|mihomo|proxy|ProxyConfig|domain'
+scripts/verify-local.sh:5:ALLOWED_FORBIDDEN_GUARD_PATTERN='^crates/puread-rules/src/(parse|category)\.rs:[0-9]+:[[:space:]]+"(hosts|host|dns|private_dns|domain|domains|proxy|clash|mihomo|adguardhome|iptables|iptables_network|mount_hosts|ad_reward|ad_reward_domain|ifw_clear|zygisk|root_hide)",[[:space:]]*$'
+rules/apps/com.tencent.mobileqq.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/ctrip.android.view.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/ctrip.android.view.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.taobao.idlefish.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+rules/apps/com.netease.cloudmusic.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.netease.cloudmusic.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.autonavi.minimap.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.autonavi.minimap.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/apps/tv.danmaku.bili.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/tv.danmaku.bili.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.zhihu.android.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/common/sdk-cache.toml:102:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+classification:
+- scripts/verify-local.sh matches are grep guard patterns, not runtime capability.
+- rules/**/*.toml source_file and notes matches are provenance or explicit boundary notes; component target contains upstream Java package segment .proxy. and does not configure a proxy service.
+- crates/puread-android/src/command_runner/settings.rs matches are deny-list guard branches that reject DNS/hosts/proxy settings keys before execution.
+- No raw match shows code that configures DNS/private-DNS, adblock host lists, proxy routing, iptables, AdGuardHome, root hiding, or anti-detection behavior.
+FORBIDDEN_SCAN_CLASSIFIED: PASS
+classified_forbidden_exit_code: 0
+
+### Corrected cleanup receipt
+cmd: find . /tmp -path '*/data/adb' -type d
+remaining_data_adb: none
+CLEANUP_CHECK_CORRECTED: PASS
+cleanup_receipt: removed /tmp/puread-review-wave4.IHjmBx/root/data/adb, /tmp/puread-review-wave4.dDO2av/root/data/adb, /tmp/tmp.HTplw9LFst/android-fs/data/adb, /tmp/tmp.Hqmcnn6L8H/android-fs/data/adb, /tmp/tmp.ml1W8LvGOW/android/data/adb during first cleanup pass.
+cleanup_scope: all removed paths were under /tmp and matched QA Android fixture data/adb layout; no repository product file was removed.
+
+### Corrected final verdict
+verdict_corrected: FAIL
+finished_at: 2026-06-18T20:21:23+08:00
+
+## Final QA closeout
+started_at: 2026-06-18T20:22:14+08:00
+
+### Existing-path forbidden scan rerun
+existing_paths: crates/puread-cli/src crates/puread-android/src rules scripts
+raw_rg_exit_code_existing_paths: 0
+raw_matches_existing_paths:
+scripts/verify-local.sh:4:FORBIDDEN_PATTERN='hosts|DNS|dns|iptables|Clash|clash|AdGuardHome|adguardhome|mount_hosts|ad_reward|private_dns|mihomo|proxy|ProxyConfig|domain'
+scripts/verify-local.sh:5:ALLOWED_FORBIDDEN_GUARD_PATTERN='^crates/puread-rules/src/(parse|category)\.rs:[0-9]+:[[:space:]]+"(hosts|host|dns|private_dns|domain|domains|proxy|clash|mihomo|adguardhome|iptables|iptables_network|mount_hosts|ad_reward|ad_reward_domain|ifw_clear|zygisk|root_hide)",[[:space:]]*$'
+rules/apps/com.tencent.mobileqq.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/ctrip.android.view.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/ctrip.android.view.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+rules/apps/com.taobao.idlefish.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.netease.cloudmusic.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.netease.cloudmusic.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/apps/com.zhihu.android.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.autonavi.minimap.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/com.autonavi.minimap.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/tv.danmaku.bili.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/apps/tv.danmaku.bili.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+rules/common/sdk-cache.toml:102:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+production_capability_classification: PASS - all hits are guard code, provenance, notes, or literal Android component class names; no forbidden network/root-hiding production capability found.
+
+### Recent blockers confirmation
+appops_components: PASS by test output, 8 passed / 0 failed; includes durable pm hide success ledger, skipped failure behavior, and restore semantics tests.
+cli_profile_restore: PASS by test output, 11 passed / 0 failed; includes final state folding, lock-before-read, symlink rejection, and env fake runner ignored.
+
+### Failure reproduction
+LOC gate failed: corrected pure LOC counter reports 255 pure LOC for crates/puread-android/tests/appops_components.rs, exceeding required <=250 by 5 lines.
+Reproduce: run the corrected LOC section in this evidence file or count touched Rust files from `git ls-files --modified --others --exclude-standard -- "*.rs"`; highest entry is `255 crates/puread-android/tests/appops_components.rs`.
+
+### Final command verdicts
+cargo fmt --all -- --check: PASS exit=0
+cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings: PASS exit=0
+cargo test -p puread-cli --test cli_profile_restore -- --nocapture: PASS 11 passed / 0 failed
+cargo test -p puread-cli --test cli_profiles -- --nocapture: PASS 10 passed / 0 failed
+cargo test -p puread-cli --test cli_execute_security -- --nocapture: PASS 15 passed / 0 failed
+cargo test -p puread-cli cli_profiles -- --nocapture: PASS cli_profiles integration subset 10 passed / 0 failed; other binaries/tests filtered out
+cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture: PASS appops_components 8 passed / 0 failed, rom_profiles 11 passed / 0 failed
+cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom: PASS valid=true error_count=0 rule_file_count=5 rule_count=9
+LOC check: FAIL highest=crates/puread-android/tests/appops_components.rs pure_loc=255 > 250
+Forbidden scan: PASS after classification; no forbidden production capability found
+Test seam scan: PASS no PUREAD_TEST_PROFILE_RUNNER in crates/puread-cli/src
+Cleanup check: PASS final find . /tmp -path "*/data/adb" -type d reports none
+
+<verdict>FAIL</verdict>
+finished_at: 2026-06-18T20:22:14+08:00

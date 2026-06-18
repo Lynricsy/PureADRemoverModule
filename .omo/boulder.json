@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "puread-rust-module",
+  "active_work_id": null,
   "works": {
     "puread-rust-module": {
       "work_id": "puread-rust-module",
@@ -9,7 +9,7 @@
       "session_ids": [
         "codex:puread-rust-module-main"
       ],
-      "status": "active",
+      "status": "completed",
       "worktree_path": null
     }
   }

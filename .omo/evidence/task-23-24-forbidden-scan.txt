@@ -1,0 +1,1 @@
+rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."

@@ -1,0 +1,9 @@
+crates/puread-cli/src/profile_execute/android_dispatch.rs 175
+crates/puread-cli/src/profile_execute/profile_runtime.rs 100
+crates/puread-cli/src/profile_execute.rs 43
+crates/puread-cli/src/profile.rs 134
+crates/puread-cli/tests/cli_profiles.rs 250
+crates/puread-cli/tests/support/cli_profiles.rs 126
+crates/puread-android/src/profiles/executor/appops_components.rs 145
+crates/puread-android/tests/appops_components.rs 199
+crates/puread-android/tests/appops_components/support.rs 73

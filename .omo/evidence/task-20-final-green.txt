@@ -1,0 +1,39 @@
+task: PureAD CLI execute/profile restore final verification
+date: 2026-06-18T20:55:00+08:00
+status: GREEN
+
+scope:
+- CLI supports status, scan, apply-profile, restore, profile-restore, profile-report, and dump-report surfaces.
+- Real mutation paths require explicit --execute and acquire the global module lock before mutation.
+- scan/restore file-action execution remains root-bound and symlink-safe.
+- apply-profile writes a module-local persistent profile ledger before mutation.
+- profile-restore --execute acquires the global lock before reading state/profile-actions.jsonl, restores from folded final-state records, and rewrites restored entries without crossing users/actions.
+- CLI production code does not read PUREAD_TEST_PROFILE_RUNNER; test runner seams are explicit test-only CLI/support paths.
+
+final5_verification:
+- cargo fmt --all -- --check: PASS
+- cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings: PASS
+- cargo test -p puread-cli --test cli_profile_restore -- --nocapture: PASS, 12 passed
+- cargo test -p puread-cli --test cli_profiles -- --nocapture: PASS, 10 passed
+- cargo test -p puread-cli --test cli_execute_security -- --nocapture: PASS, 15 passed
+- cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture: PASS, 8 + 11 passed
+- cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom: PASS, valid=true, error_count=0
+- touched Rust pure LOC gate: PASS, no touched file over 250 pure LOC
+- forbidden capability scan: PASS, no DNS/domain/hosts/proxy/iptables/AdGuardHome/root hiding/anti-detection production capability
+- test seam scan: PASS, crates/puread-cli/src does not read PUREAD_TEST_PROFILE_RUNNER
+- cleanup check: PASS, no lingering data/adb QA pollution
+
+security_and_review:
+- final4 security review: PASS, .omo/evidence/review-wave4-final4-security.txt
+- final5 quality review: PASS, .omo/evidence/review-wave4-final5-quality.txt
+- final5 QA review: PASS, .omo/evidence/review-wave4-final5-qa.txt
+- final5 context review: PASS, .omo/evidence/review-wave4-final5-context.txt
+
+key_evidence:
+- .omo/evidence/task-20-profile-ledger-restore-security.txt
+- .omo/evidence/task-20-profile-restore-lock-order-fix.txt
+- .omo/evidence/task-20-cli-profile-restore-loc-final-fix.txt
+- .omo/evidence/task-20-cli-execute-security.txt
+- .omo/evidence/review-wave4-final5-qa.txt
+- .omo/evidence/review-wave4-final5-quality.txt
+- .omo/evidence/review-wave4-final5-context.txt

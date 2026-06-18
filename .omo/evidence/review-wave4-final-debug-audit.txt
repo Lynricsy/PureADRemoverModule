@@ -1,0 +1,100 @@
+Wave4 T20/T23/T24 final debugging-oriented runtime audit
+Started: 2026-06-18T20:57:26+08:00
+Worker role: validation worker
+Scope: no product file edits, no commit/push, no git config changes
+Git HEAD: a346b08ac067bc3a06ed7711708970d1cc4401af
+
+Environment
+- cargo: cargo 1.96.0 (30a34c682 2026-05-25)
+- rustc: rustc 1.96.0 (ac68faa20 2026-05-25)
+- Worktree baseline: existing dirty tree with Wave4 implementation/evidence changes and ignored AgentLogs/Example/target. This audit intentionally only added this evidence file.
+- AgentLogs search before audit: search_logs query "PureADRemoverModule Wave4 T20 T23 T24 final5 profile restore lock fake runner forbidden scan final green" returned no specific log file, with suggested keywords around T20/T23/T24, profile restore, fake runner, lock, and PUREAD_TEST_PROFILE_RUNNER.
+
+Hypothesis 1: Cross-user component final-state folding may still collapse records from different Android users and mark the wrong ledger lines restored.
+Check:
+  cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+Result:
+  PASS. The target ran 12 tests and all passed.
+Distinguishing output:
+  running 12 tests
+  test cli_profile_restore_keeps_component_final_state_per_user_id ... ok
+  test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+Conclusion:
+  The user_id folding regression test is present and passing, so the final-state fold keeps component state separated by Android user_id.
+
+Hypothesis 2: profile-restore --execute may still read/rewrite profile ledger before taking the global lock, allowing stale ledger snapshots to drop new records.
+Check:
+  cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+Result:
+  PASS. The lock-contention regression test is present and passed inside the same 12-test target.
+Distinguishing output:
+  test cli_profile_restore_execute_lock_contention_prevents_ledger_read ... ok
+  test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+Conclusion:
+  Runtime test coverage confirms lock contention prevents ledger reads before mutation, addressing stale snapshot/drop risk.
+
+Hypothesis 3: apply-profile fake runner seam may be triggerable by environment in production CLI source.
+Checks:
+  rg -n "PUREAD_TEST_PROFILE_RUNNER" crates/puread-cli/src
+  cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+Results:
+  PASS.
+  - rg exited with no matches in crates/puread-cli/src.
+  - The default-runner regression test passed.
+Distinguishing output:
+  rg output: <no matches>
+  test cli_profile_restore_default_runner_ignores_env_fake_runner ... ok
+  test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+Conclusion:
+  Production CLI source does not read PUREAD_TEST_PROFILE_RUNNER, and runtime test confirms default runner ignores the environment fake-runner seam.
+
+Hypothesis 4: Forbidden DNS/domain/hosts/proxy/iptables/root-hiding production capability may have slipped into changed production paths.
+Check:
+  rg -n "hosts|DNS|domain|proxy|iptables|AdGuardHome|mount_hosts|ad_reward|root hiding|anti-detection" crates/puread-cli/src crates/puread-android/src rules/appops rules/components rules/rom
+Result:
+  PASS with classified allowed hits only.
+Raw hits:
+  rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+  rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+  rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+  rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+  crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+  crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+  crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+  crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+Classification:
+  - crates/puread-android/src/command_runner/settings.rs lines 105-120 are deny/guard paths that reject DNS, hosts, and proxy settings keys.
+  - rules/components/sdk-ad-components.toml target/source hits are the literal Android component class name "com.kwad.sdk.api.proxy.app.KsRewardVideoActivity", not network proxy behavior.
+  - rules/components/sdk-ad-components.toml notes explicitly state the component rule is not domain or network blocking.
+  - rules/rom/miui-ad-settings.toml notes explicitly exclude private DNS and unrelated settings categories.
+  - No iptables, AdGuardHome, mount_hosts, ad_reward, root hiding, or anti-detection hits appeared.
+Conclusion:
+  No executable forbidden DNS/domain/hosts/proxy/iptables/AdGuardHome/mount_hosts/ad_reward/root-hiding/anti-detection production capability was found in the scanned production paths.
+
+Hypothesis 5: Final evidence/plan may be stale after final5 fixes.
+Checks:
+  rg -n "\[x\] 20\.|\[x\] 23\.|\[x\] 24\." .omo/plans/puread-rust-module.md
+  rg -n "status: GREEN|final5|PASS" .omo/evidence/task-20-final-green.txt .omo/evidence/task-23-24-final-green.txt
+Results:
+  PASS.
+Distinguishing output:
+  .omo/plans/puread-rust-module.md:292:- [x] 20. CLI 手动扫描和应用 profile
+  .omo/plans/puread-rust-module.md:316:- [x] 23. 实现 AppOps 与组件 profile
+  .omo/plans/puread-rust-module.md:324:- [x] 24. 实现 ROM profile 与 settings/XML 修改
+  .omo/evidence/task-20-final-green.txt:3:status: GREEN
+  .omo/evidence/task-20-final-green.txt:13:final5_verification:
+  .omo/evidence/task-20-final-green.txt:14:- cargo fmt --all -- --check: PASS
+  .omo/evidence/task-20-final-green.txt:15:- cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings: PASS
+  .omo/evidence/task-20-final-green.txt:16:- cargo test -p puread-cli --test cli_profile_restore -- --nocapture: PASS, 12 passed
+  .omo/evidence/task-20-final-green.txt:22:- forbidden capability scan: PASS, no DNS/domain/hosts/proxy/iptables/AdGuardHome/root hiding/anti-detection production capability
+  .omo/evidence/task-20-final-green.txt:23:- test seam scan: PASS, crates/puread-cli/src does not read PUREAD_TEST_PROFILE_RUNNER
+  .omo/evidence/task-23-24-final-green.txt:3:status: GREEN
+  .omo/evidence/task-23-24-final-green.txt:14:final5_verification:
+  .omo/evidence/task-23-24-final-green.txt:15:- cargo fmt --all -- --check: PASS
+  .omo/evidence/task-23-24-final-green.txt:16:- cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings: PASS
+  .omo/evidence/task-23-24-final-green.txt:18:- cargo test -p puread-cli --test cli_profile_restore -- --nocapture: PASS, 12 passed
+  .omo/evidence/task-23-24-final-green.txt:23:- forbidden capability scan: PASS, no executable hosts/DNS/domain/proxy/iptables/AdGuardHome/mount_hosts/ad_reward/root hiding/anti-detection capability introduced
+Conclusion:
+  Plan checkboxes for T20/T23/T24 are closed and final green evidence records final5 PASS/GREEN status.
+
+Final verdict: PASS

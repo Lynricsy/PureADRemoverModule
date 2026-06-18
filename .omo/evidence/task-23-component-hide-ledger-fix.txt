@@ -1,0 +1,59 @@
+Task: task-23 component pm hide ledger/report fix
+Timestamp: 2026-06-18T18:55:43+08:00
+
+Why this was fixed:
+- Android component profile execution uses ledger-before-mutation. The pre-mutation persisted
+  component record cannot truthfully claim that a later `pm hide` mutation succeeded.
+- Before this fix, `TryHide` records were persisted with `hide_status:"applied"` before running
+  `pm hide`, while the returned report could later show `hide_status:"skipped_unavailable"`.
+  A persisted `applied` record drives restore through `pm unhide`, which is wrong when hide was
+  unavailable or failed.
+
+What changed:
+- `crates/puread-android/src/profiles/executor/appops_components.rs`
+  - Changed the pre-mutation ledger status for `PmHidePolicy::TryHide` from `applied` to
+    `skipped_unavailable`.
+  - Kept the existing report path: after the `pm hide` attempt, the returned operation record still
+    reports `applied` only when the command succeeds and `skipped_unavailable` when it fails.
+  - Existing restore logic already gates `pm unhide` on persisted `hide_status == applied`, so a
+    conservative persisted record skips `pm unhide` while still continuing component enable.
+- `crates/puread-android/tests/appops_components.rs`
+  - Added ledger assertions for both unavailable runner errors and non-zero `pm hide` exits.
+  - Added restore coverage for a persisted `skipped_unavailable` component record to prove it calls
+    `pm enable` without calling `pm unhide`.
+  - Kept the existing ledger failure test covering mutation blocking.
+
+Red verification:
+- Command:
+  `cargo test -p puread-android --test appops_components component_profile_skips_pm_hide_when_capability_attempt_fails -- --nocapture`
+- Observed failure before the implementation change:
+  `persistent ledger must match report when pm hide exits non-zero`
+- This confirmed the bug: report was `skipped_unavailable`, but the persisted ledger record still
+  contained the prewritten `applied` hide status.
+
+Green verification:
+- `cargo fmt --all -- --check`
+  Result: passed.
+- `cargo clippy -p puread-android --all-targets -- -D warnings`
+  Result: passed.
+- `cargo test -p puread-android --test appops_components -- --nocapture`
+  Result: passed, 7 tests.
+
+LSP status:
+- `mcp__lsp.status` reports Rust LSP missing.
+- Post-edit hook also reported:
+  `Unknown binary 'rust-analyzer' in official toolchain 'stable-x86_64-unknown-linux-gnu'`.
+- No LSP installation was performed because the task scope did not ask for toolchain changes.
+
+LOC:
+- `crates/puread-android/src/profiles/executor/appops_components.rs`: 145 pure LOC.
+- `crates/puread-android/src/profiles/record.rs`: 85 pure LOC.
+- `crates/puread-android/tests/appops_components.rs`: 239 pure LOC.
+- `crates/puread-android/tests/appops_components/support.rs`: 76 pure LOC.
+
+Scope notes:
+- No CLI restore, lock, or profile runtime files were changed.
+- No git config was set.
+- No commit or push was performed.
+- The worktree already contained many unrelated tracked and untracked changes from parallel work;
+  they were left untouched.

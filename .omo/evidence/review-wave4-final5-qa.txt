@@ -1,0 +1,267 @@
+# Wave4 final5 QA
+
+timestamp_utc: 2026-06-18T12:48:51Z
+verdict: PASS
+scope: final LOC fix verification for Wave4 T20/T23/T24
+
+## Constraints
+
+- Sent required preamble: `WORKING: final5 QA - verifying final LOC and tests`
+- Did not modify product files.
+- Did not commit or push.
+- Did not set git config.
+- Wrote only this final5 QA evidence file during this QA pass.
+
+## Starting Worktree
+
+`git status --short --ignored` showed pre-existing Wave4 changes in Cargo files, Rust crates,
+rules, and prior `.omo/evidence/*` files, plus ignored `AgentLogs/`, `Example/`, `target/`,
+and `xtask/upstream-report/target/`.
+
+No files were reverted. Existing modified and untracked files were treated as shared workspace
+state from earlier Wave4 work.
+
+## Required Commands
+
+### cargo fmt
+
+Command:
+
+```sh
+cargo fmt --all -- --check
+```
+
+Result: PASS, exit 0.
+
+### cargo clippy
+
+Command:
+
+```sh
+cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings
+```
+
+Result: PASS, exit 0.
+
+Key output:
+
+```text
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+```
+
+### cli_profile_restore
+
+Command:
+
+```sh
+cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+```
+
+Result: PASS, exit 0.
+
+Key output:
+
+```text
+running 12 tests
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+```
+
+Confirmed final LOC split did not break:
+
+- `cli_apply_profile_rejects_state_symlink_before_android_mutation`
+- `cli_profile_restore_keeps_component_final_state_per_user_id`
+- profile restore symlink, lock, ledger, and runner safety cases
+
+### cli_profiles
+
+Command:
+
+```sh
+cargo test -p puread-cli --test cli_profiles -- --nocapture
+```
+
+Result: PASS, exit 0.
+
+Key output:
+
+```text
+running 10 tests
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+```
+
+### cli_execute_security
+
+Command:
+
+```sh
+cargo test -p puread-cli --test cli_execute_security -- --nocapture
+```
+
+Result: PASS, exit 0.
+
+Key output:
+
+```text
+running 15 tests
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+```
+
+### puread-android appops/components and ROM profiles
+
+Command:
+
+```sh
+cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture
+```
+
+Result: PASS, exit 0.
+
+Key output:
+
+```text
+running 8 tests
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+running 11 tests
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+```
+
+Confirmed coverage includes:
+
+- AppOps ledger sink failure no-mutation behavior.
+- Component disable/enable and pm hide availability behavior.
+- Durable component hide final-state persistence failure behavior.
+- ROM settings and shared prefs restore/security behavior.
+
+### rules validate
+
+Command:
+
+```sh
+cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom
+```
+
+Result: PASS, exit 0.
+
+Key output:
+
+```json
+{
+  "schema_version": 1,
+  "command": "rules_validate",
+  "valid": true,
+  "error_count": 0,
+  "rule_file_count": 5,
+  "rule_count": 9
+}
+```
+
+## LOC Check
+
+Command:
+
+```sh
+git ls-files -m -o --exclude-standard -- '*.rs' | sort | while IFS= read -r file; do
+  count=$(awk '!/^[[:space:]]*$/ && !/^[[:space:]]*\/\//' "$file" | wc -l | tr -d ' ')
+  printf '%4s %s\n' "$count" "$file"
+done
+```
+
+Touched Rust files checked: 54.
+
+Result: PASS. No touched Rust file exceeds 250 pure LOC.
+
+High-signal LOC results:
+
+```text
+ 160 crates/puread-android/src/profiles/executor/appops_components.rs
+ 215 crates/puread-android/tests/appops_components.rs
+ 247 crates/puread-cli/src/restore_fs.rs
+ 234 crates/puread-cli/tests/cli_execute_security.rs
+ 234 crates/puread-cli/tests/cli_profile_restore.rs
+ 241 crates/puread-cli/tests/cli_profiles.rs
+ 230 crates/puread-cli/tests/support/cli_profile_restore.rs
+  38 crates/puread-cli/tests/support/cli_profile_restore_apply.rs
+```
+
+Over-limit command:
+
+```sh
+git ls-files -m -o --exclude-standard -- '*.rs' | sort | while IFS= read -r file; do
+  count=$(awk '!/^[[:space:]]*$/ && !/^[[:space:]]*\/\//' "$file" | wc -l | tr -d ' ')
+  if [ "$count" -gt 250 ]; then printf '%4s %s\n' "$count" "$file"; fi
+done
+```
+
+Result: no output.
+
+Note: an earlier zsh LOC helper attempt stored a multiline path list in a scalar and failed by
+treating the list as one filename. The corrected line-by-line command above is the authoritative
+LOC result.
+
+## Forbidden Scan Classification
+
+Command:
+
+```sh
+rg -n -i "hosts|dns|iptables|clash|adguardhome|mount_hosts|ad_reward|zygisk|root hiding|hide root|anti-detection|反检测|隐藏" \
+  crates/puread-cli/src crates/puread-android/src crates/puread-rules/src \
+  rules/appops rules/components rules/rom scripts/verify-local.sh
+```
+
+Result: PASS after classification. No production implementation of forbidden network, DNS,
+hosts, proxy, iptables, AdGuardHome service takeover, ad reward, root hiding, or anti-detection
+capability was found.
+
+Allowed/expected hits:
+
+- `scripts/verify-local.sh`: forbidden scan patterns and allowed guard patterns.
+- `crates/puread-rules/src/parse.rs`: forbidden category tokens rejected by parser.
+- `crates/puread-rules/src/category.rs`: forbidden category classification table.
+- `crates/puread-android/src/command_runner/settings.rs`: explicit guard rejecting
+  `private_dns_mode`, `private_dns_specifier`, DNS-containing settings keys, and hosts settings.
+- `rules/rom/miui-ad-settings.toml`: notes state that private DNS/network/privacy-protection
+  settings are excluded.
+
+Classification: all hits are guard, rejection, or explanatory metadata. No forbidden capability
+is wired into an execution path.
+
+## Test Seam Scan
+
+Command:
+
+```sh
+rg -n "PUREAD_TEST|TEST_PROFILE|FAKE|MOCK|test_support|fixture|TempFixture|ScriptedRunner|MemoryLedger" \
+  crates/puread-cli/src crates/puread-android/src crates/puread-cli/tests crates/puread-android/tests
+```
+
+Result: PASS after classification.
+
+Allowed/expected hits:
+
+- Test-only support modules under `crates/puread-cli/tests/support/*`.
+- Test-only support modules under `crates/puread-android/tests/*/support.rs`.
+- Test-only in-module support under `crates/puread-android/src/*/test_support.rs`.
+- One production CLI error text in `crates/puread-cli/src/error.rs` mentioning fixture root mapping;
+  this is an error variant used for safe fixture-root path mapping, not a fake runner/test-only
+  execution seam.
+
+No test seam was found in production execution paths that would route normal runtime behavior
+through fake runners or mocks.
+
+## Cleanup / Pollution Check
+
+Command:
+
+```sh
+find . -path './target' -prune -o -path './Example' -prune -o -path './AgentLogs' -prune -o -type f -path './*/data/adb/*' -print
+find . -path './target' -prune -o -path './Example' -prune -o -path './AgentLogs' -prune -o -type d -path '*/data/adb' -print
+```
+
+Result: PASS. Both commands produced no output; no `*/data/adb` pollution was found.
+
+## Final Verdict
+
+All required final5 QA gates passed. Final LOC repair is verified, and Wave4 T20/T23/T24 QA is green.
+
+<verdict>PASS</verdict>

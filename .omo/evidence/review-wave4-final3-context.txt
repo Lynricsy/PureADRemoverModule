@@ -1,0 +1,258 @@
+# Wave4 final3 context/evidence/plan consistency review
+
+reviewed_at: 2026-06-18T20:19:22+08:00
+cwd: /root/Projects/Ling/PureADRemoverModule
+mode: read-only context/evidence audit; only this evidence file was written
+verdict: FAIL
+updated_after_parallel_evidence: 2026-06-18T20:20:28+08:00
+
+## Scope
+
+Task: third-round final context/evidence/plan consistency review.
+
+Goal:
+- Confirm whether old Wave4 final2 FAIL items are covered by final3 evidence.
+- Decide whether T20/T23/T24 can be checked in `.omo/plans/puread-rust-module.md`.
+- Check repository context: AGENTS upstream policy, `.gitignore`, remote, local identity config, and `Example/` ignored/tracked state.
+
+Constraints observed:
+- Sent required preflight message: `WORKING: final3 context - mining logs/evidence`.
+- Did not modify product files.
+- Did not commit, push, or set git config.
+- Used AgentLogs MCP first for history lookup.
+- Wrote this evidence file as the required audit artifact.
+
+## AgentLogs history lookup
+
+Required history lookup was performed through `search_logs`, not manual file search.
+
+Queries:
+- `task20 profile restore lock order`
+  - No exact log file located.
+  - Suggested wider keywords included `task20`, `lock.*order`, `profile.*restore`, `GlobalLock`, `restore.*ledger`.
+- `task23 component hide durable final state`
+  - Found:
+    - `AgentLogs/0178-task-23-component-hide-durable-final-state-context.md`
+    - `AgentLogs/0179-task-23-component-hide-durable-final-state-fixed.md`
+    - `AgentLogs/0172-Wave4-final2-quality-review-failed-on-pm-hide-ledger-success-state.md`
+- `Wave4 final security FAIL`
+  - Found:
+    - `AgentLogs/0174-PureAD-Wave4-final2-security-review.md`
+    - `AgentLogs/0172-Wave4-final2-quality-review-failed-on-pm-hide-ledger-success-state.md`
+    - `AgentLogs/0177-PureAD-task20-profile-restore-lock-order-fix.md`
+    - `AgentLogs/0170-PureADRemoverModule-task20-profile-ledger-restore-security-fix.md`
+    - `AgentLogs/0179-task-23-component-hide-durable-final-state-fixed.md`
+
+Relevant history read:
+- `0174` recorded final2 security verdict FAIL with two blockers:
+  - `profile-restore --execute` read profile ledger before acquiring `GlobalLock`.
+  - successful `pm hide` persisted `hide_status:"skipped_unavailable"` instead of durable final hidden state.
+- `0172` recorded final2 quality verdict FAIL on the same successful `pm hide` persistent ledger/report mismatch.
+- `0177` recorded the T20 lock-order fix and verification PASS.
+- `0179` recorded the T23 component durable final-state fix and verification PASS.
+
+## Evidence reviewed
+
+Required fix evidence:
+- `.omo/evidence/task-20-profile-restore-lock-order-fix.txt`
+  - Present.
+  - States root cause: `profile-restore --execute` read `state/profile-actions.jsonl` before acquiring `GlobalLock`.
+  - States fix: execute mode computes ledger path, resolves/acquires global lock, then reads ledger, restores pending records, and rewrites restored records.
+  - Regression test: `cli_profile_restore_execute_lock_contention_prevents_ledger_read`.
+  - Verification:
+    - `cargo fmt --all -- --check`: PASS
+    - `cargo clippy -p puread-cli --all-targets -- -D warnings`: PASS
+    - `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`: PASS, 9 passed
+    - `cargo test -p puread-cli --test cli_profiles -- --nocapture`: PASS, 10 passed
+    - manual CLI lock-contention QA: status 1 on lock contention, runner log absent
+    - forbidden scan on touched restore files: no matches
+  - Assessment: targeted T20 old security blocker has direct fix evidence.
+
+- `.omo/evidence/task-23-component-hide-durable-final-state.txt`
+  - Present.
+  - States red phase:
+    - Android durable ledger record count was `1`, expected `2`.
+    - CLI restore did not find `"hide_status":"applied"` after `apply-profile --execute`.
+  - States final behavior:
+    - provisional record is appended before mutation.
+    - confirmed record with `hide_status=applied` is appended after successful `pm hide` and before `pm disable-user`.
+    - confirmed append failure after successful `pm hide` returns error and does not continue as safely applied.
+    - CLI `profile-restore` folds provisional+confirmed records by logical component key and restores final state once.
+  - Verification:
+    - `cargo fmt --all -- --check`: PASS
+    - `cargo clippy -p puread-android -p puread-cli --all-targets -- -D warnings`: PASS
+    - `cargo test -p puread-android --test appops_components -- --nocapture`: PASS, 8 passed
+    - `cargo test -p puread-cli --test cli_profile_restore -- --nocapture`: PASS, 11 passed
+    - `cargo test -p puread-cli --test cli_profiles -- --nocapture`: PASS, 10 passed
+    - `cargo test -p puread-cli --test cli_execute_security -- --nocapture`: PASS, 15 passed
+  - Assessment: targeted T23 old quality/security blocker has direct fix evidence.
+
+Final3 review evidence:
+- `.omo/evidence/review-wave4-final3-qa.txt`
+  - Present.
+  - Final summary includes many PASS commands:
+    - fmt PASS
+    - clippy PASS
+    - `cli_profile_restore` PASS, 11 passed
+    - `cli_profiles` PASS, 10 passed
+    - `cli_execute_security` PASS, 15 passed
+    - `puread-cli cli_profiles` filtered run PASS
+    - `puread-android --test appops_components --test rom_profiles` PASS, appops 8 passed and ROM 11 passed
+    - rules validate PASS, 5 files and 9 rules
+    - test seam scan PASS
+    - cleanup check PASS
+  - Blocking result:
+    - `Forbidden scan: no forbidden production capability` exited `1`.
+    - The file ends with `total_failed_commands: 1` and `verdict: FAIL`.
+  - Important detail:
+    - The failing scan printed matches including `scripts/verify-local.sh`, source provenance strings under `rules/apps`/`rules/common`, deny-guard settings code, ROM notes, and component class names containing `proxy`.
+    - This may need classification by quality/security reviewers, but the final3 QA evidence itself is not PASS.
+
+- `.omo/evidence/review-wave4-final3-quality.txt`
+  - Appeared during this review, after the first missing-file check.
+  - Verdict: FAIL.
+  - Passing checks recorded there:
+    - component TryHide success path now appends durable confirmed state.
+    - confirmed append failure is not silently reported as safely applied.
+    - failure/unavailable TryHide path remains skipped and restore does not unhide.
+    - `profile-restore --execute` locks before reading the ledger.
+    - production fake-runner env does not appear in production source.
+    - targeted forbidden-capability scan found no new production DNS/domain/hosts/proxy/iptables/root-hiding capability in scoped files.
+    - no `unwrap`, `expect`, `panic!`, `todo!`, or `unimplemented!` matches in scoped files.
+    - `cargo metadata --no-deps --format-version 1`: PASS.
+  - Blocking quality issues recorded there:
+    - `profile-restore` folds distinct component records across Android users because `ComponentActionKey` omits `user_id`.
+    - Targeted reproduction restored only `--user 10` while marking both `user_id=0` and `user_id=10` ledger rows restored.
+    - `crates/puread-android/tests/appops_components.rs` is reported as 255 pure LOC, above the 250 pure LOC ceiling.
+
+- `.omo/evidence/review-wave4-final3-security.txt`
+  - Appeared during this review, after the first missing-file check.
+  - Verdict: PASS.
+  - It specifically rechecked and passed:
+    - restore execute lock before ledger read/rewrite.
+    - ledger/lock path symlink and path-escape guards.
+    - component pm hide success durable JSONL can restore unhide.
+    - confirmed append failure does not falsely claim recoverability.
+    - failure/unavailable path remains safe and does not unhide.
+    - no forbidden DNS/domain/hosts/proxy/iptables/AdGuardHome/root-hiding/anti-detection production capability.
+  - Residual caveat: this security review used diff/file reasoning and `rg`, not cargo tests.
+
+Old FAIL evidence used only as history:
+- `.omo/evidence/review-wave4-final2-quality.txt`
+  - Verdict: FAIL.
+  - Blocker: successful `pm hide` persisted wrong durable `hide_status`, so JSONL restore could miss `pm unhide`.
+- `.omo/evidence/review-wave4-final2-security.txt`
+  - Verdict: FAIL.
+  - Blockers:
+    - restore execute lock order could drop concurrent apply ledger records.
+    - successful `pm hide` durable ledger could remain `skipped_unavailable`.
+
+## Repository context checks
+
+Plan:
+- Read `.omo/plans/puread-rust-module.md`.
+- Current plan state still has:
+  - `T20` unchecked.
+  - `T23` unchecked.
+  - `T24` unchecked.
+- T20 acceptance requires CLI e2e coverage for dry-run/default and execute branches plus `cargo test -p puread-cli cli_profiles`.
+- T23 acceptance requires fake runner validation for `pm disable/enable` and `cmd appops set`, and rules default-enabled check.
+- T24 acceptance requires fixture XML modify/restore tests, fake `getprop` skip for non-MIUI, and `cargo test -p puread-android rom_profiles`.
+
+AGENTS:
+- Read `AGENTS.md`.
+- Upstream update/sync instructions are present:
+  - project boundary and forbidden capabilities
+  - upstream source list
+  - current snapshot fields
+  - sync workflow
+  - rule classification matrix
+  - rule provenance fields
+  - verification commands
+  - AgentLogs requirements
+  - Git/non-Git notes
+  - `Example/` read-only convention
+- Required remote is documented as `git@github.com:Lynricsy/PureADRemoverModule.git`.
+
+`.gitignore`:
+- Read `.gitignore`.
+- Contains `Example/`.
+- `git check-ignore -v Example/ads288.zip Example/Adguard-Home-For-Magisk-Mod` output:
+  - `.gitignore:2:Example/ Example/ads288.zip`
+  - `.gitignore:2:Example/ Example/Adguard-Home-For-Magisk-Mod`
+
+Remote:
+- `git remote -v` output:
+  - `origin git@github.com:Lynricsy/PureADRemoverModule.git (fetch)`
+  - `origin git@github.com:Lynricsy/PureADRemoverModule.git (push)`
+- Assessment: PASS.
+
+Local git identity config:
+- `git config --local --get user.name` exit code `1`, no output.
+- `git config --local --get user.email` exit code `1`, no output.
+- `git config --local --list --show-origin` output contains core, remote, and branch settings only; no local `user.name` or `user.email`.
+- Assessment: PASS.
+
+Example tracked/ignored state:
+- `git ls-files Example` produced no output.
+- `git ls-files --stage -- Example` produced no output.
+- `git status --short --ignored -- Example .gitignore AGENTS.md .omo/plans/puread-rust-module.md .omo/evidence/review-wave4-final3-context.txt` showed only `!! Example/` before this file was written.
+- Assessment: Example is ignored and not tracked.
+
+## Consistency decision
+
+Old final2 blockers are targeted by fix evidence:
+- T20 restore lock-order blocker: covered by task evidence and AgentLogs `0177`.
+- T23 component `pm hide` durable final-state blocker: covered by task evidence and AgentLogs `0179`.
+
+However, the PASS criteria for this review require all final3 QA/quality/security evidence to be complete and PASS.
+
+That criterion is not satisfied:
+- final3 QA exists but has `verdict: FAIL`.
+- final3 quality exists but has `verdict: FAIL`.
+- final3 security exists and has `Verdict: PASS`.
+
+Therefore old FAIL cannot yet be declared fully covered by final3 evidence, even though targeted fix evidence exists for the two known old blockers.
+
+## T20/T23/T24 checkbox recommendation
+
+Do not check T20/T23/T24 yet.
+
+Reason:
+- The task explicitly says only after all final3 evidence PASS should T20/T23/T24 be recommended for checking.
+- At review time final3 QA is FAIL, final3 quality is FAIL, and only final3 security is PASS.
+
+Per-task status:
+- T20: targeted fix evidence supports the lock-order issue, but final3 sign-off is not complete. The quality review also found a profile-restore final-state folding bug in the restore surface. Keep unchecked.
+- T23: targeted fix evidence supports the durable component final-state issue, but final3 quality found a new component restore folding blocker across Android users. Keep unchecked.
+- T24: ROM tests passed inside final3 QA and security PASS did not find a ROM blocker, but final3 QA/quality are not all PASS. Keep unchecked.
+
+## Blocking items
+
+1. `.omo/evidence/review-wave4-final3-qa.txt` ends with `verdict: FAIL`.
+   - Cause recorded in that file: forbidden production capability scan exited `1`.
+   - The scan output includes potentially explainable matches, but the final3 QA artifact itself did not classify them as acceptable and did not PASS.
+
+2. `.omo/evidence/review-wave4-final3-quality.txt` ends with `FAIL`.
+   - Blocker A: `profile-restore` folds component records without `user_id`, causing distinct Android users to collapse into one restore action and falsely marking another user's record as restored.
+   - Blocker B: `crates/puread-android/tests/appops_components.rs` is reported as 255 pure LOC, above the 250 pure LOC ceiling.
+
+3. `.omo/evidence/review-wave4-final3-security.txt` is PASS, so it is not a blocker.
+
+4. Because final3 QA/quality/security are not all complete and PASS, the old final2 FAIL items are not fully covered at the final3 review layer.
+
+## Closeout TODO
+
+- Re-run or complete final3 QA so the forbidden scan either:
+  - passes with a correct production-scope allowlist, or
+  - produces a reviewer-approved explanation and final PASS artifact.
+- Fix or otherwise resolve final3 quality blocker A: include `user_id` in component final-state folding/restored-index keys, then add regression coverage proving user 0 and user 10 restore independently.
+- Fix or otherwise resolve final3 quality blocker B: split `crates/puread-android/tests/appops_components.rs` below 250 pure LOC or document an accepted exception if project policy allows one.
+- Re-run final3 quality and produce PASS.
+- Keep final3 security PASS as current evidence unless later code changes invalidate its reviewed scope.
+- After all three final3 artifacts are present and PASS, re-run this context/evidence consistency review.
+- Only then check T20/T23/T24 in `.omo/plans/puread-rust-module.md`.
+
+## Final verdict
+
+<verdict>FAIL</verdict>

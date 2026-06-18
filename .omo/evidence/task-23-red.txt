@@ -1,0 +1,9 @@
+[1m[92m   Compiling[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[91merror[E0432][0m[1m: unresolved import `puread_android::profiles`[0m
+ [1m[94m--> [0mcrates/puread-android/tests/appops_components.rs:9:21
+  [1m[94m|[0m
+[1m[94m9[0m [1m[94m|[0m use puread_android::profiles::{
+  [1m[94m|[0m                     [1m[91m^^^^^^^^[0m [1m[91mcould not find `profiles` in `puread_android`[0m
+
+[1mFor more information about this error, try `rustc --explain E0432`.[0m
+[1m[91merror[0m: could not compile `puread-android` (test "appops_components") due to 1 previous error

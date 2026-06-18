@@ -18,7 +18,7 @@ pub use error::CommandError;
 pub use invocation::CommandInvocation;
 pub use metadata::{ChattrAdapter, ChconAdapter, LsattrAdapter};
 pub use output::CommandOutput;
-pub use pm::PmComponentAdapter;
+pub use pm::{PmComponentAdapter, PmPackageAdapter};
 pub use property::GetpropAdapter;
 pub use runner::{AndroidCommandRunner, CommandRunnerError, RealAndroidCommandRunner};
 pub use settings::{SettingsAdapter, SettingsNamespace};

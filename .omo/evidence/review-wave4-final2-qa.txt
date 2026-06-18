@@ -1,0 +1,407 @@
+# Wave4 Final QA2 Evidence
+
+timestamp: 2026-06-18T19:45:44+08:00
+scope: Wave4 T20/T23/T24 current uncommitted changes after fixes
+verdict: PASS
+
+## Constraints observed
+
+- Sent required preflight message: `WORKING: final QA2 - running full verification`.
+- Did not modify product files.
+- Did not commit, push, or set git config.
+- Wrote only this QA evidence file.
+- Cleanup scope limited to checking/removing QA-generated temp/runtime pollution; no cleanup was needed.
+
+## Initial state
+
+`git status --short --ignored` before QA showed existing Wave4 uncommitted changes in Cargo/Rust/rules/evidence files, plus ignored `AgentLogs/`, `Example/`, `target/`, and `xtask/upstream-report/target/`.
+
+Local git config check:
+
+```text
+file:.git/config core.repositoryformatversion=0
+file:.git/config core.filemode=true
+file:.git/config core.bare=false
+file:.git/config core.logallrefupdates=true
+file:.git/config remote.origin.url=git@github.com:Lynricsy/PureADRemoverModule.git
+file:.git/config remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config branch.main.remote=origin
+file:.git/config branch.main.merge=refs/heads/main
+```
+
+No local identity config was present or set.
+
+Initial cleanup scan:
+
+```text
+find .. -path '*/data/adb' -type d -print
+<no output>
+```
+
+## Required command results
+
+### cargo fmt
+
+Command:
+
+```sh
+cargo fmt --all -- --check
+```
+
+Result: PASS, exit code 0.
+
+Key output: no formatter diff output.
+
+### cargo clippy
+
+Command:
+
+```sh
+cargo clippy -p puread-cli -p puread-android --all-targets -- -D warnings
+```
+
+Result: PASS, exit code 0.
+
+Key output:
+
+```text
+Checking puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.86s
+```
+
+### cli_profile_restore integration tests
+
+Command:
+
+```sh
+cargo test -p puread-cli --test cli_profile_restore -- --nocapture
+```
+
+Result: PASS, exit code 0.
+
+Key numbers:
+
+```text
+running 8 tests
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+```
+
+Recent-fail verification:
+
+- `cli_profile_restore_rejects_state_symlink_before_mutation`: PASS.
+- `cli_profile_restore_rejects_profile_ledger_symlink_before_mutation`: PASS.
+- `cli_profile_restore_rejects_run_symlink_before_mutation`: PASS.
+- `cli_profile_restore_rejects_lock_symlink_before_mutation`: PASS.
+- `cli_profile_restore_default_runner_ignores_env_fake_runner`: PASS.
+
+### cli_profiles integration tests
+
+Command:
+
+```sh
+cargo test -p puread-cli --test cli_profiles -- --nocapture
+```
+
+Result: PASS, exit code 0.
+
+Key numbers:
+
+```text
+running 10 tests
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+```
+
+### cli_execute_security integration tests
+
+Command:
+
+```sh
+cargo test -p puread-cli --test cli_execute_security -- --nocapture
+```
+
+Result: PASS, exit code 0.
+
+Key numbers:
+
+```text
+running 15 tests
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+```
+
+### cli_profiles filtered cargo test
+
+Command:
+
+```sh
+cargo test -p puread-cli cli_profiles -- --nocapture
+```
+
+Result: PASS, exit code 0.
+
+Key numbers:
+
+```text
+tests/cli_profiles.rs:
+running 10 tests
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+```
+
+Other binaries/tests had 0 selected tests and filtered out their unrelated tests as expected.
+
+### Android appops/components and ROM profile tests
+
+Command:
+
+```sh
+cargo test -p puread-android --test appops_components --test rom_profiles -- --nocapture
+```
+
+Result: PASS, exit code 0.
+
+Key numbers:
+
+```text
+tests/appops_components.rs:
+running 7 tests
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+tests/rom_profiles.rs:
+running 11 tests
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+```
+
+Recent-fail verification:
+
+- `appops_components` has 7 tests and all passed.
+- `component_profile_disables_enables_and_skips_unavailable_pm_hide`: PASS; test asserts report contains `"hide_status":"skipped_unavailable"` and persistent ledger has matching skipped status.
+- `component_profile_skips_pm_hide_when_capability_attempt_fails`: PASS; test asserts report/ledger consistency for non-zero `pm hide`.
+- `component_profile_restore_keeps_enable_when_persisted_hide_was_skipped`: PASS; test asserts restore calls only `pm enable --user 0 ...` and does not call `pm unhide`.
+
+### rules validate
+
+Command:
+
+```sh
+cargo run -p puread-cli -- rules validate rules/appops rules/components rules/rom
+```
+
+Result: PASS, exit code 0.
+
+Key output:
+
+```json
+{
+  "schema_version": 1,
+  "command": "rules_validate",
+  "valid": true,
+  "error_count": 0,
+  "rule_file_count": 5,
+  "rule_count": 9
+}
+```
+
+## LOC check
+
+Command used:
+
+```sh
+tmp=$(mktemp)
+{
+  git diff --name-only -- '*.rs'
+  git ls-files --others --exclude-standard -- '*.rs'
+} | sort -u > "$tmp"
+while IFS= read -r file; do
+  [ -f "$file" ] || continue
+  count=$(awk '
+    BEGIN { in_block=0; code=0 }
+    {
+      line=$0
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+      if (in_block) {
+        if (line ~ /\*\//) {
+          sub(/^.*\*\//, "", line)
+          in_block=0
+        } else {
+          next
+        }
+      }
+      while (line ~ /\/\*/) {
+        before=line
+        sub(/\/\*.*$/, "", before)
+        if (line ~ /\*\//) {
+          sub(/^[^\/]*\/\*[^*]*\*\//, "", line)
+          line=before line
+        } else {
+          line=before
+          in_block=1
+          break
+        }
+      }
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+      if (line == "" || line ~ /^\/\//) next
+      code++
+    }
+    END { print code }
+  ' "$file")
+  printf "%4d %s\n" "$count" "$file"
+done < "$tmp" | sort -nr
+rm -f "$tmp"
+```
+
+Result: PASS. All touched Rust source/test files are <=250 pure LOC.
+
+Highest files:
+
+```text
+247 crates/puread-cli/src/restore_fs.rs
+241 crates/puread-cli/tests/cli_profiles.rs
+239 crates/puread-android/tests/appops_components.rs
+234 crates/puread-cli/tests/cli_execute_security.rs
+212 crates/puread-android/tests/command_runner.rs
+208 crates/puread-android/src/profiles/xml.rs
+207 crates/puread-cli/src/profile_execute/android_dispatch.rs
+202 crates/puread-cli/tests/support/cli_profile_restore.rs
+201 crates/puread-cli/src/profile_execute/profile_runtime.rs
+191 crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+```
+
+Recent-fail verification:
+
+- `crates/puread-cli/tests/cli_profiles.rs`: 241 pure LOC, PASS.
+- No touched Rust file exceeded 250 pure LOC.
+
+## Forbidden capability scan
+
+Production Rust command:
+
+```sh
+rg -n -i "DNS|private[-_ ]?DNS|domain|host[-_ ]?list|adblock|proxy|iptables|AdGuardHome|zygisk|root hiding|anti[-_ ]?detection|反检测|隐藏" crates/puread-cli/src crates/puread-android/src || true
+```
+
+Production Rust output:
+
+```text
+crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+```
+
+Assessment: PASS. These hits are rejection guard logic in the settings command runner, not DNS/private-DNS/proxy production capability.
+
+Rules command:
+
+```sh
+rg -n -i "DNS|private[-_ ]?DNS|domain|host[-_ ]?list|adblock|proxy|iptables|AdGuardHome|zygisk|root hiding|anti[-_ ]?detection|反检测|隐藏" rules/appops rules/components rules/rom || true
+```
+
+Rules output:
+
+```text
+rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+```
+
+Assessment: PASS.
+
+- `rules/rom/miui-ad-settings.toml` hit is a note explicitly excluding private DNS/network keys.
+- `rules/components/sdk-ad-components.toml` `domain` hit is a note explicitly saying the component rule is not domain/network blocking.
+- `proxy` hits are part of an Android component class name `api.proxy.app.KsRewardVideoActivity`, not proxy configuration capability.
+
+Install/runtime script command:
+
+```sh
+rg -n -i "DNS|private[-_ ]?DNS|domain|host[-_ ]?list|adblock|proxy|iptables|AdGuardHome|zygisk|root hiding|anti[-_ ]?detection|反检测|隐藏" service.sh post-fs-data.sh customize.sh system.prop module.prop || true
+```
+
+Output:
+
+```text
+rg: service.sh: No such file or directory (os error 2)
+rg: post-fs-data.sh: No such file or directory (os error 2)
+rg: customize.sh: No such file or directory (os error 2)
+rg: system.prop: No such file or directory (os error 2)
+rg: module.prop: No such file or directory (os error 2)
+```
+
+Assessment: PASS. No root install/runtime script or module property file exists at repository root to carry forbidden capability.
+
+Overall forbidden scan verdict: PASS. No DNS/domain/private-DNS/adblock host-list/proxy/iptables/AdGuardHome/root hiding/anti-detection production capability was found outside notes/tests/evidence/rejection guards.
+
+## Test seam scan
+
+Command:
+
+```sh
+rg -n "PUREAD_TEST_PROFILE_RUNNER|__puread_use_env_runner|env_runner|test.*runner" crates/puread-cli/src crates/puread-cli/tests/support/cli_profile_restore.rs crates/puread-cli/tests/cli_profile_restore.rs
+```
+
+Output:
+
+```text
+crates/puread-cli/tests/cli_profile_restore.rs:44:    // When: profile-restore executes under the module global lock with the test runner seam.
+crates/puread-cli/tests/cli_profile_restore.rs:51:            "--test-profile-runner",
+crates/puread-cli/tests/cli_profile_restore.rs:146:            "--test-profile-runner",
+crates/puread-cli/tests/support/cli_profile_restore.rs:28:        .env("PUREAD_TEST_PROFILE_RUNNER", "1")
+crates/puread-cli/tests/support/cli_profile_restore.rs:157:        "--test-profile-runner",
+crates/puread-cli/src/profile_execute.rs:29:    #[cfg(debug_assertions)] test_runner: bool,
+crates/puread-cli/src/profile_execute.rs:37:        test_runner,
+crates/puread-cli/src/cli.rs:61:    pub test_profile_runner: bool,
+crates/puread-cli/src/cli.rs:129:    pub test_profile_runner: bool,
+crates/puread-cli/src/profile.rs:89:            args.profile_test.test_profile_runner,
+crates/puread-cli/src/profile.rs:91:            args.profile_test.profile_runner_log.as_deref(),
+crates/puread-cli/src/profile.rs:122:        args.test_profile_runner,
+crates/puread-cli/src/profile_execute/profile_runtime.rs:185:        append_test_runner_call(self.log_path.as_deref(), invocation)?;
+crates/puread-cli/src/profile_execute/profile_runtime.rs:203:fn append_test_runner_call(
+crates/puread-cli/src/profile_execute/profile_runtime.rs:211:        std::fs::create_dir_all(parent).map_err(|source| test_runner_error(&source))?;
+crates/puread-cli/src/profile_execute/profile_runtime.rs:217:        .map_err(|source| test_runner_error(&source))?;
+crates/puread-cli/src/profile_execute/profile_runtime.rs:218:    writeln!(file, "{}", invocation.argv().join(" ")).map_err(|source| test_runner_error(&source))
+crates/puread-cli/src/profile_execute/profile_runtime.rs:222:fn test_runner_error(source: &std::io::Error) -> CommandRunnerError {
+crates/puread-cli/src/profile_execute/android_dispatch.rs:19:    #[cfg(debug_assertions)] test_runner: bool,
+crates/puread-cli/src/profile_execute/android_dispatch.rs:25:        test_runner,
+crates/puread-cli/src/profile_execute/android_dispatch.rs:38:    #[cfg(debug_assertions)] test_runner: bool,
+crates/puread-cli/src/profile_execute/android_dispatch.rs:42:    if test_runner {
+crates/puread-cli/src/profile_execute/profile_restore.rs:36:    #[cfg(debug_assertions)] test_runner: bool,
+crates/puread-cli/src/profile_execute/profile_restore.rs:49:        test_runner,
+crates/puread-cli/src/profile_execute/profile_restore.rs:72:    #[cfg(debug_assertions)] test_runner: bool,
+crates/puread-cli/src/profile_execute/profile_restore.rs:77:        test_runner,
+crates/puread-cli/src/profile_execute/profile_restore.rs:108:    #[cfg(debug_assertions)] test_runner: bool,
+crates/puread-cli/src/profile_execute/profile_restore.rs:112:    if test_runner {
+```
+
+Assessment: PASS.
+
+- `PUREAD_TEST_PROFILE_RUNNER` only appears in test support.
+- `crates/puread-cli/src` does not read `PUREAD_TEST_PROFILE_RUNNER`.
+- Production source contains an explicit `--test-profile-runner` seam guarded behind `#[cfg(debug_assertions)]`; it is not triggered by environment alone.
+- `cli_profile_restore_default_runner_ignores_env_fake_runner` passed in the required test run.
+
+## Cleanup check
+
+Final cleanup scan:
+
+```sh
+find . -path '*/data/adb' -type d -print
+<no output>
+```
+
+Cleanup receipt:
+
+- No lingering `*/data/adb` QA pollution found.
+- No QA-generated temp/runtime artifact required removal.
+
+## Final git status
+
+After QA, `git status --short --ignored` still shows the existing Wave4 uncommitted product changes and prior evidence files. This run added only:
+
+```text
+.omo/evidence/review-wave4-final2-qa.txt
+```
+
+No product file cleanup, commit, push, or git config mutation was performed.
+
+## Failure reproduction
+
+No required command failed. There is no failing reproduction for the current Wave4 T20/T23/T24 QA scope.

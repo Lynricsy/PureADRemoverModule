@@ -1,5 +1,6 @@
 use crate::command_runner::pm::validate_token;
 use crate::command_runner::{AndroidCommandAdapter, CommandError, CommandInvocation, CommandPhase};
+use serde::{Deserialize, Serialize};
 
 const SETTINGS: &str = "/system/bin/settings";
 const ALLOWED_ROM_SETTINGS: &[&str] = &[
@@ -11,7 +12,8 @@ const ALLOWED_ROM_SETTINGS: &[&str] = &[
 ];
 
 /// Android settings namespace。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum SettingsNamespace {
     /// `settings system`。

@@ -1,0 +1,346 @@
+# PureAD Wave4 T20/T23/T24 review lane 2 hands-on QA
+
+Result: PASS
+Date: 2026-06-18
+Scope: T20 CLI hands-on QA plus T23/T24 Android profile tests and safety scans.
+
+## Boundaries
+
+- No source files were intentionally edited.
+- No commit, push, or git config command was run.
+- No destructive command was run against real Android paths.
+- Mutation-class CLI checks were run against fixtures only. One initial `apply-profile --execute` run used the repository fixture path and removed two fixture sentinel files; both were restored immediately from `HEAD`, and `git diff -- tests/fixtures/android-fs/.../.fixture` is empty afterward. Subsequent mutation-class checks used a temporary copy under `/tmp`.
+
+## Required commands
+
+### cargo fmt --all -- --check
+
+Exit: 0
+
+Output: no formatter diff.
+
+### cargo clippy -p puread-cli --all-targets -- -D warnings
+
+Exit: 0
+
+Key output:
+
+```text
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
+```
+
+### cargo clippy -p puread-android --all-targets -- -D warnings
+
+Exit: 0
+
+Key output:
+
+```text
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+```
+
+### cargo test -p puread-cli cli_profiles -- --nocapture
+
+Exit: 0
+
+Coverage observed:
+
+- `cli_profiles_status_outputs_paths_and_lock_state_when_module_root_is_fixture`
+- `cli_profiles_restore_keeps_existing_dry_run_contract`
+- `cli_profiles_scan_defaults_to_dry_run_when_flag_is_omitted`
+- `cli_profiles_dump_report_uses_existing_ledger_report_without_mutation`
+- `cli_profiles_apply_profile_defaults_to_dry_run_when_execute_is_omitted`
+- `cli_profiles_apply_profile_execute_reports_lock_conflict_when_lock_is_held`
+- `cli_profiles_apply_profile_execute_uses_global_lock_under_fixture`
+
+Key output:
+
+```text
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+### cargo test -p puread-cli
+
+Exit: 0
+
+Key output:
+
+```text
+src/lib.rs: 1 passed
+tests/cli_profiles.rs: 7 passed
+tests/ledger.rs: 7 passed
+tests/rules.rs: 5 passed
+tests/scan_dry_run.rs: 4 passed
+Doc-tests puread_cli: 0 passed
+```
+
+### cargo test -p puread-android --test appops_components -- --nocapture
+
+Exit: 0
+
+Coverage observed:
+
+- AppOps profile records original mode and restores `default` when missing.
+- Component profile disables/enables and skips unavailable `pm hide`.
+
+Key output:
+
+```text
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+### cargo test -p puread-android --test rom_profiles -- --nocapture
+
+Exit: 0
+
+Coverage observed:
+
+- ROM shared_prefs XML profile modifies and restores original XML with backup/hash.
+- MIUI settings profile is skipped when ROM getprop does not match.
+
+Key output:
+
+```text
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+### cargo test -p puread-android
+
+Exit: 0
+
+Key output:
+
+```text
+src/lib.rs: 45 passed
+tests/appops_components.rs: 2 passed
+tests/chattr.rs: 5 passed
+tests/command_runner.rs: 7 passed
+tests/file_actions.rs: 6 passed
+tests/rom_profiles.rs: 2 passed
+tests/sqlite_actions.rs: 9 passed
+Doc-tests puread_android: 0 passed
+```
+
+### cargo run -p puread-cli -- scan --dry-run --root tests/fixtures/android-fs
+
+Exit: 0
+
+Observed JSON facts:
+
+- `"mode": "dry_run"`
+- `"dry_run": true`
+- `"will_mutate": false`
+- `"rule_file_count": 10`
+- `"action_count": 2`
+- Two planned low-risk file actions for `com.ss.android.ugc.aweme` fixture paths.
+
+### cargo run -p puread-cli -- scan --execute --root tests/fixtures/android-fs
+
+Exit: 1
+
+Exact product output from clean rerun:
+
+```text
+real scan execution is not implemented; pass --dry-run
+```
+
+This is the expected safety failure: scan execution is explicitly rejected and the message tells the operator to use dry-run.
+
+Note: an earlier shell wrapper used zsh's read-only variable name `status`, producing extra wrapper noise after the product error. The command was rerun with `rc`; the clean rerun above is authoritative.
+
+## Supplemental hands-on CLI scenarios
+
+### Command surface
+
+`cargo run -p puread-cli -- --help` lists:
+
+```text
+apply-profile
+dump-report
+ledger
+restore
+rules
+scan
+status
+```
+
+Subcommand help confirms:
+
+- `status` supports `--rules`, `--root`, `--module-root`, and `--lock-path`.
+- `apply-profile` supports `<PROFILE>`, `--dry-run`, `--execute`, `--rules`, `--root`, `--module-root`, and `--lock-path`.
+- `restore` supports `--dry-run --ledger <LEDGER>`.
+- `dump-report` supports `--ledger <LEDGER>`.
+
+### status
+
+Command:
+
+```sh
+cargo run -p puread-cli -- status --root tests/fixtures/android-fs --module-root /tmp/.../module
+```
+
+Exit: 0
+
+Observed JSON facts:
+
+- `"command": "status"`
+- `"root_path": "tests/fixtures/android-fs"`
+- `"module_root": "/tmp/.../module"`
+- `"lock_path": "/tmp/.../module/run/puread.lock"`
+- `"lock_held": false`
+
+### apply-profile default dry-run
+
+Command:
+
+```sh
+cargo run -p puread-cli -- apply-profile conservative --root tests/fixtures/android-fs --module-root /tmp/.../module
+```
+
+Exit: 0
+
+Observed JSON facts:
+
+- `"command": "apply_profile"`
+- `"mode": "dry_run"`
+- `"lock_acquired": false`
+- `"will_mutate": false`
+- `"action_count": 2`
+- Both actions have `"status": "planned"`.
+
+### apply-profile --execute on temporary fixture copy
+
+Command used a temporary copy:
+
+```sh
+cp -a tests/fixtures/android-fs /tmp/.../android-fs
+cargo run -p puread-cli -- apply-profile conservative --execute --root /tmp/.../android-fs --module-root /tmp/.../module
+```
+
+Exit: 0
+
+Observed JSON facts:
+
+- `"mode": "execute"`
+- `"lock_acquired": true`
+- `"will_mutate": true`
+- `"applied": 2`
+- `"failed": 0`
+
+### global lock conflict
+
+Command:
+
+```sh
+flock -x /tmp/.../module/run/puread.lock -c "cargo run -p puread-cli -- apply-profile conservative --execute --root /tmp/.../android-fs --module-root /tmp/.../module"
+```
+
+Exit: 1
+
+Exact product output:
+
+```text
+global lock is already held: /tmp/.../module/run/puread.lock
+```
+
+### restore --dry-run
+
+Command:
+
+```sh
+cargo run -p puread-cli -- restore --dry-run --ledger tests/fixtures/ledger.json
+```
+
+Exit: 0
+
+Observed JSON facts:
+
+- `"mode": "dry_run"`
+- `"action_count": 2`
+- `"will_mutate": false`
+- Restore steps include `restore_content`, `set_mode`, `set_owner`, `recreate_directory`, `set_selinux_context`, and `set_immutable`.
+
+### dump-report
+
+Command:
+
+```sh
+cargo run -p puread-cli -- dump-report --ledger tests/fixtures/ledger.json
+```
+
+Exit: 0
+
+Observed JSON facts:
+
+- `"command": "dump_report"`
+- `"record_count": 2`
+- `"pending_restore_count": 2`
+
+## T23/T24 rule and forbidden-scope checks
+
+### default_enabled=false profile scan
+
+Command:
+
+```sh
+if rg -n "default_enabled = true" rules/appops rules/components rules/rom; then
+  printf 'FAIL: profile rule default_enabled=true found\n'
+  exit 1
+else
+  printf 'PASS: no appops/components/rom profile rules default to true\n'
+fi
+```
+
+Exit: 0
+
+Output:
+
+```text
+PASS: no appops/components/rom profile rules default to true
+```
+
+### non-production forbidden-scope scan
+
+Command:
+
+```sh
+rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward|private_dns|root hiding|IFW" \
+  rules/rom \
+  crates/puread-android/src/command_runner/settings.rs \
+  crates/puread-android/tests/command_runner.rs \
+  crates/puread-android/tests/rom_profiles.rs \
+  crates/puread-android/tests/appops_components.rs
+```
+
+Exit: 0
+
+Matches were classified as expected deny guards, tests, or ROM notes only:
+
+```text
+crates/puread-android/tests/command_runner.rs:293: "private_dns_mode",
+crates/puread-android/tests/command_runner.rs:294: "private_dns_specifier",
+crates/puread-android/tests/command_runner.rs:296: "hosts_file_override",
+crates/puread-android/src/command_runner/settings.rs:105: if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+crates/puread-android/src/command_runner/settings.rs:108: "DNS settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:114: "hosts settings are out of scope",
+rules/rom/miui-ad-settings.toml:39: notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+```
+
+Additional production-scope scan:
+
+```sh
+rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward|private_dns|root hiding|IFW" \
+  crates/puread-android/src/profiles rules/appops rules/components
+```
+
+Exit: 1, no matches. Wrapper output:
+
+```text
+PASS: no forbidden token found in appops/component/profile executor production scope
+```
+
+## Final QA verdict
+
+PASS.
+
+The required cargo fmt, clippy, package tests, profile integration tests, CLI dry-run, and invalid execute safety check passed or failed as expected. T20 command behavior was driven through CLI surfaces, including default dry-run and global lock conflict. T23/T24 appops/components and ROM profile tests passed, profile rules remain disabled by default, and forbidden-scope matches remain limited to deny guards/tests/notes rather than production profile executor behavior.
