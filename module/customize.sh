@@ -38,7 +38,9 @@ if [ -x "$PUREAD_DAEMON_BIN" ] && [ -x "$PUREAD_CLI_BIN" ]; then
     puread_write_status "installed" "runtime=$(puread_runtime_name);abi=$(puread_select_abi);binary=present"
     puread_log "customize: runtime=$(puread_runtime_name) abi=$(puread_select_abi) binaries=present"
 else
-    puread_write_status "template_only" "runtime=$(puread_runtime_name);abi=$(puread_select_abi);binary=missing_until_T25"
-    puread_log "customize: runtime=$(puread_runtime_name) abi=$(puread_select_abi) binaries missing until T25"
-    puread_print "- Native binaries are not bundled yet; T25 will provide ABI artifacts."
+    puread_write_status "missing_binary" "runtime=$(puread_runtime_name);abi=$(puread_select_abi);daemon=$PUREAD_DAEMON_BIN;cli=$PUREAD_CLI_BIN"
+    puread_log "customize: runtime=$(puread_runtime_name) abi=$(puread_select_abi) binaries missing daemon=$PUREAD_DAEMON_BIN cli=$PUREAD_CLI_BIN"
+    puread_print "- Native binaries are missing for this ABI."
+    puread_print "- Expected daemon: $PUREAD_DAEMON_BIN"
+    puread_print "- Expected CLI: $PUREAD_CLI_BIN"
 fi

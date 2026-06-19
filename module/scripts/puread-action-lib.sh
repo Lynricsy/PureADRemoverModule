@@ -18,7 +18,7 @@ puread_action_status() {
     fi
 
     if [ ! -x "$(puread_binary_path puread-cli)" ] || [ ! -x "$(puread_binary_path puread-daemon)" ]; then
-        puread_print "native_binary=missing_until_T25"
+        puread_print "native_binary=missing"
     fi
 }
 
