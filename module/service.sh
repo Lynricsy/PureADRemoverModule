@@ -50,7 +50,10 @@ puread_prepare_runtime_dirs
 puread_apply_module_permissions
 puread_log "service: runtime=$PUREAD_RUNTIME abi=$PUREAD_ABI daemon=$PUREAD_DAEMON_BIN cli=$PUREAD_CLI_BIN"
 
+PUREAD_AUTO_APPLY_FAILURES=0
+
 puread_auto_apply_once() {
+    PUREAD_AUTO_APPLY_FAILURES=0
     if [ "${PUREAD_AUTO_APPLY:-1}" != "1" ]; then
         puread_log "service: auto apply disabled by PUREAD_AUTO_APPLY=$PUREAD_AUTO_APPLY"
         return 0
@@ -93,6 +96,7 @@ puread_auto_apply_once() {
         fi
     done
 
+    PUREAD_AUTO_APPLY_FAILURES="$PUREAD_AUTO_FAILURES"
     if [ "$PUREAD_AUTO_FAILURES" -eq 0 ]; then
         {
             printf 'version=%s\n' "$(puread_module_version)"
@@ -109,9 +113,18 @@ puread_auto_apply_once() {
 }
 
 puread_auto_apply_once
+case "${PUREAD_AUTO_APPLY_FAILURES:-0}" in
+    ''|*[!0-9]*)
+        PUREAD_AUTO_APPLY_FAILURES=0
+        ;;
+esac
 
 if [ "${PUREAD_DAEMON_DISABLE:-0}" = "1" ]; then
-    puread_write_status "daemon_disabled" "PUREAD_DAEMON_DISABLE=1;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+    if [ "$PUREAD_AUTO_APPLY_FAILURES" -gt 0 ]; then
+        puread_write_status "daemon_disabled_with_profile_errors" "PUREAD_DAEMON_DISABLE=1;auto_failures=$PUREAD_AUTO_APPLY_FAILURES;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+    else
+        puread_write_status "daemon_disabled" "PUREAD_DAEMON_DISABLE=1;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+    fi
     puread_log "service: daemon disabled by environment after auto apply"
     exit 0
 fi
@@ -124,7 +137,11 @@ fi
 
 if puread_pid_matches_daemon "$PUREAD_PID_PATH"; then
     PUREAD_OLD_PID="$(cat "$PUREAD_PID_PATH" 2>/dev/null || printf '%s' unknown)"
-    puread_write_status "daemon_already_running" "pid=$PUREAD_OLD_PID;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+    if [ "$PUREAD_AUTO_APPLY_FAILURES" -gt 0 ]; then
+        puread_write_status "daemon_started_with_profile_errors" "pid=$PUREAD_OLD_PID;auto_failures=$PUREAD_AUTO_APPLY_FAILURES;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+    else
+        puread_write_status "daemon_already_running" "pid=$PUREAD_OLD_PID;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+    fi
     puread_log "service: daemon already running pid=$PUREAD_OLD_PID"
     exit 0
 elif [ -f "$PUREAD_PID_PATH" ]; then
@@ -145,5 +162,9 @@ PUREAD_DAEMON_PID="$!"
 printf '%s\n' "$PUREAD_DAEMON_PID" >"$PUREAD_PID_PATH"
 chmod 600 "$PUREAD_PID_PATH" 2>/dev/null || true
 
-puread_write_status "daemon_started" "pid=$PUREAD_DAEMON_PID;dry_run=$PUREAD_DRY_RUN;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+if [ "$PUREAD_AUTO_APPLY_FAILURES" -gt 0 ]; then
+    puread_write_status "daemon_started_with_profile_errors" "pid=$PUREAD_DAEMON_PID;auto_failures=$PUREAD_AUTO_APPLY_FAILURES;dry_run=$PUREAD_DRY_RUN;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+else
+    puread_write_status "daemon_started" "pid=$PUREAD_DAEMON_PID;dry_run=$PUREAD_DRY_RUN;runtime=$PUREAD_RUNTIME;abi=$PUREAD_ABI"
+fi
 puread_log "service: daemon started pid=$PUREAD_DAEMON_PID dry_run=$PUREAD_DRY_RUN"

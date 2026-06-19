@@ -112,6 +112,7 @@ fi
 kill -0 "$timeout_pid" 2>/dev/null || die "timeout daemon was unexpectedly gone"
 test -f "$module_timeout/run/puread-daemon.pid" || die "timeout pid file should be retained"
 grep -q '^status=uninstall_daemon_stop_failed' "$module_timeout/state/status.env" || die "timeout status did not expose daemon stop failure"
+grep -q '^description=PureAD status: uninstall needs attention (x86_64)' "$module_timeout/module.prop" || die "module description did not expose uninstall attention status"
 kill -KILL "$timeout_pid" 2>/dev/null || true
 
 printf '%s\n' "uninstall_lifecycle=pass"

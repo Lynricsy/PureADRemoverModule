@@ -76,9 +76,25 @@ run_service() {
     sh "$module_root/service.sh" >/dev/null
 }
 
+run_customize() {
+    module_root="$1"
+    PUREAD_FORCE_ANDROID=1 \
+    ARCH=x86_64 \
+    MODPATH="$module_root" \
+    sh "$module_root/customize.sh" >/dev/null
+}
+
 tmp_parent="${TMPDIR:-/tmp}"
 work="$(mktemp -d "${tmp_parent%/}/puread-service-lifecycle.XXXXXX")"
 trap 'rm -rf "$work"' EXIT HUP INT TERM
+
+module_install="$work/module-install"
+mk_fixture "$module_install"
+write_cli "$module_install/bin/x86_64/puread-cli" "$work/install-cli.log"
+write_daemon "$module_install/bin/x86_64/puread-daemon" "$work/install-daemon.log"
+run_customize "$module_install"
+grep -q '^status=installed' "$module_install/state/status.env" || die "customize did not write installed status"
+grep -q '^description=PureAD status: installed; reboot to activate (x86_64)' "$module_install/module.prop" || die "module description did not expose install status"
 
 module_ok="$work/module-ok"
 mk_fixture "$module_ok"
@@ -90,6 +106,7 @@ grep -q 'profile=conservative status=done' "$module_ok/state/auto-apply-summary.
 grep -q 'profile=rom status=done' "$module_ok/state/auto-apply-summary.log" || die "rom profile was not auto-applied"
 test -f "$module_ok/state/auto-apply-$(sed -n 's/^version=//p' "$module_ok/module.prop").done" || die "auto apply marker missing"
 grep -q '^daemon:' "$work/ok-daemon.log" || die "daemon was not started"
+grep -q '^description=PureAD status: active; daemon running (x86_64)' "$module_ok/module.prop" || die "module description did not expose running daemon status"
 
 if [ -f "$module_ok/run/puread-daemon.pid" ]; then
     daemon_pid="$(cat "$module_ok/run/puread-daemon.pid")"
@@ -120,5 +137,6 @@ write_daemon "$module_fail/bin/x86_64/puread-daemon" "$work/fail-daemon.log"
 PUREAD_DAEMON_DISABLE=1 run_service "$module_fail"
 grep -q 'profile=sqlite status=failed' "$module_fail/state/auto-apply-summary.log" || die "failed profile was not recorded"
 test ! -f "$module_fail/state/auto-apply-$(sed -n 's/^version=//p' "$module_fail/module.prop").done" || die "failed auto apply wrote marker"
+grep -q '^description=PureAD status: profile errors; daemon disabled (x86_64)' "$module_fail/module.prop" || die "module description did not expose profile error status"
 
 printf '%s\n' "service_lifecycle=pass"

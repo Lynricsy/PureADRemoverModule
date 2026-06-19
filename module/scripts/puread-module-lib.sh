@@ -197,6 +197,88 @@ puread_log() {
     chmod 600 "$(puread_log_path)" 2>/dev/null || true
 }
 
+puread_status_summary() {
+    case "$1" in
+        installed)
+            printf '%s' "installed; reboot to activate"
+            ;;
+        host_dry_run)
+            printf '%s' "host dry-run"
+            ;;
+        auto_apply_complete)
+            printf '%s' "profiles applied"
+            ;;
+        auto_apply_partial)
+            printf '%s' "profile errors; retry next boot"
+            ;;
+        daemon_started|daemon_already_running)
+            printf '%s' "active; daemon running"
+            ;;
+        daemon_started_with_profile_errors)
+            printf '%s' "active; profile errors"
+            ;;
+        daemon_disabled)
+            printf '%s' "profiles applied; daemon disabled"
+            ;;
+        daemon_disabled_with_profile_errors)
+            printf '%s' "profile errors; daemon disabled"
+            ;;
+        missing_binary)
+            printf '%s' "missing native binary"
+            ;;
+        uninstall_restore_planned)
+            printf '%s' "uninstall restore planned"
+            ;;
+        uninstall_missing_cli)
+            printf '%s' "uninstall missing CLI"
+            ;;
+        uninstall_daemon_stop_failed|uninstall_restore_plan_failed)
+            printf '%s' "uninstall needs attention"
+            ;;
+        *)
+            printf 'state %s' "$1"
+            ;;
+    esac
+}
+
+puread_update_module_description() {
+    PUREAD_PROP_PATH="$PUREAD_MODDIR/module.prop"
+    [ -f "$PUREAD_PROP_PATH" ] || return 0
+    puread_is_android || return 0
+
+    PUREAD_DESCRIPTION="PureAD status: $(puread_status_summary "$1") ($(puread_select_abi))"
+    PUREAD_PROP_TMP="$PUREAD_PROP_PATH.tmp.$$"
+    PUREAD_DESCRIPTION_WRITTEN=0
+
+    {
+        while IFS= read -r PUREAD_PROP_LINE || [ -n "$PUREAD_PROP_LINE" ]; do
+            case "$PUREAD_PROP_LINE" in
+                description=*)
+                    if [ "$PUREAD_DESCRIPTION_WRITTEN" -eq 0 ]; then
+                        printf 'description=%s\n' "$PUREAD_DESCRIPTION"
+                        PUREAD_DESCRIPTION_WRITTEN=1
+                    fi
+                    ;;
+                *)
+                    printf '%s\n' "$PUREAD_PROP_LINE"
+                    ;;
+            esac
+        done <"$PUREAD_PROP_PATH"
+        if [ "$PUREAD_DESCRIPTION_WRITTEN" -eq 0 ]; then
+            printf 'description=%s\n' "$PUREAD_DESCRIPTION"
+        fi
+    } >"$PUREAD_PROP_TMP" 2>/dev/null || {
+        rm -f "$PUREAD_PROP_TMP" 2>/dev/null || true
+        return 0
+    }
+
+    mv "$PUREAD_PROP_TMP" "$PUREAD_PROP_PATH" 2>/dev/null || {
+        rm -f "$PUREAD_PROP_TMP" 2>/dev/null || true
+        return 0
+    }
+    chmod 644 "$PUREAD_PROP_PATH" 2>/dev/null || true
+}
+
 puread_write_status() {
     puread_prepare_state_dir
     {
@@ -214,6 +296,7 @@ puread_write_status() {
         printf 'updated_at=%s\n' "$(puread_now)"
     } >"$(puread_status_path)" 2>/dev/null || true
     chmod 600 "$(puread_status_path)" 2>/dev/null || true
+    puread_update_module_description "$1"
 }
 
 puread_pid_running() {
