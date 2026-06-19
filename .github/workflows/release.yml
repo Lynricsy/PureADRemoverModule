@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish module release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANDROID_API_LEVEL: "35"
+      ANDROID_NDK_VERSION: "27.2.12479018"
+      PUREAD_RELEASE_ABIS: "arm64-v8a armeabi-v7a x86_64 x86"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdkmanager --install "ndk;$ANDROID_NDK_VERSION"
+          ndk_home="$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION"
+          toolchain="$ndk_home/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          {
+            printf 'ANDROID_NDK_HOME=%s\n' "$ndk_home"
+            printf 'CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=%s/aarch64-linux-android%s-clang\n' "$toolchain" "$ANDROID_API_LEVEL"
+            printf 'CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER=%s/armv7a-linux-androideabi%s-clang\n' "$toolchain" "$ANDROID_API_LEVEL"
+            printf 'CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=%s/x86_64-linux-android%s-clang\n' "$toolchain" "$ANDROID_API_LEVEL"
+            printf 'CARGO_TARGET_I686_LINUX_ANDROID_LINKER=%s/i686-linux-android%s-clang\n' "$toolchain" "$ANDROID_API_LEVEL"
+          } >>"$GITHUB_ENV"
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip unzip
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Verify workspace
+        run: scripts/verify-local.sh
+
+      - name: Package module
+        run: |
+          rm -f dist/*.zip
+          PUREAD_BUILD_PROFILE=release \
+          PUREAD_ANDROID_ABIS="$PUREAD_RELEASE_ABIS" \
+          scripts/package-module.sh
+
+      - name: Collect release metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t packages < <(find dist -maxdepth 1 -type f -name '*.zip' | sort)
+          if [ "${#packages[@]}" -ne 1 ]; then
+            printf 'expected exactly one release zip, found %s\n' "${#packages[@]}" >&2
+            printf '%s\n' "${packages[@]}" >&2
+            exit 1
+          fi
+          zip_path="${packages[0]}"
+          version="$(sed -n 's/^version=//p' module/module.prop | head -n 1)"
+          version_code="$(sed -n 's/^versionCode=//p' module/module.prop | head -n 1)"
+          printf 'zip_path=%s\n' "$zip_path" >>"$GITHUB_OUTPUT"
+          printf 'version=%s\n' "$version" >>"$GITHUB_OUTPUT"
+          printf 'version_code=%s\n' "$version_code" >>"$GITHUB_OUTPUT"
+          sha256sum "$zip_path" >"$zip_path.sha256"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_NAME: PureAD ${{ steps.meta.outputs.version }}
+          RELEASE_ZIP: ${{ steps.meta.outputs.zip_path }}
+          RELEASE_VERSION: ${{ steps.meta.outputs.version }}
+          RELEASE_VERSION_CODE: ${{ steps.meta.outputs.version_code }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          notes="$(mktemp)"
+          {
+            printf 'PureAD module release `%s`.\n\n' "$RELEASE_VERSION"
+            printf -- '- Version code: `%s`\n' "$RELEASE_VERSION_CODE"
+            printf -- '- Trigger tag: `%s`\n' "$RELEASE_TAG"
+            printf -- '- Built Android ABIs: `%s`\n' "$PUREAD_RELEASE_ABIS"
+            printf -- '- The zip is built by `scripts/package-module.sh` in release mode.\n'
+            printf -- '- Android real-device verification is not performed by this workflow.\n'
+          } >"$notes"
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "$RELEASE_ZIP" "$RELEASE_ZIP.sha256" --clobber
+            gh release edit "$RELEASE_TAG" --title "$RELEASE_NAME" --notes-file "$notes"
+          else
+            gh release create "$RELEASE_TAG" "$RELEASE_ZIP" "$RELEASE_ZIP.sha256" \
+              --title "$RELEASE_NAME" \
+              --notes-file "$notes"
+          fi

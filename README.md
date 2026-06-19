@@ -1,5 +1,12 @@
 # PureADRemoverModule
 
+[![Release](https://github.com/Lynricsy/PureADRemoverModule/actions/workflows/release.yml/badge.svg)](https://github.com/Lynricsy/PureADRemoverModule/actions/workflows/release.yml)
+![GitHub release](https://img.shields.io/github/v/release/Lynricsy/PureADRemoverModule?display_name=tag&style=flat-square)
+![GitHub downloads](https://img.shields.io/github/downloads/Lynricsy/PureADRemoverModule/total?style=flat-square)
+![GitHub repo size](https://img.shields.io/github/repo-size/Lynricsy/PureADRemoverModule?style=flat-square)
+![GitHub code size](https://img.shields.io/github/languages/code-size/Lynricsy/PureADRemoverModule?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/Lynricsy/PureADRemoverModule?style=flat-square)
+
 PureADRemoverModule 是一个 Android Root 环境下的非域名本地层去广告模块。它面向 Clash、代理和 DNS 无法覆盖的本地广告落地物，例如应用私有目录中的广告缓存、广告 SDK 文件、已知广告 SQLite 数据库，以及显式 profile 下的组件、AppOps 和 ROM 配置治理。
 
 本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品。域名、网络连接和代理路由应继续由用户已有网络层工具处理；本仓库只做可 dry-run、可审计、可回滚的本地文件和系统状态治理。
@@ -15,6 +22,17 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 模块模板位于 [`module/`](module/)，其中包含 Magisk、KernelSU、APatch 通用的 `module.prop`、`customize.sh`、`service.sh`、`action.sh`、`uninstall.sh` 和模块辅助脚本。打包入口约定为 [`scripts/package-module.sh`](scripts/package-module.sh)，产物应以模块 zip 形式安装到支持 Root 模块的 Android 环境。
 
 不要把当前本地构建、fixture 测试或脚本静态校验理解为实机通过。真实安装仍需要在目标 Root 管理器、目标 ABI、目标 ROM 和目标应用版本上单独验证；README 只说明仓库入口和使用边界，不声明已经覆盖所有设备组合。
+
+## 发布
+
+仓库包含 GitHub Actions release workflow。推送 `v*` tag 时会自动安装 Rust 与 Android NDK，构建 release profile 的 Android ABI 模块包，并把 `dist/*.zip` 与对应 SHA256 上传到 GitHub Release。
+
+```sh
+git tag v0.1.0-t25
+git push origin v0.1.0-t25
+```
+
+Release workflow 只做自动构建、结构校验和发布，不做真实 Android 设备安装验证；实机验证仍需在目标 Root 环境中单独执行。
 
 ## 当前能力
 
