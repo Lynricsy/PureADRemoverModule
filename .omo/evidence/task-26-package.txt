@@ -11,6 +11,6 @@ note=The resulting binaries are not Android ABI verified.
 copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-daemon
 copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-cli
 done=build-module
-zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t26.zip
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t27.zip
 done=package-module
 result=pass

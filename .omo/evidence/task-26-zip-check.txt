@@ -1,5 +1,5 @@
 gate=zip-check
-zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t26.zip
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t27.zip
 entry_count=38
 rule_file_count=18
 abis=x86_64

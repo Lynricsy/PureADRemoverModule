@@ -178,9 +178,16 @@ puread_apply_module_permissions() {
         if [ -d "$PUREAD_MODDIR/scripts" ]; then
             set_perm_recursive "$PUREAD_MODDIR/scripts" 0 0 0755 0755 2>/dev/null || true
         fi
+        if [ -d "$PUREAD_MODDIR/bin" ]; then
+            set_perm_recursive "$PUREAD_MODDIR/bin" 0 0 0755 0755 2>/dev/null || true
+        fi
     else
         chmod 755 "$PUREAD_MODDIR/customize.sh" "$PUREAD_MODDIR/service.sh" "$PUREAD_MODDIR/action.sh" "$PUREAD_MODDIR/uninstall.sh" 2>/dev/null || true
         chmod 755 "$PUREAD_MODDIR/scripts"/*.sh 2>/dev/null || true
+    fi
+    if [ -d "$PUREAD_MODDIR/bin" ]; then
+        find "$PUREAD_MODDIR/bin" -type d -exec chmod 755 {} \; 2>/dev/null || true
+        find "$PUREAD_MODDIR/bin" -type f -name 'puread-*' -exec chmod 755 {} \; 2>/dev/null || true
     fi
 }
 

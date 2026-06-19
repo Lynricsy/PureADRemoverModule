@@ -38,8 +38,8 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 仓库包含 GitHub Actions release workflow。推送 `v*` tag 时会自动安装 Rust 与 Android NDK，构建 release profile 的 Android ABI 模块包，并把 `dist/*.zip` 与对应 SHA256 上传到 GitHub Release。
 
 ```sh
-git tag v0.1.0-t26
-git push origin v0.1.0-t26
+git tag v0.1.0-t27
+git push origin v0.1.0-t27
 ```
 
 Release workflow 只做自动构建、结构校验和发布，不做真实 Android 设备安装验证；实机验证仍需在目标 Root 环境中单独执行。
