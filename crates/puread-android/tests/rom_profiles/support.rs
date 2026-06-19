@@ -7,6 +7,7 @@ use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::fs;
 use std::io;
+use std::ops::Deref;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -78,7 +79,26 @@ impl MemoryLedger {
     }
 }
 
-pub(crate) fn unique_temp_dir() -> PathBuf {
+#[derive(Debug)]
+pub(crate) struct TestTempDir {
+    path: PathBuf,
+}
+
+impl Deref for TestTempDir {
+    type Target = Path;
+
+    fn deref(&self) -> &Self::Target {
+        self.path.as_path()
+    }
+}
+
+impl Drop for TestTempDir {
+    fn drop(&mut self) {
+        let _ignored = fs::remove_dir_all(&self.path);
+    }
+}
+
+pub(crate) fn unique_temp_dir() -> TestTempDir {
     let nanos = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_or(0, |duration| duration.as_nanos());
@@ -86,7 +106,7 @@ pub(crate) fn unique_temp_dir() -> PathBuf {
         std::env::temp_dir().join(format!("puread-rom-profile-{}-{nanos}", std::process::id()));
     let _ = fs::remove_dir_all(&path);
     let _ = fs::create_dir_all(&path);
-    path
+    TestTempDir { path }
 }
 
 pub(crate) fn write_prefs_fixture(root: &Path) -> Result<PathBuf, io::Error> {

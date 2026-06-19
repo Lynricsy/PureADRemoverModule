@@ -1,0 +1,188 @@
+# task-25-26-27 script quality fix evidence
+recorded_at=2026-06-19T11:08:45+08:00
+
+## shell parse
+command=sh -n scripts/verify-local.sh scripts/qa-android.sh scripts/package-module.sh scripts/lib/*.sh
+result=pass
+
+## pure shell loc
+206	scripts/build-module.sh
+215	scripts/package-module.sh
+113	scripts/qa-android.sh
+74	scripts/update-upstream.sh
+80	scripts/verify-local.sh
+76	scripts/lib/qa-android-common.sh
+129	scripts/lib/qa-android-device.sh
+79	scripts/lib/qa-android-static.sh
+43	scripts/lib/verify-local-common.sh
+173	scripts/lib/verify-local-forbidden.sh
+73	scripts/lib/verify-local-quality.sh
+100	scripts/lib/verify-local-zip.sh
+result=pass
+
+## package module
+PureAD build-module
+root=/root/Projects/Ling/PureADRemoverModule
+profile=debug
+mode=host-fixture
+abis=x86_64
+note=PUREAD_ANDROID_ABIS is unset; this builds current-host fixture binaries for package layout validation only.
+note=The resulting binaries are not Android ABI verified.
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-daemon
+copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-cli
+done=build-module
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+done=package-module
+result=pass
+
+## zip required entries
+present=module.prop
+present=action.sh
+present=service.sh
+present=post-fs-data.sh
+present=customize.sh
+present=bin/x86_64/puread-cli
+present=bin/x86_64/puread-daemon
+present=rules/common/sdk-cache.toml
+zip_entry_count=37
+result=pass
+
+## zip forbidden entries
+forbidden_zip_entries=none
+result=pass
+
+## qa android dry run
+info: static compatibility evidence: .omo/evidence/task-27-static-compat.txt
+== command plan ==
+plan: adb devices
+plan: adb shell dumpsys batterystats
+plan: adb shell dumpsys alarm
+plan: adb shell dumpsys deviceidle
+plan: adb shell top -b -n 1
+plan: adb shell su -c 'sh /data/adb/modules/PureAD/action.sh status'
+plan: adb shell su -c 'PUREAD_SCAN_ROOT=/data sh /data/adb/modules/PureAD/action.sh scan-dry-run'
+plan: adb shell su -c '/data/adb/modules/PureAD/bin/<abi>/puread-cli apply-profile conservative --dry-run --rules /data/adb/modules/PureAD/rules --root / --module-root /data/adb/modules/PureAD'
+plan: adb shell su -c 'PUREAD_DRY_RUN=1 sh /data/adb/modules/PureAD/service.sh'
+plan: adb shell su -c 'check /data/adb/modules/PureAD/run/puread-daemon.pid and stop only a pid started by this QA run'
+== end command plan ==
+qa_status=plan_only
+real_device_pass=false
+info: device unavailable evidence: .omo/evidence/task-27-device-unavailable.txt
+result=pass
+contains_command_plan=yes
+contains_plan_only=yes
+contains_real_device_false=yes
+
+## verify local
+info: run: sh -n scripts/verify-local.sh
+info: pass: verify-local-sh-parse
+info: run: cargo fmt --all -- --check
+info: pass: cargo-fmt
+info: run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+info: pass: cargo-clippy
+info: run: cargo test --workspace
+info: pass: cargo-test
+info: run: cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom
+info: pass: rules-validate
+info: run: scripts/package-module.sh
+info: pass: package-module
+info: pass: zip check
+info: pass: forbidden scan
+info: pass: pure Rust LOC
+info: pass: shell parse
+info: local verification passed
+result=pass
+
+## malformed input smoke
+qa_help_result=pass
+Usage: scripts/qa-android.sh [options]
+
+Android root module smoke QA for PureAD.
+
+Options:
+  --dry-run              Print the command plan and write unavailable artifacts only.
+
+## cleanup check
+package_staging_residue=none
+verify_tmp_residue=none
+
+## local git config identity
+local_user_name=unset
+local_user_email=unset
+
+## git status
+ M .omo/boulder.json
+ M README.md
+ M module/bin/README.md
+ M module/module.prop
+ M module/rules/README.md
+ M scripts/verify-local.sh
+ M xtask/upstream-report/src/report.rs
+ M xtask/upstream-report/src/scanner/source_meta.rs
+ M xtask/upstream-report/tests/directory_report.rs
+?? .omo/evidence/review-wave5-qa.txt
+?? .omo/evidence/review-wave5-quality.txt
+?? .omo/evidence/review-wave5-scope-plan.txt
+?? .omo/evidence/task-25-26-27-script-quality-fix.txt
+?? .omo/evidence/task-25-build-dry-run.txt
+?? .omo/evidence/task-25-loc.txt
+?? .omo/evidence/task-25-package.txt
+?? .omo/evidence/task-25-packaged-action-status.txt
+?? .omo/evidence/task-25-python-zip-fallback.txt
+?? .omo/evidence/task-25-shell-parse.txt
+?? .omo/evidence/task-25-shellcheck.txt
+?? .omo/evidence/task-25-shfmt.txt
+?? .omo/evidence/task-25-verify-local-summary.txt
+?? .omo/evidence/task-25-verify-local.txt
+?? .omo/evidence/task-25-zip-forbidden-scan.txt
+?? .omo/evidence/task-25-zip-list.txt
+?? .omo/evidence/task-25-zip-required.txt
+?? .omo/evidence/task-25-zip-test.txt
+?? .omo/evidence/task-26-cargo-clippy.txt
+?? .omo/evidence/task-26-cargo-fmt.txt
+?? .omo/evidence/task-26-cargo-test.txt
+?? .omo/evidence/task-26-forbidden-scan.txt
+?? .omo/evidence/task-26-loc.txt
+?? .omo/evidence/task-26-package.txt
+?? .omo/evidence/task-26-rules-validate.txt
+?? .omo/evidence/task-26-shell-parse.txt
+?? .omo/evidence/task-26-verify-local.txt
+?? .omo/evidence/task-26-verify-script-parse.txt
+?? .omo/evidence/task-26-zip-check.txt
+?? .omo/evidence/task-27-adb-devices.txt
+?? .omo/evidence/task-27-android-qa-dry-run.txt
+?? .omo/evidence/task-27-device-unavailable.txt
+?? .omo/evidence/task-27-dry-run-push-plan.txt
+?? .omo/evidence/task-27-forbidden-scan-summary.txt
+?? .omo/evidence/task-27-forbidden-scan.txt
+?? .omo/evidence/task-27-help.txt
+?? .omo/evidence/task-27-shell-parse.txt
+?? .omo/evidence/task-27-shellcheck.txt
+?? .omo/evidence/task-27-static-compat.txt
+?? .omo/evidence/task-28-readme-grep.txt
+?? .omo/evidence/task-28-readme.txt
+?? .omo/evidence/task-29-gitless-guards.txt
+?? .omo/evidence/task-29-gitless-manifest.json
+?? .omo/evidence/task-29-gitless-report.txt
+?? .omo/evidence/task-29-gitless-summary.txt
+?? .omo/evidence/task-29-loc.txt
+?? .omo/evidence/task-29-no-rule-mutation-final-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation-final.txt
+?? .omo/evidence/task-29-no-rule-mutation-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation.txt
+?? .omo/evidence/task-29-policy-guard.txt
+?? .omo/evidence/task-29-report-guards.txt
+?? .omo/evidence/task-29-upstream-regression.txt
+?? .omo/evidence/task-29-upstream-summary.txt
+?? dist/
+?? module/bin/x86_64/
+?? scripts/build-module.sh
+?? scripts/lib/
+?? scripts/package-module.sh
+?? scripts/qa-android.sh
+?? xtask/upstream-report/tests/git_unavailable.rs
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/

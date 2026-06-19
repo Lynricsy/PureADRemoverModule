@@ -1,3 +1,4 @@
+use std::io::ErrorKind;
 use std::path::Path;
 use std::process::Command;
 
@@ -23,12 +24,11 @@ pub(super) fn sha256_bytes(bytes: &[u8]) -> String {
 }
 
 pub(super) fn git_value(dir: &Path, args: &[&str]) -> Result<String, ReportError> {
-    let output = Command::new("git")
-        .arg("-C")
-        .arg(dir)
-        .args(args)
-        .output()
-        .map_err(|source| io_at(dir, source))?;
+    let output = match Command::new("git").arg("-C").arg(dir).args(args).output() {
+        Ok(output) => output,
+        Err(source) if source.kind() == ErrorKind::NotFound => return Ok("n/a".to_owned()),
+        Err(source) => return Err(io_at(dir, source)),
+    };
     if !output.status.success() {
         return Ok("n/a".to_owned());
     }

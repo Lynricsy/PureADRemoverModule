@@ -1,0 +1,6 @@
+result=device-unavailable
+reason=no authorized adb device
+dry_run=1
+real_device_pass=false
+adb_devices_evidence=.omo/evidence/task-27-adb-devices.txt
+static_evidence=.omo/evidence/task-27-static-compat.txt

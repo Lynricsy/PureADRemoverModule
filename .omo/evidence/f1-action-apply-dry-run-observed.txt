@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "command": "apply_profile",
+  "mode": "dry_run",
+  "profile": "conservative",
+  "root_path": "tests/fixtures/android-fs",
+  "module_root": "module",
+  "lock_path": "module/run/puread.lock",
+  "lock_acquired": false,
+  "rule_file_count": 9,
+  "action_count": 2,
+  "will_mutate": false,
+  "applied": 0,
+  "skipped": 0,
+  "failed": 0,
+  "actions": [
+    {
+      "rule_id": "aweme-internal-splash-commerce-card",
+      "action": "empty_dir",
+      "target_kind": "path",
+      "package": "com.ss.android.ugc.aweme",
+      "android_path": "/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "host_path": "tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "status": "planned",
+      "record": null,
+      "error": null
+    },
+    {
+      "rule_id": "aweme-external-splash-cache",
+      "action": "empty_dir",
+      "target_kind": "path",
+      "package": "com.ss.android.ugc.aweme",
+      "android_path": "/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "host_path": "tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "status": "planned",
+      "record": null,
+      "error": null
+    }
+  ]
+}
+exit=0

@@ -1,0 +1,315 @@
+F3 Final Verification - Real manual QA
+时间: 2026-06-19 Asia/Hong_Kong
+角色: 最终 QA 审查员
+约束: 不修改代码；不提交/推送；不改 Example/；不设置 local git config。除本文件与 AgentLog 外仅允许验证脚本自身产生 evidence。
+
+结论: FAIL
+原因: 必需 QA 面大多通过，但 cleanup/stale_state 面发现 /tmp 下已有大量 puread-* 历史残留目录，不满足“无 staging/tmp 残留”的对抗项。无 Android 授权设备，因此 Android smoke 与 power 只能记录 unavailable，未声明真机通过。
+
+1. 初始工作树与 local git config
+
+命令:
+  git status --short --ignored
+Exit code: 0
+关键观察:
+  工作树在本轮开始前已是 dirty_worktree：
+  - 已修改: .omo/boulder.json、.omo/plans/puread-rust-module.md、.omo/start-work/ledger.jsonl、README.md、module/bin/README.md、module/module.prop、module/rules/README.md、scripts/verify-local.sh、xtask/upstream-report/src/report.rs、xtask/upstream-report/src/scanner/source_meta.rs、xtask/upstream-report/tests/directory_report.rs
+  - 未跟踪: 多个 .omo/evidence/task-* 与 review-wave5-* 文件、dist/、module/bin/x86_64/、scripts/build-module.sh、scripts/lib/、scripts/package-module.sh、scripts/qa-android.sh、xtask/upstream-report/tests/git_unavailable.rs
+  - 忽略: AgentLogs/、Example/、target/、xtask/upstream-report/target/
+限制说明:
+  本轮没有恢复或覆盖这些既有变更。
+
+命令:
+  git config --local --list --show-origin || true
+Exit code: 0
+关键观察:
+  local git config 仅包含 core、origin remote、branch.main 信息；未发现 user.name/user.email。
+
+命令:
+  git config --local --get user.name; printf 'user.name.rc=%s\n' "$?"; git config --local --get user.email; printf 'user.email.rc=%s\n' "$?"
+Exit code: 0
+关键观察:
+  user.name.rc=1
+  user.email.rc=1
+  说明 local git identity 未设置。
+
+2. Package zip real check
+
+命令:
+  scripts/package-module.sh
+Exit code: 0
+关键观察:
+  - 输出 PureAD build-module
+  - profile=debug
+  - mode=host-fixture
+  - abis=x86_64
+  - note=PUREAD_ANDROID_ABIS is unset; this builds current-host fixture binaries for package layout validation only.
+  - note=The resulting binaries are not Android ABI verified.
+  - zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+  - done=package-module
+限制说明:
+  该 zip 内二进制是 host-fixture x86_64 布局验证产物，不等同 Android ABI 实机验证。
+
+命令:
+  unzip -Z1 dist/PureAD-0.1.0-t25.zip
+Exit code: 0
+关键观察:
+  zip entry 共 37 个，包含关键 entry：
+  - module.prop
+  - customize.sh
+  - service.sh
+  - post-fs-data.sh
+  - uninstall.sh
+  - action.sh
+  - scripts/puread-module-lib.sh
+  - bin/x86_64/puread-cli
+  - bin/x86_64/puread-daemon
+  - rules/appops/luna-and-reader-appops.toml
+  - rules/apps/*.toml
+  - rules/common/sdk-cache.toml
+  - rules/components/*.toml
+  - rules/rom/*.toml
+  - rules/sqlite/*.toml
+
+命令:
+  zipinfo -l dist/PureAD-0.1.0-t25.zip | sed -n '1,220p'
+Exit code: 0
+关键观察:
+  - bin/x86_64/puread-cli 为 executable，uncompressed size 42536272
+  - bin/x86_64/puread-daemon 为 executable，uncompressed size 4336576
+  - module lifecycle scripts 为 executable
+  - zip size 12037210 bytes
+
+命令:
+  entries="$(unzip -Z1 dist/PureAD-0.1.0-t25.zip)"
+  # 检查必需 entry 与禁止 entry
+Exit code: 0
+关键观察:
+  package_entry_check=pass
+  必需 entry 均存在；未发现禁止 entry：
+  - .git/
+  - AgentLogs/
+  - Example/
+  - target/
+  - xtask/upstream-report/target/
+  - module/bin/README.md
+  - module/rules/README.md
+  - README.md
+  - scripts/package-module.sh
+  - .omo/
+  - .puread-module-staging
+
+命令:
+  find dist -maxdepth 2 -type d -name '.puread-module-staging.*' -print
+Exit code: 0
+关键观察:
+  无输出；package staging 目录已清理。
+
+3. CLI dry-run against fixtures
+
+命令:
+  find tests/fixtures/android-fs -type f -print | sort | xargs -r sha256sum
+Exit code: 0
+关键观察:
+  dry-run 前 fixture 哈希：
+  - 16b835b572634a5a2c4809c11871f76cbd66926c86cdf3b5c443c0988aface7e  tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card/.fixture
+  - e9b6416400285c23f6c120f91b4af029b155bfdccd22984dd3db036bc742b80e  tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache/.fixture
+
+命令:
+  cargo run -p puread-cli -- scan --dry-run --rules rules/files --root tests/fixtures/android-fs
+Exit code: 0
+关键观察:
+  JSON 输出：
+  - "mode": "dry_run"
+  - "dry_run": true
+  - "rule_file_count": 10
+  - "action_count": 2
+  - "will_mutate": false
+  - actions 包含 aweme-internal-splash-commerce-card 与 aweme-external-splash-cache
+  - host_path 均指向 tests/fixtures/android-fs 下 fixture
+
+命令:
+  find tests/fixtures/android-fs -type f -print | sort | xargs -r sha256sum
+Exit code: 0
+关键观察:
+  dry-run 后 fixture 哈希与前述一致，确认未修改 fixture。
+
+4. Daemon tempdir event scenario
+
+命令:
+  cargo test -p puread-daemon event_loop -- --nocapture
+Exit code: 0
+关键观察:
+  运行 5 个 event_loop 集成测试，全部通过：
+  - event_loop_emits_reload_event_when_reload_signal_arrives
+  - event_loop_does_not_restart_after_shutdown_during_file_control_race
+  - event_loop_stops_when_shutdown_signal_arrives
+  - event_loop_drains_reload_and_shutdown_during_debounce
+  - event_loop_emits_debounced_file_event_when_file_is_created
+说明:
+  覆盖临时目录文件创建触发 FilesChanged、reload、shutdown、debounce/control race。
+
+命令:
+  cargo test -p puread-daemon file_rule_integration -- --nocapture
+Exit code: 0
+关键观察:
+  运行 3 个 file_rule_integration 集成测试，全部通过：
+  - file_rule_integration_excludes_sqlite_appops_and_component_from_watch_roots
+  - file_rule_integration_outputs_dry_run_plan_when_splash_cache_is_created
+  - file_rule_integration_apply_mode_executes_file_action_and_writes_ledger
+说明:
+  覆盖 daemon 文件规则集成 dry-run plan、apply 写 ledger，以及 watcher 排除 sqlite/appops/component。
+
+5. Android smoke
+
+命令:
+  scripts/qa-android.sh --dry-run
+Exit code: 0
+关键观察:
+  - qa_status=plan_only
+  - real_device_pass=false
+  - 输出 Android 安全命令计划，包括 adb devices、dumpsys batterystats/alarm/deviceidle、top、action.sh status、scan-dry-run、apply-profile conservative --dry-run、service.sh dry-run。
+  - 脚本写入 .omo/evidence/task-27-static-compat.txt
+  - 脚本写入 .omo/evidence/task-27-device-unavailable.txt
+
+命令:
+  sed -n '1,220p' .omo/evidence/task-27-adb-devices.txt
+Exit code: 0
+关键观察:
+  - adb=unavailable
+  - device-unavailable
+  - real_device_pass=false
+
+命令:
+  sed -n '1,220p' .omo/evidence/task-27-device-unavailable.txt
+Exit code: 0
+关键观察:
+  - result=device-unavailable
+  - reason=no authorized adb device
+  - dry_run=1
+  - real_device_pass=false
+
+命令:
+  sed -n '1,260p' .omo/evidence/task-27-static-compat.txt
+Exit code: 0
+关键观察:
+  - mode=static-script-compatibility
+  - real_device_pass=false
+  - ksu=syntax-only
+  - apatch=syntax-only
+  - syntax_ok=module/customize.sh
+  - syntax_ok=module/service.sh
+  - syntax_ok=module/action.sh
+  - syntax_ok=module/uninstall.sh
+  - syntax_ok=module/scripts/puread-module-lib.sh
+  - syntax_ok=scripts/qa-android.sh
+限制说明:
+  无授权 Android 设备；未做真机安装、未刷机、未执行真实 root 设备命令。
+
+6. Power evidence
+
+命令:
+  scripts/qa-android.sh --dry-run
+Exit code: 0
+关键观察:
+  dry-run 命令计划包含：
+  - adb shell dumpsys batterystats
+  - adb shell dumpsys alarm
+  - adb shell dumpsys deviceidle
+  - adb shell top -b -n 1
+限制说明:
+  因 adb unavailable / no authorized adb device，未采集 dumpsys/top。power evidence 状态为 unavailable；不得声明真机功耗通过。
+
+7. Restore/profile dry-run
+
+命令:
+  sha256sum tests/fixtures/ledger.json
+Exit code: 0
+关键观察:
+  restore dry-run 前 ledger 哈希：
+  e0a41a00f67a12b23a1665bf700c3922373bcf34be0536e314a18ed605e9a21b  tests/fixtures/ledger.json
+
+命令:
+  cargo run -p puread-cli -- restore --dry-run --ledger tests/fixtures/ledger.json
+Exit code: 0
+关键观察:
+  JSON 输出：
+  - "mode": "dry_run"
+  - "ledger_path": "tests/fixtures/ledger.json"
+  - "action_count": 2
+  - "will_mutate": false
+  - "restored": 0
+  - "failed": 0
+  - actions 均为 "status": "planned"
+
+命令:
+  sha256sum tests/fixtures/ledger.json
+Exit code: 0
+关键观察:
+  restore dry-run 后 ledger 哈希仍为：
+  e0a41a00f67a12b23a1665bf700c3922373bcf34be0536e314a18ed605e9a21b  tests/fixtures/ledger.json
+  确认 ledger fixture 未被修改。
+
+命令:
+  cargo run -p puread-cli -- apply-profile conservative --dry-run --rules rules/appops --root tests/fixtures/android-fs --module-root tests/fixtures/module-root
+Exit code: 0
+关键观察:
+  JSON 输出：
+  - "command": "apply_profile"
+  - "mode": "dry_run"
+  - "profile": "conservative"
+  - "lock_acquired": false
+  - "rule_file_count": 1
+  - "action_count": 0
+  - "will_mutate": false
+  - "applied": 0
+  - "skipped": 0
+  - "failed": 0
+限制说明:
+  conservative profile 对 appops 规则没有实际 action；该命令仍验证 profile dry-run surface 不获取锁、不修改 host。
+
+8. Cleanup / contamination / stale state
+
+命令:
+  find . -path './target' -prune -o -path './Example' -prune -o -path './AgentLogs' -prune -o \( -name 'adbkey*' -o -name '*.apk' -o -name '*.apks' -o -name '*.idsig' -o -name '*.keystore' -o -name '*.jks' -o -name '*.pem' -o -name '*.p12' \) -print | sort | sed -n '1,160p'
+Exit code: 0
+关键观察:
+  无输出；仓库可见范围内未发现 adb key、APK、签名或证书类污染。
+
+命令:
+  find tests/fixtures -maxdepth 3 -type d -name 'module-root' -print; find . -maxdepth 4 -type d \( -name '.puread-module-staging.*' -o -name 'staging' -o -name 'tmp' \) -print | sort | sed -n '1,160p'
+Exit code: 0
+关键观察:
+  - 未出现 tests/fixtures/module-root
+  - 出现 ./target/tmp 与 ./xtask/upstream-report/target/tmp；它们位于 Cargo target ignored build output 下。
+限制说明:
+  target/tmp 属于已有 ignored build output，不作为源码污染；但仍说明仓库处于 dirty/ignored build artifact 状态。
+
+命令:
+  find dist -maxdepth 2 -type d -name '.puread-module-staging.*' -print; find /tmp -maxdepth 1 -type d \( -name 'puread-daemon-event-loop-*' -o -name 'puread-*' \) -print 2>/dev/null | sort | sed -n '1,120p'
+Exit code: 0
+关键观察:
+  - dist staging 无输出，说明本轮 package staging 已清理。
+  - /tmp 下存在大量 puread-* 历史残留，例如：
+    /tmp/puread-diagnostic-target
+    /tmp/puread-final-context-check-target
+    /tmp/puread-hands-on-qa-target
+    /tmp/puread-review-logs
+    /tmp/puread-review-state
+    /tmp/puread-review-target
+    /tmp/puread-review-wave5-upstream.sRo2Te
+    /tmp/puread-review-wave5-upstream2.e3DhJ6
+    /tmp/puread-rom-profile-*
+判定:
+  FAIL。尽管本轮 event_loop 临时目录未残留 puread-daemon-event-loop-*，系统 /tmp 中仍存在 puread-* stale_state，不满足 cleanup 对抗项“无 staging/tmp 残留”。按最终 QA 审查规则，不清理、不替实现背书。
+
+9. 最终工作树
+
+命令:
+  git status --short --ignored
+Exit code: 0
+关键观察:
+  仍为 dirty_worktree。除本轮允许写入的 .omo/evidence/f3-manual-qa.txt、qa-android 脚本产物以及 package 命令刷新 dist/module/bin 产物外，已有修改/未跟踪文件保持存在；本轮未提交、未推送、未改 Example/。
+
+最终判定
+  <verdict>FAIL</verdict>

@@ -1,0 +1,202 @@
+# Wave5 scope review after script-quality fix
+
+reviewed_at=2026-06-19T11:15:13+08:00
+scope=T25,T26,T27,T28,T29
+mode=read-only reviewer; only this evidence file and AgentLog were written
+verdict=PASS
+
+## plan excerpts read
+
+command=sed -n '326,410p' .omo/plans/puread-rust-module.md
+result=pass
+observed:
+  - T25 requires build-module dry-run, package-module zip, root entries module.prop/service.sh/uninstall.sh/action.sh/bin/<abi>/puread-daemon/bin/<abi>/puread-cli/rules, and no hosts files, AdGuardHome binary, or proxy config.
+  - T26 requires verify-local to run fmt, clippy, tests, rules validate, forbidden capability grep with documentation allowlist, zip structure check, pure LOC check, and no swallowed failure codes.
+  - T27 requires qa-android.sh syntax, real-device collection when available, and dry-run command plan plus device-unavailable artifact when no device is available.
+  - T28 requires README usage and boundary docs, including Clash/non-domain/low-power/restore/upstream/AGENTS and no promotional DNS/hosts/AdGuard Home phrasing.
+  - T29 requires local Example report-only update, no automatic rule changes, ads288 SHA256, AdGuard nested commit, accepted/rejected categories, and git-unavailable file snapshot fallback.
+  - Final verification F4 requires grep and inspection for forbidden DNS/hosts/domain/proxy/iptables/private-DNS/IFW/root-hiding behavior.
+
+## worktree and dirty-state probes
+
+command=git diff --name-only HEAD
+result=read
+changed_tracked_files:
+  - .omo/boulder.json
+  - README.md
+  - module/bin/README.md
+  - module/module.prop
+  - module/rules/README.md
+  - scripts/verify-local.sh
+  - xtask/upstream-report/src/report.rs
+  - xtask/upstream-report/src/scanner/source_meta.rs
+  - xtask/upstream-report/tests/directory_report.rs
+
+command=git status --short --ignored
+result=read
+classification:
+  - tracked Wave5/doc/tool changes are present.
+  - untracked Wave5 outputs are present under .omo/evidence, dist, module/bin/x86_64, scripts/build-module.sh, scripts/lib, scripts/package-module.sh, scripts/qa-android.sh, and xtask/upstream-report/tests/git_unavailable.rs.
+  - Example/ is still ignored, shown as "!! Example/".
+  - AgentLogs/, target/, and xtask/upstream-report/target/ are ignored.
+dirty_worktree_probe=pass_for_review_scope; dirty files are review subject or existing generated evidence, not reviewer code edits.
+
+## local git config
+
+command=git config --local --get user.name; git config --local --get user.email; git config --local --get-regexp '^(user\.name|user\.email)$'
+result=pass
+user.name=unset
+user.email=unset
+local_identity_entries=none
+
+## Example snapshot boundary
+
+commands:
+  - git ls-files -- Example
+  - git status --short --ignored -- Example .gitignore
+  - rg -n '^Example/$' .gitignore
+  - git diff --name-only HEAD -- Example .gitignore rules upstream/upstream_manifest.json
+result=pass
+observed:
+  - git ls-files -- Example produced no tracked files.
+  - git status --short --ignored -- Example .gitignore produced "!! Example/" and ".gitignore" contains "Example/" at line 2.
+  - git diff --name-only HEAD -- Example .gitignore rules upstream/upstream_manifest.json produced no output.
+prompt_injection_upstream_untrusted_probe=pass; Example remains ignored/read-only and report-only workflow keeps upstream text as data, not instructions.
+
+## T25 packaging surface
+
+commands:
+  - unzip -Z1 dist/PureAD-0.1.0-t25.zip | sort
+  - unzip -Z1 dist/PureAD-0.1.0-t25.zip | rg -n -i '(^|/)(hosts|host|Host)$|AdGuardHome|adguard-home|iptables|mount_hosts|ad_reward|(^|/)(proxy|ProxyConfig|clash|mihomo)(\.|/|$)|private[_-]?dns|dns' || true
+result=pass
+zip_entries_summary:
+  - module.prop
+  - customize.sh
+  - service.sh
+  - post-fs-data.sh
+  - uninstall.sh
+  - action.sh
+  - scripts/puread-module-lib.sh
+  - bin/x86_64/puread-cli
+  - bin/x86_64/puread-daemon
+  - 18 rules/*.toml entries
+forbidden_zip_entry_matches=0
+notes:
+  - Package entry names contain no hosts/Host/AdGuardHome/iptables/mount_hosts/ad_reward/proxy/Clash/Mihomo/DNS/private-DNS entries.
+  - A content scan of extracted zip files found only allowed rule provenance/boundary text: Adguard-Home-For-Magisk-Mod source metadata, a "no private DNS/network" note, and one SDK Java class name containing ".proxy.". No executable package script or config entry implements forbidden capability.
+
+## script and module inspection
+
+files_read:
+  - scripts/build-module.sh
+  - scripts/package-module.sh
+  - scripts/qa-android.sh
+  - scripts/lib/qa-android-common.sh
+  - scripts/lib/qa-android-device.sh
+  - scripts/lib/qa-android-static.sh
+  - scripts/lib/verify-local-common.sh
+  - scripts/lib/verify-local-forbidden.sh
+  - scripts/lib/verify-local-quality.sh
+  - scripts/lib/verify-local-zip.sh
+  - module/service.sh
+  - module/action.sh
+  - module/scripts/puread-module-lib.sh
+result=pass
+observed:
+  - scripts/build-module.sh only builds/copies puread-cli and puread-daemon artifacts into module/bin/<abi>.
+  - scripts/package-module.sh stages module scripts, bin artifacts, bundled rules, and a no-op post-fs-data.sh using mktemp staging; it does not copy Example or upstream zip files.
+  - scripts/qa-android.sh and scripts/lib/qa-android-*.sh only emit/run adb smoke checks, explicit optional pushes to temporary/module bin paths, status, scan dry-run, profile dry-run, dumpsys/top collection, and daemon dry-run start/stop for QA-started pid.
+  - module/service.sh defaults PUREAD_DRY_RUN=1 unless explicitly set to 0 and starts only puread-daemon; no wake lock, foreground service, fixed 5-second polling, DNS, hosts, iptables, proxy, hiding, or anti-detection behavior was found.
+  - module/action.sh exposes status, diagnostics, scan-dry-run, and restore-dry-run only.
+  - module helper resolves ABI, state/run/log paths, status, diagnostics, CLI scan dry-run, and restore dry-run only.
+script_fix_scope=pass; the fix splits verification/QA helpers and improves tempdir/staging handling without adding out-of-scope functionality.
+
+## forbidden token classification scan
+
+command=rg -n -i --with-filename 'hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|domain|ad_reward|ifw|zygisk|root_hide|root[-_ ]?hiding|denylist|shamiko' crates scripts module rules xtask/upstream-report/src xtask/upstream-report/tests README.md AGENTS.md || true
+result=pass
+classification:
+  - allowed:documentation: AGENTS.md and README.md boundary/prohibition text.
+  - allowed:verification_grep_guard: scripts/lib/verify-local-forbidden.sh and scripts/lib/verify-local-zip.sh forbidden scanners.
+  - allowed:rule_rejection_guard: crates/puread-rules/src/parse.rs and category.rs reject forbidden categories/fields.
+  - allowed:settings_rejection_guard: crates/puread-android/src/command_runner/settings.rs rejects DNS/hosts/proxy/private DNS settings as out of scope.
+  - allowed:upstream_audit_classifier: xtask/upstream-report/src/classifier/forbidden.rs and manifest categories classify forbidden upstream material as rejected.
+  - allowed:test_or_fixture: Rust tests and invalid fixtures assert forbidden categories fail.
+  - allowed:package_metadata_boundary: crate descriptions saying non-domain.
+  - allowed:rule_notes_or_provenance: rules source/source_file/notes/source_line_or_pattern fields.
+  - allowed:sdk_component_class_name: rules/components/sdk-ad-components.toml has a Java component class containing ".proxy." as part of SDK package name, not proxy configuration.
+blocked_matches=0
+scope_creep_probe=pass; no production execution path implements DNS/hosts/domain/proxy/Clash/Mihomo/AdGuardHome/iptables/ad_reward/root-hiding/anti-detection behavior.
+
+## T26 evidence note
+
+read=.omo/evidence/task-26-forbidden-scan.txt
+result=pass
+observed=blocked_matches=0 and result=pass.
+
+read=.omo/evidence/task-26-zip-check.txt
+result=stale_mixed_evidence_detected
+observed=lines 1-3 contain an older "exit_code=1/result=fail", while lines 4-10 contain the current zip summary and "result=pass".
+review_decision=not used as sole PASS evidence; current independent unzip entry scan and .omo/evidence/task-25-26-27-script-quality-fix.txt lines 39-53 prove current package structure and forbidden entry check pass.
+misleading_success_output_probe=pass_with_note; stale mixed evidence exists but does not contradict current artifact inspection.
+
+## T27 evidence
+
+read=.omo/evidence/task-27-android-qa-dry-run.txt
+result=pass
+observed:
+  - command plan includes adb devices, dumpsys batterystats, dumpsys alarm, dumpsys deviceidle, top, action.sh status, scan-dry-run, CLI apply-profile dry-run, and daemon dry-run service check.
+  - qa_status=plan_only
+  - real_device_pass=false
+
+read=.omo/evidence/task-27-device-unavailable.txt and task-27-static-compat.txt
+result=pass
+observed:
+  - device-unavailable artifact explicitly records real_device_pass=false.
+  - static compatibility syntax checks pass for module scripts and scripts/qa-android.sh.
+
+## T28 evidence
+
+read=README.md and .omo/evidence/task-28-readme-grep.txt
+result=pass
+observed:
+  - README documents non-domain local scope, Clash/network-layer split, installation/package entry, conservative defaults, explicit profile risks, low-power behavior, restore/uninstall flow, AGENTS-based upstream sync, and local verification.
+  - README contains required terms: Clash, 非域名, 低功耗, 恢复, 上游, AGENTS, profile-restore, package-module.
+  - README uses forbidden tokens only as boundary/prohibition text; it does not advertise DNS/hosts/AdGuardHome capability.
+
+## T29 evidence
+
+read=.omo/evidence/task-29-upstream-summary.txt
+result=pass
+observed:
+  - sources=2, accepted=46, rejected=68, ignored=22.
+  - ads288.zip SHA256=bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7.
+  - Adguard-Home-For-Magisk-Mod commit=098ba8c78cf57dbd180fe2c72b05405b76eaa769.
+  - accepted categories: appops, component, file_path, rom_profile, sdk_cache, sqlite.
+  - rejected categories: ad_reward_domain, dns, domain, hosts, ifw_clear, iptables_network, proxy.
+  - report_only=true, download_performed=false, rules_modified=false, snapshots_modified=false, auto_import_allowed=false.
+
+read=xtask/upstream-report/tests/git_unavailable.rs and .omo/evidence/task-29-gitless-summary.txt
+result=pass
+observed:
+  - git unavailable test drives the real puread-upstream-report binary with PATH pointing to an empty bin directory.
+  - git-only source metadata degrades to n/a while file snapshot reporting still succeeds.
+
+read=xtask/upstream-report/src/report.rs and source_meta.rs
+result=pass
+observed:
+  - report stdout now includes source metadata and auto_import_allowed=false.
+  - Command::new("git") ErrorKind::NotFound returns "n/a"; other IO errors remain errors.
+
+## adversarial probes
+
+scope_creep=pass; no forbidden production capability or extra network-layer feature found.
+prompt_injection_upstream_untrusted=pass; upstream report says local input only, upstream text is data, auto import is false, and Example remains ignored.
+dirty_worktree=pass_for_review; dirty files are visible and not reverted or hidden.
+stale_state=pass_with_note; stale mixed task-26 zip-check evidence identified and replaced with independent current zip inspection for verdict.
+misleading_success_output=pass; verdict relies on command/file observations, not success summaries alone.
+generated_artifact=pass; dist zip and module/bin host fixtures are generated Wave5 outputs; zip entries and extracted text were inspected for forbidden capability indicators.
+
+## conclusion
+
+T25-T29 remain aligned with the plan for the Wave5 scope under review. The script-quality fix did not introduce DNS/hosts/domain/proxy/Clash/Mihomo/AdGuardHome/iptables/ad_reward/root-hiding/anti-detection or constant high-power behavior. Current package entries are clean, Example remains ignored with no tracked diff, local git identity is unset, and upstream report-only behavior remains manual-review-only with forbidden categories rejected.

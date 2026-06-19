@@ -1,0 +1,52 @@
+review=wave5-quality-final
+verdict=FAIL
+scope=read-only reviewer; only this evidence file and AgentLog were written
+
+blocking_issue:
+- scripts/package-module.sh is 252 lines, exceeding the required <=250 LOC limit for every scripts/*.sh and scripts/lib/*.sh file.
+  Evidence: wc -l reported "252 scripts/package-module.sh"; file ends at scripts/package-module.sh:252.
+
+verification_commands:
+- sh -n scripts/verify-local.sh scripts/qa-android.sh scripts/package-module.sh scripts/lib/*.sh
+  result=pass exit=0
+- wc -l scripts/*.sh scripts/lib/*.sh
+  result=fail
+  details:
+    scripts/build-module.sh=234
+    scripts/package-module.sh=252
+    scripts/qa-android.sh=125
+    scripts/update-upstream.sh=88
+    scripts/verify-local.sh=97
+    scripts/lib/qa-android-common.sh=86
+    scripts/lib/qa-android-device.sh=141
+    scripts/lib/qa-android-static.sh=86
+    scripts/lib/verify-local-common.sh=50
+    scripts/lib/verify-local-forbidden.sh=194
+    scripts/lib/verify-local-quality.sh=81
+    scripts/lib/verify-local-zip.sh=150
+- scripts/verify-local.sh
+  result=pass exit=0
+- scripts/qa-android.sh --dry-run
+  result=pass exit=0
+
+security_and_quality_checks:
+- verify-local temp root: pass. scripts/verify-local.sh uses mktemp -d "${TMPDIR:-/tmp}/puread-verify-local.XXXXXX" and trap cleanup with unsafe-path guard.
+- package staging: pass. scripts/package-module.sh uses mktemp -d "$PUREAD_DIST/.puread-module-staging.XXXXXX" and cleanup guard restricted to "$PUREAD_DIST"/.puread-module-staging.*.
+- zip-check evidence: pass. scripts/lib/verify-local-zip.sh writes evidence to mktemp "${evidence}.tmp.XXXXXX" and mv atomically replaces the final evidence path.
+- zip-check stale_state resistance: pass. scripts/verify-local.sh rewrites task-26-package.txt through run_capture before write_zip_check reads the zip= line; zip check snapshots the zip into TMP_ROOT before validating.
+- misleading_success_output: pass for the reviewed surface. zip verification uses Python zipfile checks and required entry/forbidden entry assertions, not success text only.
+- malformed_input: pass. Invalid args rejected:
+  verify-local invalid arg exit=2
+  qa-android invalid arg exit=2
+  package-module invalid arg exit=1
+- cleanup: pass at check time. No .debug-journal.md, no .omo/evidence/task-26-zip-check.txt.tmp.*, no dist staging directories, and no /tmp/puread-verify-local.* directories were found.
+- local git identity config: pass. git config --local --get user.name and user.email both exited 1.
+- dirty_worktree: observed. Worktree contains many pre-existing modified/untracked files; reviewer did not restore or edit them.
+
+notable_outputs:
+- scripts/verify-local.sh ended with: info: local verification passed
+- scripts/qa-android.sh --dry-run ended with qa_status=plan_only and real_device_pass=false, as expected for dry-run/device-unavailable mode.
+- .omo/evidence/task-26-zip-check.txt contains result=pass, required_entries=present, forbidden_path_entries=none.
+
+final_decision:
+FAIL because the explicit LOC success criterion says every scripts/*.sh and scripts/lib/*.sh file must be <=250 lines, and scripts/package-module.sh is 252 lines.

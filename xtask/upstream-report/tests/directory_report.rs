@@ -34,6 +34,12 @@ fn report_writes_manual_review_manifest_when_directory_contains_special_paths()
 
     // Then: the manifest is valid JSON and every candidate is manual-review-only.
     assert_success(&output)?;
+    let stdout = String::from_utf8(output.stdout)?;
+    assert!(stdout.contains("## sources"), "{stdout}");
+    assert!(stdout.contains("source=scripts"), "{stdout}");
+    assert!(stdout.contains("commit=n/a"), "{stdout}");
+    assert!(stdout.contains("auto_import_allowed=false"), "{stdout}");
+
     let document = parse_json_file(&manifest)?;
     assert_policy(&document)?;
     assert_eq!(json_field(&document, "input")?["kind"], "directory");

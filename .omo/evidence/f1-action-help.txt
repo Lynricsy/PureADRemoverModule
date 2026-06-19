@@ -1,0 +1,15 @@
+Usage: sh action.sh <action> [profile]
+PureAD actions:
+  status
+  diagnose
+  scan-dry-run
+  restore-dry-run
+  apply-profile-dry-run <profile>
+  apply-profile-execute <profile>
+  profile-restore-dry-run
+  profile-restore-execute
+Environment:
+  PUREAD_PROFILE=<profile> may replace the apply-profile profile argument
+  PUREAD_RULES_DIR=<path> overrides profile rule directory
+  PUREAD_PROFILE_ROOT=<path> overrides profile target root
+exit=0

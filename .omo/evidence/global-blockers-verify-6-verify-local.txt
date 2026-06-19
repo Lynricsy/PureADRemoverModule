@@ -1,0 +1,20 @@
+info: run: sh -n scripts/verify-local.sh
+info: pass: verify-local-sh-parse
+info: run: cargo fmt --all -- --check
+info: pass: cargo-fmt
+info: run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+info: pass: cargo-clippy
+info: run: cargo test --workspace
+info: pass: cargo-test
+info: run: cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom
+info: pass: rules-validate
+info: run: scripts/package-module.sh
+info: pass: package-module
+info: pass: zip check
+info: pass: forbidden scan
+error: pure Rust LOC check found 1 files over 250 LOC; see .omo/evidence/task-26-loc.txt
+info: pass: shell parse
+error: local verification failed
+  - pure Rust LOC check found 1 files over 250 LOC; see .omo/evidence/task-26-loc.txt
+
+exit_code=1

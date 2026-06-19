@@ -1,0 +1,10 @@
+mode=static-script-compatibility
+real_device_pass=false
+ksu=syntax-only
+apatch=syntax-only
+syntax_ok=module/customize.sh
+syntax_ok=module/service.sh
+syntax_ok=module/action.sh
+syntax_ok=module/uninstall.sh
+syntax_ok=module/scripts/puread-module-lib.sh
+syntax_ok=scripts/qa-android.sh

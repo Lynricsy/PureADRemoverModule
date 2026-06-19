@@ -1,0 +1,6 @@
+info: pass: zip check
+failures=
+zip_check=
+gate=zip-check
+cp: cannot stat '/tmp/puread-zip-red.uivhIS/tmp/zip-check-package.zip': No such file or directory
+result=pass

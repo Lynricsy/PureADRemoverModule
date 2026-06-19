@@ -1,0 +1,5 @@
+[1m[92m    Checking[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[92m    Checking[0m puread-cli v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-cli)
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 1.11s
+
+exit_code=0

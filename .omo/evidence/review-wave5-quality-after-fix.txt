@@ -1,0 +1,103 @@
+# Wave5 script quality after-fix review
+recorded_at=2026-06-19T11:13:17+08:00
+reviewer=Codex read-only reviewer
+verdict=PASS
+
+## scope
+checked=scripts/verify-local.sh
+checked=scripts/qa-android.sh
+checked=scripts/package-module.sh
+checked=scripts/lib/*.sh
+checked=.omo/evidence/task-25-26-27-script-quality-fix.txt
+
+## existing evidence review
+source=.omo/evidence/task-25-26-27-script-quality-fix.txt
+summary=claims shell parse pass, all scripts pure LOC <=250, package pass, zip required entries present, forbidden zip entries none, qa dry-run pass, verify-local pass, cleanup residue none, local git identity unset.
+
+## 1 shell syntax
+command=sh -n scripts/verify-local.sh scripts/qa-android.sh scripts/package-module.sh scripts/lib/*.sh
+exit=0
+result=pass
+
+## 2 pure shell LOC
+command=for f in scripts/*.sh scripts/lib/*.sh; do loc=$(sed '/^[[:space:]]*$/d;/^[[:space:]]*#/d' "$f" | wc -l | tr -d ' '); printf '%s\t%s\n' "$loc" "$f"; done | sort -rn
+limit=250
+215	scripts/package-module.sh
+206	scripts/build-module.sh
+173	scripts/lib/verify-local-forbidden.sh
+129	scripts/lib/qa-android-device.sh
+113	scripts/qa-android.sh
+100	scripts/lib/verify-local-zip.sh
+80	scripts/verify-local.sh
+79	scripts/lib/qa-android-static.sh
+76	scripts/lib/qa-android-common.sh
+74	scripts/update-upstream.sh
+73	scripts/lib/verify-local-quality.sh
+43	scripts/lib/verify-local-common.sh
+result=pass
+
+## 3 verify-local temp directory
+command=rg -n "mktemp -d|puread-verify-local\\.\\$\\$|TMP_ROOT|rm -rf" scripts/verify-local.sh scripts/lib/*.sh
+mktemp=scripts/verify-local.sh:45: TMP_ROOT="$(mktemp -d "${tmp_parent%/}/puread-verify-local.XXXXXX")"
+cleanup_guard=scripts/verify-local.sh:30-40 refuses empty/root temp path before rm -rf.
+predictable_pid_dir=none
+result=pass
+
+## 4 package-module staging
+command=rg -n "puread-module-staging|mktemp -d|rm -rf|cleanup_stage|PUREAD_STAGE" scripts/package-module.sh
+mktemp=scripts/package-module.sh:190: PUREAD_STAGE="$(mktemp -d "$PUREAD_DIST/.puread-module-staging.XXXXXX")"
+cleanup_guard=scripts/package-module.sh:176-186 only removes "$PUREAD_DIST"/.puread-module-staging.* and rejects other paths.
+fixed_rm_rf_pattern=none
+result=pass
+
+## 5 verify-local execution
+command=scripts/verify-local.sh
+exit=0
+observed=local verification passed; internal cargo fmt, cargo clippy, cargo test, rules validate, package, zip check, forbidden scan, Rust LOC, shell parse all passed.
+result=pass
+
+## 6 qa android dry-run
+command=scripts/qa-android.sh --dry-run
+exit=0
+contains=== command plan ==
+contains=qa_status=plan_only
+contains=real_device_pass=false
+result=pass
+
+## 7 package zip entries
+command=scripts/package-module.sh
+exit=0
+zip=dist/PureAD-0.1.0-t25.zip
+command=unzip -Z1 dist/PureAD-0.1.0-t25.zip
+entries=module.prop, customize.sh, service.sh, post-fs-data.sh, uninstall.sh, action.sh, scripts/puread-module-lib.sh, bin/x86_64/puread-cli, bin/x86_64/puread-daemon, rules/common/sdk-cache.toml, rules/*.toml
+forbidden_scan_command=unzip -Z1 dist/PureAD-0.1.0-t25.zip | rg -n "(^|/)(Example|Host)(/|$)|\\.zip$|hosts|host\\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw"
+forbidden_scan_rc=1
+forbidden_zip_entries=none
+result=pass
+
+## 8 local git identity
+command=git config --local --get user.name
+exit=1
+local_user_name=unset
+command=git config --local --get user.email
+exit=1
+local_user_email=unset
+result=pass
+
+## 9 git status
+command=git status --short --ignored
+status_summary=dirty worktree with pre-existing tracked and untracked task artifacts; no code restoration, commit, push, local git config, or Example mutation performed by this review.
+notable_tracked_modified=.omo/boulder.json, README.md, module/bin/README.md, module/module.prop, module/rules/README.md, scripts/verify-local.sh, xtask/upstream-report/src/report.rs, xtask/upstream-report/src/scanner/source_meta.rs, xtask/upstream-report/tests/directory_report.rs
+notable_untracked=scripts/build-module.sh, scripts/package-module.sh, scripts/qa-android.sh, scripts/lib/, dist/, module/bin/x86_64/, task evidence files
+ignored=AgentLogs/, Example/, target/, xtask/upstream-report/target/
+
+## adversarial probes
+dirty_worktree=pass; status was captured and no unrelated dirty files were reverted or modified.
+stale_state=pass; package-module was rerun before zip inspection, and verify-local reran its own package/zip gates.
+misleading_success_output=pass; verdict is based on exit codes plus required stdout markers and direct zip entry inspection.
+malformed_input=pass; scripts/qa-android.sh --unknown-option exits rc=2 with usage instead of success.
+cleanup=pass; find dist /tmp -maxdepth 1 for .puread-module-staging* and puread-verify-local.* returned no residue after runs.
+forbidden_capability_scope=pass; packaged zip entry names contain no forbidden Host/hosts/DNS/proxy/iptables/AdGuardHome/ad_reward/IFW entries.
+
+## conclusion
+All requested verification commands passed. The Wave5 quality blockers are resolved for the reviewed scope: oversized shell scripts are split under the 250 pure LOC limit, verify-local no longer uses predictable PID temp dirs, package-module uses unique guarded staging, dry-run QA reports plan-only status, and the generated module zip has required entries without forbidden path entries.

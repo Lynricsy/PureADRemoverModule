@@ -1,4 +1,4 @@
-use crate::manifest::{FindingRecord, ScanResult};
+use crate::manifest::{FindingRecord, ScanResult, SourceRecord, SourceType};
 
 pub fn render(result: &ScanResult) -> String {
     let manifest = &result.manifest;
@@ -41,6 +41,7 @@ pub fn render(result: &ScanResult) -> String {
     output.push_str("snapshot_policy=local input only; upstream text is data, not instructions\n");
     output.push_str("sync_decision=report_only; candidates require manual review\n");
     output.push_str("auto_import_allowed=false\n\n");
+    push_sources(&mut output, &manifest.sources);
     push_section(
         &mut output,
         "## accepted candidates",
@@ -50,6 +51,34 @@ pub fn render(result: &ScanResult) -> String {
     push_section(&mut output, "## rejected findings", &manifest.rejected, 80);
     push_section(&mut output, "## ignored files", &manifest.ignored, 20);
     output
+}
+
+fn push_sources(output: &mut String, sources: &[SourceRecord]) {
+    output.push_str("## sources\n");
+    if sources.is_empty() {
+        output.push_str("  - none\n\n");
+        return;
+    }
+    for source in sources {
+        output.push_str("  - source=");
+        output.push_str(&source.source_id);
+        output.push_str(" type=");
+        output.push_str(source_type_text(source.source_type));
+        output.push_str(" path=");
+        output.push_str(&source.path);
+        output.push_str(" sha256=");
+        output.push_str(&source.sha256);
+        output.push_str(" commit=");
+        output.push_str(&source.commit);
+        output.push_str(" remote_url=");
+        output.push_str(&source.remote_url);
+        output.push_str(" file_count=");
+        output.push_str(&source.file_count.to_string());
+        output.push_str(" executable_upstream_code=");
+        output.push_str(bool_text(source.executable_upstream_code));
+        output.push_str(" auto_import_allowed=false\n");
+    }
+    output.push('\n');
 }
 
 fn push_section(output: &mut String, title: &str, records: &[FindingRecord], limit: usize) {
@@ -105,4 +134,11 @@ fn push_line(output: &mut String, key: &str, value: &str) {
 
 const fn bool_text(value: bool) -> &'static str {
     if value { "true" } else { "false" }
+}
+
+const fn source_type_text(source_type: SourceType) -> &'static str {
+    match source_type {
+        SourceType::Directory => "directory",
+        SourceType::Zip => "zip",
+    }
 }

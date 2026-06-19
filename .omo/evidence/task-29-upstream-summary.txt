@@ -1,0 +1,170 @@
+{
+  "manifest_path": "upstream/upstream_manifest.json",
+  "summary": {
+    "sources": 2,
+    "accepted": 46,
+    "rejected": 68,
+    "ignored": 22
+  },
+  "policy": {
+    "download_performed": false,
+    "rules_modified": false,
+    "snapshots_modified": false,
+    "report_only": true,
+    "auto_import_allowed": false
+  },
+  "sources": [
+    {
+      "source_id": "Adguard-Home-For-Magisk-Mod",
+      "type": "directory",
+      "path": "Example/Adguard-Home-For-Magisk-Mod",
+      "sha256": "n/a",
+      "size_bytes": 3901656,
+      "file_count": 21,
+      "remote_url": "https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git",
+      "commit": "098ba8c78cf57dbd180fe2c72b05405b76eaa769",
+      "executable_upstream_code": true,
+      "auto_import_allowed": false
+    },
+    {
+      "source_id": "ads288.zip",
+      "type": "zip",
+      "path": "Example/ads288.zip",
+      "sha256": "bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7",
+      "size_bytes": 430199,
+      "file_count": 115,
+      "remote_url": "n/a",
+      "commit": "n/a",
+      "executable_upstream_code": true,
+      "auto_import_allowed": false
+    }
+  ],
+  "accepted_categories": [
+    "appops",
+    "component",
+    "file_path",
+    "rom_profile",
+    "sdk_cache",
+    "sqlite"
+  ],
+  "rejected_categories": [
+    "ad_reward_domain",
+    "dns",
+    "domain",
+    "hosts",
+    "ifw_clear",
+    "iptables_network",
+    "proxy"
+  ],
+  "manual_review": {
+    "accepted": 46,
+    "rejected": 68,
+    "ignored": 22
+  },
+  "sample_accepted": [
+    {
+      "source": "ads288.zip",
+      "path": "META-INF/com/google/android/update-binary",
+      "categories": [
+        "file_path"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "ads288.zip",
+      "path": "key.sh",
+      "categories": [
+        "file_path"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "ads288.zip",
+      "path": "mod/ad.sh",
+      "categories": [
+        "file_path",
+        "sdk_cache"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "ads288.zip",
+      "path": "mod/aweme.sh",
+      "categories": [
+        "file_path"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "ads288.zip",
+      "path": "mod/alicloud.sh",
+      "categories": [
+        "file_path"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    }
+  ],
+  "sample_rejected": [
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "path": ".github/ISSUE_TEMPLATE/bug-report.yml",
+      "categories": [
+        "dns",
+        "proxy"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "path": "Adguardhome/action.sh",
+      "categories": [
+        "dns"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "path": "Adguardhome/bin/AdGuardHome.yaml",
+      "categories": [
+        "dns",
+        "domain",
+        "ifw_clear",
+        "proxy"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "path": "Adguardhome/bin/data/filters/1721861844.txt",
+      "categories": [
+        "dns",
+        "domain",
+        "iptables_network",
+        "proxy"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    },
+    {
+      "source": "Adguard-Home-For-Magisk-Mod",
+      "path": "Adguardhome/bin/data/filters/1721861846.txt",
+      "categories": [
+        "dns",
+        "domain",
+        "ifw_clear",
+        "iptables_network",
+        "proxy"
+      ],
+      "review_state": "manual_review_only",
+      "auto_import_allowed": false
+    }
+  ]
+}

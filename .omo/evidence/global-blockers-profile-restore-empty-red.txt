@@ -1,0 +1,4 @@
+command=target/debug/puread-cli profile-restore --dry-run --module-root /tmp/puread-empty-red.CA9fLB
+filesystem error at /tmp/puread-empty-red.CA9fLB/state/profile-actions.jsonl: No such file or directory (os error 2)
+exit_code=1
+state_listing=

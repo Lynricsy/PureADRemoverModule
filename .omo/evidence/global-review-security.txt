@@ -1,0 +1,190 @@
+# Global Review Lane 4 - Security Review
+
+reviewed_at: 2026-06-19
+reviewer_scope: read-only security review; only this evidence file and AgentLog are written
+repository: /root/Projects/Ling/PureADRemoverModule
+verdict: PASS
+severity: none
+
+## 1. Required Inputs Checked
+
+- Inspected `.omo/evidence/f4-scope-fidelity.txt`; it records `verdict: PASS`, `blocked_matches=0`, local git identity unset, `Example/` ignored/untracked/unchanged, and packaged zip forbidden entry count 0.
+- Re-ran targeted forbidden capability scans over `crates`, `scripts`, `module`, `rules`, `xtask`, `README.md`, and `AGENTS.md`.
+- Inspected:
+  - `module/action.sh`
+  - `module/scripts/puread-module-lib.sh`
+  - `module/service.sh`
+  - `module/customize.sh`
+  - `module/uninstall.sh`
+  - `scripts/package-module.sh`
+  - `scripts/lib/verify-local-zip.sh`
+  - `scripts/lib/package-module-zip.sh`
+  - `scripts/verify-local.sh`
+  - command/profile/ledger safety paths in `crates/puread-cli`, `crates/puread-android`, and `crates/puread-core`
+- Checked zip entries for forbidden paths, nested zips, `Example/`, upstream snapshots, and symlink entries.
+- Checked local git config and git status.
+
+## 2. Root Module Shell Actions
+
+`module/action.sh`:
+
+- Actions default to `status`; real mutation is only exposed through explicit `apply-profile-execute <profile>` and `profile-restore-execute`.
+- Profile arguments and env-derived paths are passed as quoted argv to `puread-cli`, not interpolated into shell command strings:
+  - `"$PUREAD_CLI" apply-profile "$PUREAD_PROFILE_NAME" "--$PUREAD_APPLY_MODE" --rules "$PUREAD_RULES_DIR" --root "$PUREAD_PROFILE_ROOT" --module-root "$PUREAD_MODDIR"`
+  - `"$PUREAD_CLI" profile-restore "--$PUREAD_RESTORE_MODE" --module-root "$PUREAD_MODDIR"`
+- Extra action arguments are rejected with `puread_require_no_extra_arg`.
+- The shell-side profile ledger bootstrap rejects symlink leaf/parent, non-directory parent, and non-file ledger before creating `state/profile-actions.jsonl`, then applies `0700` directory and `0600` file permissions.
+- Residual note: shell-side ledger creation is not atomic `O_NOFOLLOW`; however Rust profile ledger read/rewrite paths also enforce module-root containment, parent symlink rejection, leaf symlink rejection, and `O_NOFOLLOW` before reading or writing. This is recorded as a non-blocking defense-in-depth note, not a blocker.
+
+`module/service.sh`:
+
+- Host execution is dry-run only outside Android.
+- Android daemon default is `PUREAD_DRY_RUN=1`; non-dry-run requires explicit `PUREAD_DRY_RUN=0`.
+- No DNS/hosts/proxy/iptables/AdGuardHome/ad_reward/root hiding code was found.
+
+Rust command execution boundaries:
+
+- `crates/puread-android/src/command_runner/validation.rs` rejects empty values, whitespace, NUL, option-like tokens, `..`, and shell metacharacters before constructing Android command argv.
+- `pm`, `cmd appops`, `settings`, `getprop`, `chcon`, and related adapters construct typed `CommandInvocation` argv arrays, not shell strings.
+- `settings` rejects `private_dns_mode`, `private_dns_specifier`, any key containing `dns`, `host`, or `proxy`, and only allows the ROM-ad settings allowlist.
+- Profile apply execute acquires `GlobalLock`, preflights profile ledger safety for non-file actions, then executes typed file/profile actions.
+- Profile restore execute acquires `GlobalLock`, reads ledger through no-follow/symlink-checked paths, restores final-state entries, and rewrites only after successful restore actions.
+
+## 3. File, Temp, and Ledger Handling
+
+`scripts/package-module.sh`:
+
+- Uses `mktemp -d "$PUREAD_DIST/.puread-module-staging.XXXXXX"`.
+- Cleanup is guarded to only remove paths matching `"$PUREAD_DIST"/.puread-module-staging.*`.
+- Required files, native daemon/CLI pairs, and rule TOML entries are checked before zip creation.
+
+`scripts/verify-local.sh` and `scripts/lib/verify-local-zip.sh`:
+
+- Uses `mktemp -d "${TMPDIR:-/tmp}/puread-verify-local.XXXXXX"`.
+- Cleanup refuses `/` and empty temp paths.
+- Zip check copies the package to `$TMP_ROOT/zip-check-package.zip` before inspecting it, avoiding reads from a concurrently replaced output zip.
+- Zip check validates required module entries, CLI/daemon ABI pairing, rule TOML presence, archive integrity, and forbidden zip path entries.
+
+`/tmp` cleanup evidence:
+
+- Existing `.omo/evidence/f3-tmp-cleanup-after.txt` and `.omo/evidence/f3-tmp-cleanup-after-verify.txt` are empty.
+- Current targeted check found no `/tmp/puread-verify-local.*`, `/.puread-module-staging.*`, or `/tmp/puread-zip-check.*` residues.
+- There are many historical `/tmp/puread-*` test artifacts from earlier QA/security tests; these are outside the current package/verify-local staging patterns and do not show current staging cleanup failure.
+
+Ledger/path traversal/symlink controls:
+
+- `crates/puread-cli/src/lock.rs` keeps lock paths under module root, rejects `..`, rejects symlink parents/leaves, and opens with `O_NOFOLLOW`.
+- `crates/puread-cli/src/profile_execute/profile_runtime.rs` keeps `state/profile-actions.jsonl` under module root, rejects symlink components/leaves, and opens append ledger with `O_NOFOLLOW`.
+- `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs` applies the same module-root, symlink, and `O_NOFOLLOW` checks for profile restore reads/rewrites.
+- File, SQLite, ROM XML, and restore paths use `secure_fs`/no-follow/symlink guards and have adversarial tests for symlink/path traversal behavior.
+
+## 4. Forbidden Capabilities
+
+Targeted scan:
+
+```sh
+rg -n -i --hidden -g '!**/target/**' -g '!dist/**' -g '!Example/**' -g '!AgentLogs/**' \
+  -e 'hosts|\bDNS\b|domain|proxy|Clash|Mihomo|\bBox\b|AdGuardHome|iptables|private_dns|mount_hosts|ad_reward|\bIFW\b|root hiding|anti-detection|zygisk|denylist|root_hide' \
+  crates scripts module rules xtask README.md AGENTS.md
+```
+
+Classification:
+
+- Allowed documentation: `AGENTS.md`, `README.md`.
+- Allowed verification guards: `scripts/lib/verify-local-forbidden.sh`, `scripts/lib/verify-local-zip.sh`.
+- Allowed parser/category rejection guards: `crates/puread-rules/src/parse.rs`, `crates/puread-rules/src/category.rs`.
+- Allowed settings rejection guard: `crates/puread-android/src/command_runner/settings.rs`.
+- Allowed upstream classifier/reporting: `xtask/upstream-report/src/**`.
+- Allowed tests/fixtures: `crates/**/tests/**`, `xtask/upstream-report/tests/**`, invalid fixtures.
+- Allowed rule provenance/notes: `rules/**` source metadata and explicit boundary notes.
+- Allowed SDK component class name: `.proxy.` appears as an Android SDK component class, not a proxy configuration.
+
+Result:
+
+- No production execution path implements DNS, hosts, domain/network rule handling, proxy/Clash/Mihomo/Box configuration, iptables, AdGuardHome service takeover, ad_reward, IFW clear, root hiding, anti-detection, Zygisk, denylist, or Shamiko behavior.
+
+## 5. Zip and Supply Chain
+
+Package checked:
+
+- `dist/PureAD-0.1.0-t25.zip`
+
+Zip entries:
+
+- `entry_count=37`
+- Required entries present: `module.prop`, `customize.sh`, `service.sh`, `post-fs-data.sh`, `uninstall.sh`, `action.sh`, `scripts/puread-module-lib.sh`
+- Native entries present: `bin/x86_64/puread-cli`, `bin/x86_64/puread-daemon`
+- Rule TOML entries present under `rules/`
+- `symlink_entries=0`
+
+Forbidden entry scan:
+
+```sh
+unzip -Z1 dist/PureAD-0.1.0-t25.zip | rg -n -i '(^|/)(Example|Host)(/|$)|(^|/)(hosts|host\.sh|mount_hosts|iptables|ad_reward)(/|$)|adguardhome|adguard-home|proxy|proxyconfig|clash|mihomo|\.zip$|private[_-]?dns|\bdns\b|zygisk|denylist|root.?hide|anti.?detect'
+```
+
+Result:
+
+- exit code 1 with empty output, meaning no forbidden zip entry matches.
+- Zip does not include `Example/`, upstream zip snapshots, nested `.zip` files, hosts/Host artifacts, forbidden binaries, proxy/Clash/Mihomo config, AdGuardHome files, iptables scripts, ad_reward files, private DNS artifacts, root hiding, anti-detection, Zygisk, or denylist artifacts.
+
+Hardcoded secret scan:
+
+```sh
+rg -n --hidden -g '!**/target/**' -g '!dist/**' -g '!Example/**' -g '!AgentLogs/**' -g '!*evidence*' -g '!.omo/**' -i 'password|passwd|secret|token|api[_-]?key|private[_-]?key|BEGIN (RSA|OPENSSH|PRIVATE)|Authorization:|Bearer [A-Za-z0-9._-]+' AGENTS.md README.md Cargo.toml Cargo.lock crates scripts module rules xtask
+```
+
+Result:
+
+- Matches were restore-token domain model names, test strings such as `"secret"` in adversarial tests, and docs/evidence wording.
+- No hardcoded credential, API key, auth header, private key, or bearer token found.
+
+## 6. Rust Unsafe / Unwrap / Expect
+
+Targeted production scan:
+
+```sh
+rg -n --hidden -g '!**/target/**' -g '!dist/**' -g '!Example/**' -g '!AgentLogs/**' -g '!**/tests/**' -g '!**/*_tests.rs' -g '!**/fixtures/**' '\bunsafe\b|\.unwrap\(|\.expect\(' crates scripts module xtask rules README.md AGENTS.md
+```
+
+Result:
+
+- No Rust `unsafe` blocks were found in production code.
+- No production `unwrap()` found.
+- `expect()` matches are test-only:
+  - `crates/puread-android/src/profiles/xml/tests.rs`
+  - `crates/puread-android/src/file_actions/mutate/metadata_ops.rs` inside `#[cfg(test)] mod tests`
+- The word `unsafe` also appears in error/documentation/test text, not as Rust unsafe code.
+
+## 7. Git and Repository State
+
+Local git config:
+
+```sh
+git config --local --list --show-origin
+git config --local --get-regexp '^(user\.|author\.|committer\.)'
+```
+
+Result:
+
+- Local config contains only core/remote/branch settings.
+- Local `user.*`, `author.*`, and `committer.*` identity settings are unset; identity query exited 1 with no matches.
+
+Git status:
+
+- Worktree is dirty with tracked changes and many untracked evidence/dist/module/bin/script/test files from the broader work.
+- Ignored directories include `AgentLogs/`, `Example/`, `target/`, and `xtask/upstream-report/target/`.
+- This security review did not commit, push, change local git config, modify `Example/`, or restore any worker changes.
+
+## 8. Blocking Issues
+
+None.
+
+## 9. Residual Risks
+
+- Shell-side profile ledger bootstrap in `module/action.sh` is a convenience pre-create step and is not an atomic no-follow open. Rust still enforces no-follow and module-root/symlink checks before real profile ledger reads/appends/rewrites, so this is not blocking. A future hardening improvement could remove shell-side ledger creation and let Rust create the ledger exclusively.
+- Historical `/tmp/puread-*` artifacts exist from prior test runs. Current verify-local/package staging patterns did not leave matching residues, so this is environment cleanup debt rather than a current security blocker.
+
+## 10. Final Verdict
+
+PASS

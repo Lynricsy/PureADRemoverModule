@@ -1,2 +1,3 @@
-Future packaging can copy validated non-domain rule files here for on-device
-dry-run scans. T22 keeps this directory as a placeholder only.
+Packaging copies the validated repository rule files into this directory inside
+the module zip. The checked-in directory stays as a placeholder so lifecycle
+scripts can resolve the same path before packaged rules are staged.

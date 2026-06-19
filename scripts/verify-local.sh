@@ -1,62 +1,23 @@
 #!/bin/sh
 set -eu
 
-FORBIDDEN_PATTERN='hosts|DNS|dns|iptables|Clash|clash|AdGuardHome|adguardhome|mount_hosts|ad_reward|private_dns|mihomo|proxy|ProxyConfig|domain'
-ALLOWED_FORBIDDEN_GUARD_PATTERN='^crates/puread-rules/src/(parse|category)\.rs:[0-9]+:[[:space:]]+"(hosts|host|dns|private_dns|domain|domains|proxy|clash|mihomo|adguardhome|iptables|iptables_network|mount_hosts|ad_reward|ad_reward_domain|ifw_clear|zygisk|root_hide)",[[:space:]]*$'
+EVIDENCE_DIR=".omo/evidence"
+TASK_PREFIX="$EVIDENCE_DIR/task-26"
 
-info() {
-    printf '%s\n' "info: $*"
-}
+SCRIPT_DIR="$(dirname "$0")"
+LIB_DIR="$SCRIPT_DIR/lib"
 
-skip() {
-    printf '%s\n' "skip: $*"
-}
+. "$LIB_DIR/verify-local-common.sh"
+. "$LIB_DIR/verify-local-forbidden.sh"
+. "$LIB_DIR/verify-local-quality.sh"
+. "$LIB_DIR/verify-local-zip.sh"
 
-run() {
-    info "run: $*"
-    "$@"
-}
-
-scan_forbidden_path() {
-    path=$1
-
-    if [ ! -e "$path" ]; then
-        return 0
-    fi
-
-    scanned=1
-    status=0
-    matches=$(rg -n "$FORBIDDEN_PATTERN" "$path") || status=$?
-    if [ "$status" -eq 0 ]; then
-        filtered_matches=$(printf '%s\n' "$matches" | filter_forbidden_matches)
-        if [ "$filtered_matches" != "" ]; then
-            printf '%s\n' "$filtered_matches"
-            matched=1
-        fi
-    else
-        if [ "$status" -ne 1 ]; then
-            exit "$status"
-        fi
-    fi
-}
-
-filter_forbidden_matches() {
-    while IFS= read -r match; do
-        if [ "$match" = "" ]; then
-            continue
-        fi
-        if is_allowed_forbidden_guard_match "$match"; then
-            continue
-        fi
-        printf '%s\n' "$match"
-    done
-}
-
-is_allowed_forbidden_guard_match() {
-    printf '%s\n' "$1" | grep -Eq "$ALLOWED_FORBIDDEN_GUARD_PATTERN"
-}
-
+if [ "${1-}" = "-h" ] || [ "${1-}" = "--help" ]; then
+    usage
+    exit 0
+fi
 if [ "${1-}" != "" ]; then
+    usage >&2
     printf '%s\n' "error: unknown argument: $1" >&2
     exit 2
 fi
@@ -66,39 +27,71 @@ if [ ! -f "AGENTS.md" ]; then
     exit 1
 fi
 
-run test -d ".omo/evidence"
-run test -f "scripts/verify-local.sh"
-run sh -n "scripts/verify-local.sh"
+cleanup_tmp_root() {
+    [ -n "${TMP_ROOT:-}" ] || return 0
+    case "$TMP_ROOT" in
+        /|"")
+            printf '%s\n' "error: refusing to clean unsafe temp path: $TMP_ROOT" >&2
+            return 1
+            ;;
+        *)
+            [ -d "$TMP_ROOT" ] && rm -rf "$TMP_ROOT"
+            ;;
+    esac
+}
 
-if [ -f "Cargo.toml" ]; then
-    if command -v cargo >/dev/null 2>&1; then
-        run cargo fmt --check
-        run cargo check --workspace --locked
-        run cargo clippy --workspace --all-targets --all-features -- -D warnings
-        run cargo test --workspace --locked
-    else
-        skip "cargo not found; Rust checks not run"
-    fi
-else
-    skip "Cargo.toml not found; Rust checks not run"
-fi
-
-if command -v rg >/dev/null 2>&1; then
-    scanned=0
-    matched=0
-    for path in crates/*/src src rules module modules install.sh service.sh post-fs-data.sh customize.sh; do
-        scan_forbidden_path "$path"
-    done
-    if [ "$scanned" -eq 0 ]; then
-        skip "production paths not found; forbidden-token scan not run"
-    elif [ "$matched" -ne 0 ]; then
-        printf '%s\n' "error: forbidden tokens found in production paths" >&2
+create_tmp_root() {
+    tmp_parent="${TMPDIR:-/tmp}"
+    TMP_ROOT="$(mktemp -d "${tmp_parent%/}/puread-verify-local.XXXXXX")" || {
+        printf '%s\n' "error: failed to create verify-local temp directory under $tmp_parent" >&2
         exit 1
-    else
-        info "forbidden-token scan found no production-path matches"
-    fi
-else
-    skip "rg not found; forbidden-token scan not run"
+    }
+}
+
+TMP_ROOT=""
+create_tmp_root
+trap cleanup_tmp_root EXIT HUP INT TERM
+
+FAILURES_FILE="$TMP_ROOT/failures.txt"
+FORBIDDEN_MATCHES="$TMP_ROOT/forbidden-matches.txt"
+FORBIDDEN_RG_ERRORS="$TMP_ROOT/forbidden-rg-errors.txt"
+FORBIDDEN_EVIDENCE="$TASK_PREFIX-forbidden-scan.txt"
+RUST_FILES="$TMP_ROOT/rust-files.txt"
+LOC_ROWS="$TMP_ROOT/loc-rows.txt"
+LOC_OVER="$TMP_ROOT/loc-over.txt"
+SHELL_FILES="$TMP_ROOT/shell-files.txt"
+
+: >"$FAILURES_FILE"
+: >"$LOC_ROWS"
+: >"$LOC_OVER"
+
+mkdir -p "$EVIDENCE_DIR"
+
+require_path "scripts/verify-local.sh"
+require_path "scripts/package-module.sh"
+require_path "rules/common"
+require_path "rules/apps"
+require_path "rules/sqlite"
+require_path "rules/appops"
+require_path "rules/components"
+require_path "rules/rom"
+
+run_capture "verify-local-sh-parse" "$TASK_PREFIX-verify-script-parse.txt" sh -n "scripts/verify-local.sh"
+run_capture "cargo-fmt" "$TASK_PREFIX-cargo-fmt.txt" cargo fmt --all -- --check
+run_capture "cargo-clippy" "$TASK_PREFIX-cargo-clippy.txt" cargo clippy --workspace --all-targets --all-features -- -D warnings
+run_capture "cargo-test" "$TASK_PREFIX-cargo-test.txt" cargo test --workspace
+run_capture "rules-validate" "$TASK_PREFIX-rules-validate.txt" cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom
+run_capture "package-module" "$TASK_PREFIX-package.txt" scripts/package-module.sh
+
+write_zip_check
+write_forbidden_scan
+write_loc_check
+write_shell_parse_check
+
+if [ -s "$FAILURES_FILE" ]; then
+    printf '%s\n' "error: local verification failed"
+    sed 's/^/  - /' "$FAILURES_FILE"
+    exit 1
 fi
 
-info "local verification skeleton finished; review skip lines for gates not run"
+info "local verification passed"

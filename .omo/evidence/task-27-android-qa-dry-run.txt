@@ -1,0 +1,16 @@
+info: static compatibility evidence: .omo/evidence/task-27-static-compat.txt
+== command plan ==
+plan: adb devices
+plan: adb shell dumpsys batterystats
+plan: adb shell dumpsys alarm
+plan: adb shell dumpsys deviceidle
+plan: adb shell top -b -n 1
+plan: adb shell su -c 'sh /data/adb/modules/PureAD/action.sh status'
+plan: adb shell su -c 'PUREAD_SCAN_ROOT=/data sh /data/adb/modules/PureAD/action.sh scan-dry-run'
+plan: adb shell su -c '/data/adb/modules/PureAD/bin/<abi>/puread-cli apply-profile conservative --dry-run --rules /data/adb/modules/PureAD/rules --root / --module-root /data/adb/modules/PureAD'
+plan: adb shell su -c 'PUREAD_DRY_RUN=1 sh /data/adb/modules/PureAD/service.sh'
+plan: adb shell su -c 'check /data/adb/modules/PureAD/run/puread-daemon.pid and stop only a pid started by this QA run'
+== end command plan ==
+qa_status=plan_only
+real_device_pass=false
+info: device unavailable evidence: .omo/evidence/task-27-device-unavailable.txt

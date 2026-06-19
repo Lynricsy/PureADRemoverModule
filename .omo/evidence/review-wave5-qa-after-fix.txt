@@ -1,0 +1,220 @@
+# Wave5 T25-T29 QA after script-quality fix
+
+reviewed_at=2026-06-19T03:18:00+08:00
+role=read_only_qa_reviewer
+verdict=FAIL
+
+## Scope
+
+- Repository: `/root/Projects/Ling/PureADRemoverModule`
+- Review mode: read-only QA; no code edits, no commit, no push, no `Example/` mutation.
+- Allowed writes: this evidence file and AgentLog only.
+- Initial dirty worktree was already present before this review, including modified README/script/xtask files and untracked evidence/dist/module-bin/script files.
+
+## Commands run
+
+### 1. Local verification
+
+Command:
+
+```sh
+scripts/verify-local.sh > /tmp/puread-review-wave5-verify-local.log 2>&1
+```
+
+Exit code: `1`
+
+Key output:
+
+```text
+info: pass: verify-local-sh-parse
+info: pass: cargo-fmt
+info: pass: cargo-clippy
+info: pass: cargo-test
+info: pass: rules-validate
+info: pass: package-module
+error: zip structure check failed; see .omo/evidence/task-26-zip-check.txt
+info: pass: forbidden scan
+info: pass: pure Rust LOC
+info: pass: shell parse
+error: local verification failed
+  - zip structure check failed; see .omo/evidence/task-26-zip-check.txt
+```
+
+Blocking finding:
+
+- `scripts/verify-local.sh` does not pass. This directly fails the required VERIFY item.
+- Generated `.omo/evidence/task-26-zip-check.txt` is internally misleading: it records `exit_code=1` and `result=fail`, then later includes successful zip details and `result=pass`.
+- Source location reviewed: `scripts/lib/verify-local-zip.sh:85` to `scripts/lib/verify-local-zip.sh:95`. The Python zip-check path treats the helper return code as failure even though zip content output is appended afterward. This is a `misleading_success_output` failure and blocks approval.
+
+### 2. Android dry-run
+
+Command:
+
+```sh
+scripts/qa-android.sh --dry-run > /tmp/puread-review-wave5-qa-android.log 2>&1
+```
+
+Exit code: `0`
+
+Required stdout markers: PASS
+
+```text
+== command plan ==
+qa_status=plan_only
+real_device_pass=false
+```
+
+### 3. Package module and zip entries
+
+Command:
+
+```sh
+scripts/package-module.sh > /tmp/puread-review-wave5-package.log 2>&1
+unzip -Z1 dist/PureAD-0.1.0-t25.zip > /tmp/puread-review-wave5-zip-list.log 2>&1
+```
+
+Exit codes:
+
+- `scripts/package-module.sh`: `0`
+- `unzip -Z1`: `0`
+
+Required entries: PASS
+
+```text
+present module.prop
+present action.sh
+present service.sh
+present post-fs-data.sh
+present customize.sh
+present bin/x86_64/puread-cli
+present bin/x86_64/puread-daemon
+present rules/common/sdk-cache.toml
+```
+
+Forbidden zip entries: PASS, empty match set.
+
+### 4. Upstream report-only
+
+First attempted command with both `--manifest` and `--report` failed because the script does not support `--report`:
+
+```text
+error: unknown argument: --report
+```
+
+Supported read-only rerun:
+
+```sh
+tmpdir="$(mktemp -d /tmp/puread-review-wave5-upstream2.XXXXXX)"
+scripts/update-upstream.sh --from-local Example --manifest "$tmpdir/upstream_manifest.json" --report-only > /tmp/puread-review-wave5-upstream2.log 2>&1
+```
+
+Exit code: `0`
+
+Required report markers: PASS
+
+```text
+mode=report-only
+manifest_path=/tmp/puread-review-wave5-upstream2.*/upstream_manifest.json
+rules_modified=false
+download_performed=false
+snapshots_modified=false
+accepted_total=46
+rejected_total=68
+ignored_total=22
+auto_import_allowed=false
+source=Adguard-Home-For-Magisk-Mod ... commit=098ba8c78cf57dbd180fe2c72b05405b76eaa769 remote_url=https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git
+source=ads288.zip ... sha256=bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7
+```
+
+Protected tracked paths check: PASS
+
+```sh
+git status --short -- rules Example upstream/upstream_manifest.json
+```
+
+Before and after upstream report-only rerun: no output, so no tracked diff in `rules/`, `Example/`, or `upstream/upstream_manifest.json`.
+
+### 5. README grep
+
+Command:
+
+```sh
+rg -n "非 DNS|非DNS|不是 DNS|不是DNS|hosts|Clash|本地层|安装|打包|profile|风险|恢复|卸载|上游同步|AdGuard Home|AdGuardHome" README.md
+rg -n "推荐.*(DNS|hosts|AdGuard Home|AdGuardHome)|把.*(DNS|hosts|AdGuard Home|AdGuardHome).*推荐|DNS.*推荐功能|hosts.*推荐功能|AdGuard Home.*推荐功能" README.md
+```
+
+Result: PASS
+
+- README explains non-DNS/hosts/Clash replacement boundary, local-layer supplement, install/package entry points, profile risk, restore/uninstall, and upstream sync.
+- No match found for DNS/hosts/AdGuard Home being presented as a recommended feature.
+
+### 6. T25-T29 and script-quality evidence files
+
+Result: PASS
+
+Observed evidence files include:
+
+```text
+.omo/evidence/task-25-26-27-script-quality-fix.txt
+.omo/evidence/task-25-package.txt
+.omo/evidence/task-25-verify-local.txt
+.omo/evidence/task-26-cargo-clippy.txt
+.omo/evidence/task-26-cargo-fmt.txt
+.omo/evidence/task-26-cargo-test.txt
+.omo/evidence/task-26-rules-validate.txt
+.omo/evidence/task-26-verify-local.txt
+.omo/evidence/task-26-zip-check.txt
+.omo/evidence/task-27-android-qa-dry-run.txt
+.omo/evidence/task-28-readme-grep.txt
+.omo/evidence/task-29-upstream-regression.txt
+```
+
+### 7. Git status and local git config
+
+Command:
+
+```sh
+git status --short --ignored
+git config --local --get user.name
+git config --local --get user.email
+```
+
+Result:
+
+- Worktree remains dirty with pre-existing modified/untracked files plus this evidence file.
+- `git config --local --get user.name`: rc `1`, unset.
+- `git config --local --get user.email`: rc `1`, unset.
+- No local git identity was set.
+
+## Adversarial probes
+
+- `dirty_worktree`: detected and preserved; no restore, no cleanup, no commit.
+- `stale_state`: commands were actually rerun during this review; logs stored under `/tmp/puread-review-wave5-*`.
+- `misleading_success_output`: FAIL. `verify-local` exits `1`, while zip evidence contains both failing and passing result markers.
+- `generated artifact`: package zip and module binaries were generated by required package commands; no cleanup was performed.
+- `forbidden scope`: zip forbidden-entry scan empty; upstream report-only classified forbidden upstream scope as rejected and `auto_import_allowed=false`.
+- `cleanup`: no destructive cleanup performed; `Example/` was not modified.
+
+## Final blocking issue
+
+1. `scripts/verify-local.sh` exits `1`.
+   - Reproduce:
+
+     ```sh
+     scripts/verify-local.sh
+     sed -n '1,80p' .omo/evidence/task-26-zip-check.txt
+     ```
+
+   - Evidence:
+
+     ```text
+     error: zip structure check failed; see .omo/evidence/task-26-zip-check.txt
+     error: local verification failed
+       - zip structure check failed; see .omo/evidence/task-26-zip-check.txt
+     ```
+
+   - Relevant code:
+     - `scripts/verify-local.sh:86` calls `write_zip_check`.
+     - `scripts/lib/verify-local-zip.sh:85` to `scripts/lib/verify-local-zip.sh:95` handles the Python zip-check branch and currently records a failure for a zip that independently validates by `unzip -Z1` and required-entry checks.
+
+Because required VERIFY item 1 fails, this review cannot return PASS.

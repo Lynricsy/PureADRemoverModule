@@ -1,0 +1,192 @@
+# F4 Final Verification - Scope Fidelity and Forbidden Capability Audit
+
+reviewed_at: 2026-06-19
+reviewer_scope: read-only final scope review; only this evidence file and AgentLog are written
+repository: /root/Projects/Ling/PureADRemoverModule
+verdict: PASS
+
+## 1. 工作树、历史记录与 git 配置
+
+历史记录：
+- 已先使用 AgentLogs `search_logs` 查询相关历史，命中 Wave5 scope / zip check / F2 review 记录。
+- 已读取 `0217-Wave5-zip-check-范围边界最终轻量复核-PASS.md`，用于对齐既有 forbidden 分类口径。
+
+git remote:
+- `origin git@github.com:Lynricsy/PureADRemoverModule.git`
+
+local git config:
+- `git config --local --list --show-origin` 只包含 core、remote、branch 项。
+- `git config --local --get-regexp '^(user\.|author\.|committer\.)'` 退出码 1 且无输出。
+- 结论：local git identity unset，未设置 local user.name/user.email/author/committer。
+
+dirty worktree:
+- `git status --short --ignored` 显示本次审查前已存在多项 tracked 修改、未跟踪 evidence、dist、module/bin、scripts、xtask tests，以及 ignored `AgentLogs/`、`Example/`、`target/`。
+- 本审查未恢复、提交、推送或改写这些既有变更。
+
+## 2. Forbidden token 分类扫描
+
+扫描命令：
+
+```sh
+rg -n -i --hidden -g '!**/target/**' -g '!dist/**' \
+  -e 'hosts|\bDNS\b|domain|proxy|Clash|Mihomo|\bBox\b|AdGuardHome|iptables|private_dns|mount_hosts|ad_reward|\bIFW\b|root hiding|zygisk|denylist' \
+  crates scripts module rules xtask README.md AGENTS.md
+```
+
+结果：
+- raw_matches=453
+- blocked_matches=0
+- result=pass
+
+允许命中分类：
+- documentation: `AGENTS.md` 与 `README.md` 的项目边界、禁止能力说明、验证命令说明。
+- verification_grep_guard: `scripts/lib/verify-local-forbidden.sh`、`scripts/lib/verify-local-zip.sh` 中的 forbidden token 扫描与 zip guard。
+- rule_rejection_guard: `crates/puread-rules/src/category.rs` 中 forbidden categories 拒绝集合；`crates/puread-rules/src/parse.rs` 中 forbidden fields 拒绝集合。
+- settings_rejection_guard: `crates/puread-android/src/command_runner/settings.rs` 拒绝 `private_dns_mode`、`private_dns_specifier`、包含 `dns` / `host` / `proxy` 的 settings key，并仅允许 ROM 广告相关 allowlist。
+- upstream_audit_classifier: `xtask/upstream-report/src/classifier/forbidden.rs` 与 manifest 分类 forbidden upstream scope，不是生产执行能力。
+- test_or_fixture: `crates/*/tests/**`、`xtask/upstream-report/tests/**`、`crates/puread-rules/fixtures/invalid/**` 中的拒绝测试和 fixture。
+- rule_notes_or_provenance: `rules/**` 中的 `source` / `source_file` / `notes` / `source_line_or_pattern` 溯源或边界说明。
+- sdk_component_class_name: `rules/components/sdk-ad-components.toml` 中 Android SDK 组件类名包含 `.proxy.`，上下文是 component target，不是代理配置。
+- package_metadata_boundary: `crates/*/Cargo.toml` description 中的 `non-domain` 项目边界说明。
+
+针对性执行路径复核：
+- `crates/puread-rules/src/category.rs` 只允许 `file_path`、`sdk_cache`、`sqlite`、`component`、`appops`、`rom_profile`，并显式拒绝 `hosts`、`dns`、`domain`、`proxy`、`iptables_network`、`ad_reward_domain`、`ifw_clear`。
+- `crates/puread-rules/src/parse.rs` 在 TOML 解析前扫描字段名并拒绝 `hosts`、`dns`、`private_dns`、`domain(s)`、`proxy`、`clash`、`mihomo`、`adguardhome`、`iptables`、`mount_hosts`、`ad_reward`、`ifw_clear`、`zygisk`、`root_hide`。
+- `crates/puread-android/src/command_runner/settings.rs` 对 forbidden settings 是拒绝逻辑，不实现 DNS/private DNS/hosts/proxy 修改。
+- `module/service.sh` 只启动 `puread-daemon`，默认 `PUREAD_DRY_RUN=1`；没有 hosts/DNS/proxy/iptables/AdGuardHome/ad_reward/IFW/root hiding/zygisk/denylist 实现。
+- `module/scripts/puread-module-lib.sh` 只处理 runtime/ABI/status/log/CLI dry-run 辅助；未实现禁止能力。
+
+结论：
+- 没有发现生产执行路径实现 hosts、DNS/private DNS、domain/network rules、proxy/Clash/Mihomo/Box、AdGuardHome、iptables、mount_hosts、ad_reward、IFW clear、root hiding、zygisk、denylist。
+
+## 3. dist zip entries
+
+zip:
+- `dist/PureAD-0.1.0-t25.zip`
+
+entry list:
+
+```text
+module.prop
+customize.sh
+service.sh
+post-fs-data.sh
+uninstall.sh
+action.sh
+scripts/
+scripts/puread-module-lib.sh
+bin/
+bin/x86_64/
+bin/x86_64/puread-cli
+bin/x86_64/puread-daemon
+rules/
+rules/appops/
+rules/apps/
+rules/common/
+rules/components/
+rules/rom/
+rules/sqlite/
+rules/appops/luna-and-reader-appops.toml
+rules/apps/com.autonavi.minimap.toml
+rules/apps/com.coolapk.market.toml
+rules/apps/com.netease.cloudmusic.toml
+rules/apps/com.ss.android.ugc.aweme.toml
+rules/apps/com.taobao.idlefish.toml
+rules/apps/com.tencent.mobileqq.toml
+rules/apps/com.zhihu.android.toml
+rules/apps/ctrip.android.view.toml
+rules/apps/tv.danmaku.bili.toml
+rules/common/sdk-cache.toml
+rules/components/mi-market-components.toml
+rules/components/sdk-ad-components.toml
+rules/rom/miui-ad-settings.toml
+rules/rom/miui-shared-prefs.toml
+rules/sqlite/app-ad-databases.toml
+rules/sqlite/common-sdk-databases.toml
+rules/sqlite/coolapk-ad-databases.toml
+```
+
+forbidden zip entry scan:
+
+```sh
+unzip -Z1 dist/PureAD-0.1.0-t25.zip | rg -n -i '(^|/)(Example|Host)(/|$)|(^|/)(hosts|host\.sh|mount_hosts|iptables|ad_reward)(/|$)|adguardhome|adguard-home|proxy|proxyconfig|clash|mihomo|\.zip$'
+```
+
+结果：
+- exit_code=1
+- output_empty=true
+- Python zip check: `entry_count=37`, `forbidden_entry_count=0`
+
+结论：
+- dist zip 不包含 hosts/Host/host.sh/mount_hosts/iptables/ad_reward/AdGuardHome/proxy 配置文件。
+- dist zip 不包含上游 zip 原件或 `Example/` 内容。
+
+## 4. Example/ 边界
+
+命令结果：
+- `git check-ignore -v Example/` -> `.gitignore:2:Example/ Example/`
+- `git ls-files Example` -> 空输出
+- `git diff --name-only HEAD -- Example` -> 空输出
+- `git status --short --ignored` -> `!! Example/`
+
+结论：
+- `Example/` 被 `.gitignore` 忽略。
+- `Example/` 没有被纳入 git tracked 文件。
+- `Example/` 没有 tracked diff。
+- 本审查未改写 `Example/`。
+
+## 5. 规则分类与 domain/network 规则
+
+规则解析脚本结果：
+
+```text
+rule_count=56
+categories=appops,component,file_path,rom_profile,sdk_cache,sqlite
+bad_count=0
+```
+
+规则目录 token 复核：
+- `rules/**` 中未发现 domain/network rule 数据结构。
+- 命中项仅为：
+  - `rules/rom/miui-ad-settings.toml` notes 中声明不包含 private DNS/network 等设置。
+  - `rules/components/sdk-ad-components.toml` 的 Android component class name 包含 `.proxy.`，属于 SDK 组件名。
+  - `rules/apps/**` 与 `rules/common/sdk-cache.toml` 的 `source` / `source_file` 指向 `Adguard-Home-For-Magisk-Mod` 上游快照作为溯源字段。
+
+结论：
+- 规则分类只包含 allowed categories：`file_path`、`sdk_cache`、`sqlite`、`component`、`appops`、`rom_profile`。
+- 未维护 domain/network rules。
+
+## 6. daemon/脚本耗电与常驻行为
+
+扫描命令：
+
+```sh
+rg -n -i 'sleep[[:space:]]+5|5s|Duration::from_secs\(5\)|wake.?lock|wakelock|foreground|startForeground|FOREGROUND_SERVICE|while[[:space:]]+true|loop[[:space:]]*\{' crates/puread-daemon scripts module crates README.md AGENTS.md
+```
+
+命中分类：
+- `AGENTS.md`、`README.md`：禁止说明和低功耗设计说明。
+- `crates/puread-daemon/src/event_loop.rs`：事件循环结构定义与 `while running`，通过 `mio::Poll` / inotify 阻塞等待事件，不是固定 5 秒轮询。
+- `crates/puread-daemon/src/scheduler/config.rs`：最低低频维护间隔为 6 小时，failure backoff cap 24 小时，jitter upper bound 30 分钟。
+- `scripts/lib/verify-local-zip.sh`：zip check retry 中 `sleep 1`，属于构建验证脚本短暂重试，不是 daemon 常驻轮询。
+- `crates/puread-android/src/command_runner/appops.rs` 与 tests：`foreground` 是 Android AppOps mode 允许值，不是前台服务。
+- `crates/puread-android/src/profiles/xml_bool.rs` 中 `loop` 是 XML sibling 遍历，不是常驻轮询。
+- `crates/puread-daemon/src/event_loop/control.rs` 使用 `mio::Waker` 唤醒 epoll 事件循环，不是 Android wake lock。
+
+结论：
+- daemon 没有固定 5 秒轮询。
+- 未发现 Android wake lock / wakelock。
+- 未发现 Android foreground service / `startForeground` / `FOREGROUND_SERVICE`。
+- daemon 文件规则路径为 inotify/mio 事件驱动；维护调度最低 6 小时间隔。
+
+## 7. Adversarial review notes
+
+- scope creep: 未发现 forbidden capability 进入生产执行路径；命中均可分类为 guard、文档、测试、溯源或上游 classifier。
+- prompt injection/upstream untrusted: 上游快照只以 `source_file` 元数据和 `xtask/upstream-report` classifier 数据处理；未执行或打包上游脚本/zip。
+- misleading_success_output: 未只依赖脚本文字成功输出；实际读取了代码、规则、zip entries、git ignore、git config 和 status。
+- stale_state: 重新运行了 `git status --short --ignored`、zip entry scan、规则解析和 forbidden token scan。
+- dirty_worktree: 已识别既有 dirty worktree；本审查不恢复、不提交、不推送，仅写本文件和 AgentLog。
+
+## 8. Final verdict
+
+PASS

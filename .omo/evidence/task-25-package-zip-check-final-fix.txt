@@ -1,0 +1,14 @@
+gate=zip-required-and-forbidden-final-fix
+REQUIRED_PRESENT	module.prop
+REQUIRED_PRESENT	customize.sh
+REQUIRED_PRESENT	service.sh
+REQUIRED_PRESENT	post-fs-data.sh
+REQUIRED_PRESENT	uninstall.sh
+REQUIRED_PRESENT	action.sh
+REQUIRED_PRESENT	scripts/puread-module-lib.sh
+REQUIRED_PRESENT	bin/x86_64/puread-daemon
+REQUIRED_PRESENT	bin/x86_64/puread-cli
+REQUIRED_PRESENT	rules/common/sdk-cache.toml
+forbidden_entries=none
+entry_count=37
+result=pass

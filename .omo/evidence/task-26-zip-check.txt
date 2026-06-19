@@ -1,0 +1,8 @@
+gate=zip-check
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+entry_count=37
+rule_file_count=18
+abis=x86_64
+required_entries=present
+forbidden_path_entries=none
+result=pass

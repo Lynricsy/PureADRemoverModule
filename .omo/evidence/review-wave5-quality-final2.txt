@@ -1,0 +1,149 @@
+review=wave5-quality-final2
+verdict=PASS
+review_mode=readonly
+date=2026-06-19
+repo=/root/Projects/Ling/PureADRemoverModule
+
+Scope:
+- Final Wave5 script quality review after package LOC fix.
+- Allowed writes: this evidence file and AgentLog only.
+- No code changes, no commits, no pushes, no Example/ changes, no local git config changes.
+
+Initial state:
+- `git status --short --ignored` showed an already dirty worktree with modified/untracked project files and ignored AgentLogs/, Example/, target/, xtask/upstream-report/target/.
+- These pre-existing changes were treated as review input only; no files were reverted or edited except this evidence file.
+- `git config --local --list --show-origin` contained only core, remote.origin, and branch.main settings.
+- `git config --local --get-regexp '^(user|author|committer)\.'` exited 1 with no output, confirming local identity config is unset.
+
+VERIFY results:
+1. Shell syntax:
+   - Command: `sh -n scripts/package-module.sh scripts/lib/*.sh scripts/verify-local.sh scripts/qa-android.sh`
+   - Exit: 0
+   - Result: PASS
+
+2. Shell LOC <=250:
+   - Command: `wc -l scripts/*.sh scripts/lib/*.sh`
+   - Exit: 0
+   - Result: PASS
+   - Counts:
+     - scripts/build-module.sh: 234
+     - scripts/package-module.sh: 191
+     - scripts/qa-android.sh: 125
+     - scripts/update-upstream.sh: 88
+     - scripts/verify-local.sh: 97
+     - scripts/lib/package-module-zip.sh: 63
+     - scripts/lib/qa-android-common.sh: 86
+     - scripts/lib/qa-android-device.sh: 141
+     - scripts/lib/qa-android-static.sh: 86
+     - scripts/lib/verify-local-common.sh: 50
+     - scripts/lib/verify-local-forbidden.sh: 194
+     - scripts/lib/verify-local-quality.sh: 81
+     - scripts/lib/verify-local-zip.sh: 150
+   - Independent over-limit command:
+     - `awk 'FNR==1 { if (file != "" && count > 250) { print count, file } file=FILENAME; count=0 } { count++ } END { if (file != "" && count > 250) print count, file }' scripts/*.sh scripts/lib/*.sh`
+     - Exit: 0
+     - Output: empty
+   - Note: worker claim said package-module.sh=164 and helper=54, but current actual counts are package-module.sh=191 and helper=63. This does not block because every checked script is <=250.
+
+3. Staging/temp/atomic evidence safety:
+   - `scripts/package-module.sh` uses a single staging `mktemp -d "$PUREAD_DIST/.puread-module-staging.XXXXXX"` at line 129.
+   - `scripts/package-module.sh` installs `trap cleanup_stage EXIT HUP INT TERM` at line 153.
+   - `cleanup_stage` only removes paths matching `"$PUREAD_DIST"/.puread-module-staging.*` and refuses unsafe paths at lines 115-126.
+   - Normal completion calls `cleanup_stage` then clears `PUREAD_STAGE=""` at lines 187-188.
+   - `scripts/verify-local.sh` creates one temp root with `mktemp -d "${tmp_parent%/}/puread-verify-local.XXXXXX"` at line 45.
+   - `scripts/verify-local.sh` guards cleanup against `/` and empty path, then removes only `$TMP_ROOT` at lines 30-40.
+   - `scripts/verify-local.sh` installs `trap cleanup_tmp_root EXIT HUP INT TERM` at line 53.
+   - `scripts/lib/verify-local-zip.sh` snapshots the package to `$TMP_ROOT/zip-check-package.zip`, writes attempt output under `$TMP_ROOT`, removes both on success/failure, and retries up to 3 times at lines 67-93.
+   - `scripts/lib/verify-local-zip.sh` writes zip-check evidence through `evidence_tmp="$(mktemp "${evidence}.tmp.XXXXXX")"` and replaces final evidence with `mv "$evidence_tmp" "$evidence"` on every result path at lines 95-150.
+   - Result: PASS
+
+4. Local verification:
+   - Command: `scripts/verify-local.sh`
+   - Exit: 0
+   - Key output:
+     - pass: verify-local-sh-parse
+     - pass: cargo-fmt
+     - pass: cargo-clippy
+     - pass: cargo-test
+     - pass: rules-validate
+     - pass: package-module
+     - pass: zip check
+     - pass: forbidden scan
+     - pass: pure Rust LOC
+     - pass: shell parse
+     - local verification passed
+   - Result: PASS
+
+5. Package script:
+   - Command: `scripts/package-module.sh`
+   - Exit: 0
+   - Key output:
+     - PureAD build-module
+     - profile=debug
+     - mode=host-fixture
+     - abis=x86_64
+     - copied daemon and cli to module/bin/x86_64/
+     - zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+     - done=package-module
+   - Result: PASS
+
+6. Android QA dry run:
+   - Command: `scripts/qa-android.sh --dry-run`
+   - Exit: 0
+   - Key output:
+     - printed adb/su command plan only
+     - qa_status=plan_only
+     - real_device_pass=false
+     - device unavailable evidence recorded by script
+   - Result: PASS for requested `--dry-run` gate
+
+7. Zip entries:
+   - Command: `unzip -Z1 dist/PureAD-0.1.0-t25.zip`
+   - Exit: 0
+   - Required entries present:
+     - module.prop
+     - customize.sh
+     - service.sh
+     - post-fs-data.sh
+     - uninstall.sh
+     - action.sh
+     - scripts/puread-module-lib.sh
+     - bin/x86_64/puread-cli
+     - bin/x86_64/puread-daemon
+     - rules/*.toml entries under appops, apps, common, components, rom, sqlite
+   - Forbidden entry scan:
+     - Command: `unzip -Z1 dist/PureAD-0.1.0-t25.zip | rg -n '(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw'`
+     - Exit: 1
+     - Output: empty
+     - Interpretation: no forbidden entries matched
+   - Result: PASS
+
+8. Cleanup residue:
+   - Command: `find dist -maxdepth 1 -type d -name '.puread-module-staging.*' -print`
+   - Exit: 0
+   - Output: empty
+   - Command: `find /tmp -maxdepth 1 -type d -name 'puread-verify-local.*' -print`
+   - Exit: 0
+   - Output: empty
+   - Command: `find .omo/evidence -maxdepth 1 -type f -name '*zip-check.txt.tmp.*' -print`
+   - Exit: 0
+   - Output: empty
+   - Result: PASS
+
+9. Final git/local config:
+   - `git config --local --get-regexp '^(user|author|committer)\.'` exited 1 with no output.
+   - `git config --local --list --show-origin` still contained only core, remote.origin, and branch.main settings.
+   - `git status --short --ignored` remained dirty with pre-existing tracked/untracked files plus this new evidence file after writing.
+   - Result: PASS
+
+Adversarial checks:
+- misleading_success_output: PASS. Success output was not trusted alone; script exits, zip entries, forbidden scan, and cleanup residue were independently verified.
+- stale_state: PASS. `scripts/package-module.sh` was run after `scripts/verify-local.sh`, and `dist/PureAD-0.1.0-t25.zip` was inspected after packaging.
+- dirty_worktree: PASS with note. Worktree is dirty, but review scope did not require clean tree and no unrelated changes were reverted or edited.
+- generated artifact: PASS. The generated zip was inspected directly with `unzip -Z1`; staging/temp artifacts were checked separately.
+- cleanup: PASS. No package staging dir, puread verify tmp dir, or zip-check tmp evidence remained.
+
+Conclusion:
+- All requested VERIFY gates passed.
+- Package/module shell quality line passes after the LOC split.
+- Final verdict: PASS.

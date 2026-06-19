@@ -1,4 +1,4 @@
-Future T25 packaging should place native artifacts under this directory:
+Build packaging places native artifacts under this directory:
 
 - `arm64-v8a/puread-daemon`
 - `arm64-v8a/puread-cli`
@@ -11,6 +11,6 @@ Future T25 packaging should place native artifacts under this directory:
 - `riscv64/puread-daemon`
 - `riscv64/puread-cli`
 
-T22 intentionally ships no native binaries. Lifecycle scripts report missing
-binaries as `missing_binary` or `template_only` instead of treating this as a
-successful daemon launch.
+Local host fixture artifacts can be used to validate zip layout when Android
+cross-compilation is unavailable. Those host fixtures are not Android-device
+validated binaries.

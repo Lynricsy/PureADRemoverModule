@@ -1,0 +1,186 @@
+gate=forbidden-scan
+policy=production execution paths must not implement DNS/hosts/proxy/iptables/private-DNS/IFW/root-hiding capabilities
+allowed_contexts=documentation,test_or_fixture,verification_grep_guard,rule_rejection_guard,upstream_audit_classifier,settings_rejection_guard,package_metadata_boundary,rule_notes_or_provenance,sdk_component_class_name
+ALLOWED	allowed:documentation	AGENTS.md:7:PureADRemoverModule 是 Android Root 环境下的非域名本地层去广告模块。项目只处理 Clash/代理/DNS 无法覆盖的本地落地物，例如应用私有目录中的广告缓存、广告 SDK 文件、已知广告 SQLite 数据库、显式 profile 下的 AppOps、组件禁用和 ROM profile。
+ALLOWED	allowed:documentation	AGENTS.md:9:本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品。域名、网络连接和代理路由由用户已有网络层工具处理；本仓库只做本地文件、数据库和系统状态的可回滚治理。
+ALLOWED	allowed:documentation	AGENTS.md:25:| hosts | 生成、合并、挂载、动态切换 `hosts`、`Host/`、`host.sh`、`mount_hosts*` | 只允许在文档和 grep guard 中作为禁止能力说明 |
+ALLOWED	allowed:documentation	AGENTS.md:26:| DNS | DNS 重定向、私人 DNS 强制关闭、DNS 劫持、DNS 服务接管 | 只允许在禁止能力说明中出现 |
+ALLOWED	allowed:documentation	AGENTS.md:27:| domain | 维护域名名单、域名黑白名单、域名规则同步、域名去广告逻辑 | 只允许在项目边界和拒绝导入说明中出现 |
+ALLOWED	allowed:documentation	AGENTS.md:28:| 代理 | 改写 Clash、Mihomo、Box、ProxyConfig 或其他代理配置 | 只允许在项目边界说明中出现 |
+ALLOWED	allowed:documentation	AGENTS.md:29:| AdGuardHome | 打包、启动、配置或接管 AdGuardHome 二进制/服务 | 只允许作为上游示例来源和禁止能力说明 |
+ALLOWED	allowed:documentation	AGENTS.md:30:| iptables | 域名/IP/字符串/TLS/SNI 阻断、全局 `iptables -F`、网络链路接管 | 只允许在禁止能力说明和验证命令中出现 |
+ALLOWED	allowed:documentation	AGENTS.md:31:| ad_reward | 广告奖励域名切换、奖励视频域名白名单/黑名单 | 只允许作为拒绝导入项说明 |
+ALLOWED	allowed:documentation	AGENTS.md:32:| IFW 清空 | 清空 IFW、批量导入 IFW XML、无恢复证据的全局组件禁用 | 只允许作为拒绝导入项说明 |
+ALLOWED	allowed:documentation	AGENTS.md:33:| 隐藏/反检测 | Zygisk 隐藏、Root 隐藏、反检测规避 | 不得实现 |
+ALLOWED	allowed:documentation	AGENTS.md:36:同步上游时，看到 `hosts`、`DNS`、`domain`、`iptables`、`Clash`、`AdGuardHome`、`mount_hosts`、`ad_reward` 等词，并不表示可以导入。它们是拒绝信号，必须被分类为 out-of-scope 或 forbidden。
+ALLOWED	allowed:documentation	AGENTS.md:44:| ads288 zip 快照 | `Example/ads288.zip` | 审查非域名文件/SDK 缓存、SQLite、AppOps、组件禁用、ROM profile 候选 | 只能视为本地 zip 快照；不得声明它是最新上游；不得导入 hosts/DNS/domain/iptables/ad_reward/mount_hosts 能力 |
+ALLOWED	allowed:documentation	AGENTS.md:45:| AdGuard Home Magisk 示例 | `Example/Adguard-Home-For-Magisk-Mod/` | 审查生命周期脚本和少量本地文件路径补强思路 | 该上游包含 AdGuardHome/DNS 服务语境；不得导入服务接管、DNS、私人 DNS 或代理能力 |
+ALLOWED	allowed:documentation	AGENTS.md:57:| `snapshot_name` | 快照名，例如 `ads288.zip` 或 `Adguard-Home-For-Magisk-Mod` |
+ALLOWED	allowed:documentation	AGENTS.md:67:| `forbidden_categories_found` | 审查到的拒绝类别，例如 `hosts`、`DNS`、`iptables_network` |
+ALLOWED	allowed:documentation	AGENTS.md:75:git -C Example/Adguard-Home-For-Magisk-Mod remote -v
+ALLOWED	allowed:documentation	AGENTS.md:76:git -C Example/Adguard-Home-For-Magisk-Mod rev-parse HEAD
+ALLOWED	allowed:documentation	AGENTS.md:89:6. **拒绝禁止能力**：遇到 hosts、DNS、domain/域名名单、代理、iptables、AdGuardHome 服务接管、ad_reward、IFW 清空、Root 隐藏等内容，必须在报告中标记为 rejected，不得转写到生产规则。
+ALLOWED	allowed:documentation	AGENTS.md:105:| `hosts` | 否 | n/a | n/a | 拒绝导入 hosts、Host、host.sh、mount_hosts |
+ALLOWED	allowed:documentation	AGENTS.md:106:| `dns` | 否 | n/a | n/a | 拒绝 DNS 重定向、私人 DNS、DNS 服务接管 |
+ALLOWED	allowed:documentation	AGENTS.md:107:| `domain` | 否 | n/a | n/a | 拒绝域名名单、域名黑白名单、域名去广告规则 |
+ALLOWED	allowed:documentation	AGENTS.md:108:| `proxy` | 否 | n/a | n/a | 拒绝 Clash、Mihomo、Box、代理配置修改 |
+ALLOWED	allowed:documentation	AGENTS.md:109:| `iptables_network` | 否 | n/a | n/a | 拒绝 IP、域名、字符串、TLS/SNI 阻断 |
+ALLOWED	allowed:documentation	AGENTS.md:110:| `ad_reward_domain` | 否 | n/a | n/a | 拒绝广告奖励域名切换 |
+ALLOWED	allowed:documentation	AGENTS.md:111:| `ifw_clear` | 否 | n/a | n/a | 拒绝 IFW 清空和无恢复证据的批量导入 |
+ALLOWED	allowed:documentation	AGENTS.md:144:rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward" AGENTS.md > .omo/evidence/task-2-forbidden-docs.txt
+ALLOWED	allowed:documentation	AGENTS.md:195:git -C Example/Adguard-Home-For-Magisk-Mod rev-parse HEAD
+ALLOWED	allowed:documentation	AGENTS.md:196:sed -n '1,120p' Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh
+ALLOWED	allowed:documentation	README.md:3:PureADRemoverModule 是一个 Android Root 环境下的非域名本地层去广告模块。它面向 Clash、代理和 DNS 无法覆盖的本地广告落地物，例如应用私有目录中的广告缓存、广告 SDK 文件、已知广告 SQLite 数据库，以及显式 profile 下的组件、AppOps 和 ROM 配置治理。
+ALLOWED	allowed:documentation	README.md:5:本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品。域名、网络连接和代理路由应继续由用户已有网络层工具处理；本仓库只做可 dry-run、可审计、可回滚的本地文件和系统状态治理。
+ALLOWED	allowed:documentation	README.md:11:Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；本项目不生成网络规则、不改代理配置，也不接管解析或转发链路。推荐分工是：网络层继续处理域名和连接路由，PureAD 只处理已经落到本机文件、数据库或系统状态里的广告痕迹。
+ALLOWED	allowed:documentation	README.md:22:- `puread-rules` 解析 TOML 规则，并拒绝 hosts、DNS、domain、proxy、iptables、ad_reward、IFW 清空和 Root 隐藏等禁止类别。
+ALLOWED	allowed:documentation	README.md:23:- `puread-android` 执行可回滚的文件动作、SQLite 动作、可选 `chattr` 封装和可注入 Android 命令适配层。命令适配层覆盖 `pm`、`cmd appops`、`settings`、`getprop`、`chcon`、`chattr`、`lsattr`，支持 fake runner 与 dry-run，并拒绝 DNS、hosts、proxy、private DNS 相关 settings。
+ALLOWED	allowed:documentation	README.md:24:- `puread-android` 支持显式 profile 下的可逆 AppOps、component 和 ROM profile。AppOps 通过 `cmd appops get/set` 记录原 mode 或 default 后再设置目标 mode；component 记录原 enabled/hidden 状态并通过 `pm disable-user` / `pm enable` 恢复；`pm hide` 是 runner-backed capability attempt，不可用或失败时跳过并写入 skipped 记录，成功时写入 durable confirmed record，恢复时才执行 `pm unhide`。ROM profile 仅限定广告相关 `settings` 与 `shared_prefs` XML 布尔项，执行前检测 ROM，记录原值、原文件哈希和备份路径；不包含 DNS、private DNS、proxy 或 network 修改。
+ALLOWED	allowed:documentation	README.md:56:- hosts 生成、合并、系统映射改写或动态切换。
+ALLOWED	allowed:documentation	README.md:57:- DNS 接管、私人 DNS 强制关闭、解析劫持或解析服务托管。
+ALLOWED	allowed:documentation	README.md:58:- Clash、Mihomo、Box、ProxyConfig 或其他代理配置改写。
+ALLOWED	allowed:documentation	README.md:59:- iptables 域名、字符串、IP、TLS/SNI 阻断。
+ALLOWED	allowed:documentation	README.md:60:- 广告奖励域名切换、IFW 清空、Root 隐藏或反检测规避。
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-zip.sh:21:    r"(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw",
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-zip.sh:122:    grep -Ei '(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw' "$entries_file" >"$forbidden_entries" || true
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:1:FORBIDDEN_PATTERN='hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|domain|ad_reward|ifw|zygisk|root_hide|root[-_ ]?hiding|denylist|shamiko'
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:39:is_sdk_component_proxy_class_match() {
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:45:            printf '%s\n' "$text" | grep -Eiq '^[[:space:]]*target_component[[:space:]]=.*[.]proxy[.]'
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:58:    printf '%s\n' "$text" | grep -Eq 'private_dns_mode|private_dns_specifier|contains\("dns"\)|contains\("host"\)|contains\("proxy"\)|out of scope'
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:67:            printf '%s\n' "$text" | grep -Eq '^[[:space:]]*description[[:space:]]=.*non-domain'
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:113:    if is_sdk_component_proxy_class_match "$path" "$text"; then
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:136:        printf '%s\n' "policy=production execution paths must not implement DNS/hosts/proxy/iptables/private-DNS/IFW/root-hiding capabilities"
+ALLOWED	allowed:rule_notes_or_provenance	rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+ALLOWED	allowed:sdk_component_class_name	rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:37:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:37:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:37:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:101:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:102:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:37:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:241:        "private_dns_mode",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:242:        "private_dns_specifier",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:243:        "http_proxy",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:244:        "hosts_file_override",
+ALLOWED	allowed:package_metadata_boundary	crates/puread-cli/Cargo.toml:8:description = "CLI entrypoint scaffold for the PureAD non-domain ad remover module."
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/tests/rule_parsing.rs:122:        Err(RuleParseError::ForbiddenCategory { category }) if category == "hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/tests/rule_parsing.rs:126:        Err(RuleParseError::ForbiddenField { field }) if field == "domains"
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+ALLOWED	allowed:package_metadata_boundary	crates/puread-rules/Cargo.toml:8:description = "Rule loading boundary for the PureAD non-domain Android ad remover module."
+ALLOWED	allowed:test_or_fixture	crates/puread-core/tests/rule_model.rs:69:    let bad_actions = ["", "rm_rf", "iptables", "disable_dns"];
+ALLOWED	allowed:package_metadata_boundary	crates/puread-daemon/Cargo.toml:8:description = "Daemon entrypoint scaffold for the PureAD non-domain ad remover module."
+ALLOWED	allowed:package_metadata_boundary	crates/puread-core/Cargo.toml:8:description = "Core typed model for the PureAD non-domain Android ad remover module."
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:6:    "hosts",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:8:    "dns",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:9:    "private_dns",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:10:    "domain",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:11:    "domains",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:12:    "proxy",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:13:    "clash",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:14:    "mihomo",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:15:    "adguardhome",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:16:    "iptables",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:17:    "mount_hosts",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:18:    "ad_reward",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:19:    "ifw_clear",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:20:    "zygisk",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:21:    "root_hide",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:6:    "hosts",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:7:    "dns",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:8:    "domain",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:9:    "proxy",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:10:    "iptables_network",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:11:    "ad_reward_domain",
+ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:12:    "ifw_clear",
+ALLOWED	allowed:package_metadata_boundary	crates/puread-android/Cargo.toml:8:description = "Android adapter boundary for the PureAD non-domain ad remover module."
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_field.toml:14:domains = ["ad.example.invalid"]
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:2:id = "forbidden-hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:3:category = "hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:17:zip_entry = "mod/hosts.sh"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:18:source_line_or_pattern = "hosts"
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier.rs:42:        return useful.into_classification(Decision::Accepted, "local non-domain ad material");
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier.rs:49:        reason: "no local non-domain ad signal found".to_owned(),
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:6:    AdRewardDomain,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:9:    Dns,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:10:    Domain,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:12:    Hosts,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:13:    IfwClear,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:14:    IptablesNetwork,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:15:    Proxy,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:13:            "mount_hosts",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:14:            "host.sh",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:15:            "_hosts",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:16:            "hosts_",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:18:            "/hosts",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:19:            "hosts/",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:23:            Category::Hosts,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:24:            "path_hosts",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:28:    if contains_any(path, &["private_dns", "dns", "adguardhome", "adguard-home"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:30:            Category::Dns,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:31:            "path_dns",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:35:    if contains_any(path, &["domain", "域名"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:37:            Category::Domain,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:38:            "path_domain",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:42:    if contains_any(path, &["proxy", "proxyconfig", "clash", "mihomo"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:44:            Category::Proxy,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:45:            "path_proxy",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:49:    if contains_any(path, &["iptables", "network_limit", "/ip.sh"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:51:            Category::IptablesNetwork,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:56:    if contains_any(path, &["ad_reward", "广告奖励"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:58:            Category::AdRewardDomain,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:59:            "path_ad_reward",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:63:    if path.contains("ifw") {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:65:            Category::IfwClear,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:66:            "path_ifw",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:75:        &["mount_hosts", "system/etc/hosts", "127.0.0.1 ", "0.0.0.0 "],
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:78:            Category::Hosts,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:79:            "content_hosts",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:85:        &["private_dns", "dns", "adguardhome", "dnsmasq", ":53"],
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:88:            Category::Dns,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:89:            "content_dns",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:96:            "domain",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:106:            Category::Domain,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:107:            "content_domain",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:111:    if contains_any(text, &["proxyconfig", "proxy", "clash", "mihomo"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:113:            Category::Proxy,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:114:            "content_proxy",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:120:        &["iptables", "redirect", "tproxy", "ip rule", "network_limit"],
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:123:            Category::IptablesNetwork,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:128:    if contains_any(text, &["ad_reward", "广告奖励"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:130:            Category::AdRewardDomain,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:131:            "content_ad_reward",
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:135:    if contains_any(text, &["/data/system/ifw", "ifw规则", "ifw"]) {
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:137:            Category::IfwClear,
+ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/classifier/forbidden.rs:138:            "content_ifw",
+ALLOWED	allowed:test_or_fixture	xtask/upstream-report/tests/zip_report.rs:15:    // Given: a local zip snapshot with one forbidden host/domain entry.
+ALLOWED	allowed:test_or_fixture	xtask/upstream-report/tests/zip_report.rs:20:        &[("Host/ads_domain.txt", "0.0.0.0 gdt.qq.com\n")],
+ALLOWED	allowed:test_or_fixture	xtask/upstream-report/tests/zip_report.rs:39:        json_string_field_eq(record, "zip_entry", "Host/ads_domain.txt")
+ALLOWED	allowed:test_or_fixture	xtask/upstream-report/tests/zip_report.rs:40:            && json_categories(record).contains(&"hosts".to_owned())
+ALLOWED	allowed:test_or_fixture	xtask/upstream-report/tests/zip_report.rs:41:            && json_categories(record).contains(&"domain".to_owned())
+allowed_matches=180
+blocked_matches=0
+result=pass

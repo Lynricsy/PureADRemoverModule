@@ -1,0 +1,225 @@
+# Wave5 QA final review after zip-check fix
+
+reviewed_at=2026-06-19T11:34:35+08:00
+role=read_only_verification_reviewer
+verdict=PASS
+
+## Scope
+
+- Repository: `/root/Projects/Ling/PureADRemoverModule`
+- Review mode: read-only; no code edits, no commit, no push, no `Example/` mutation.
+- Allowed writes: `.omo/evidence/review-wave5-qa-final.txt` and AgentLog only.
+- Initial worktree was already dirty before this review. Existing modified files included `README.md`, `scripts/verify-local.sh`, `module/module.prop`, `module/bin/README.md`, `module/rules/README.md`, `xtask/upstream-report/src/report.rs`, `xtask/upstream-report/src/scanner/source_meta.rs`, `xtask/upstream-report/tests/directory_report.rs`, and `.omo/boulder.json`; existing untracked generated evidence, `dist/`, `module/bin/x86_64/`, and new scripts were also present.
+- `git config --local --list` contained repository/core/remote/branch settings only. `git config --local --get user.name` and `git config --local --get user.email` both returned rc=1.
+
+## Commands run
+
+### 1. Local verification
+
+Command:
+
+```sh
+scripts/verify-local.sh > /tmp/puread-review-wave5-final-verify-local.log 2>&1
+```
+
+Result: PASS, exit code 0.
+
+Key output:
+
+```text
+info: pass: verify-local-sh-parse
+info: pass: cargo-fmt
+info: pass: cargo-clippy
+info: pass: cargo-test
+info: pass: rules-validate
+info: pass: package-module
+info: pass: zip check
+info: pass: forbidden scan
+info: pass: pure Rust LOC
+info: pass: shell parse
+info: local verification passed
+```
+
+### 2. zip-check evidence contradiction check
+
+Command:
+
+```sh
+awk 'BEGIN{fail=0;pass=0} /^result=fail$/{fail++} /^result=pass$/{pass++} END{printf "result_fail_count=%d\nresult_pass_count=%d\n", fail, pass; exit ! (fail==0 && pass==1)}' .omo/evidence/task-26-zip-check.txt
+```
+
+Result: PASS.
+
+Key output:
+
+```text
+result_fail_count=0
+result_pass_count=1
+```
+
+Current `.omo/evidence/task-26-zip-check.txt` content:
+
+```text
+gate=zip-check
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+entry_count=37
+rule_file_count=18
+abis=x86_64
+required_entries=present
+forbidden_path_entries=none
+result=pass
+```
+
+### 3. Android QA dry-run
+
+Command:
+
+```sh
+scripts/qa-android.sh --dry-run > /tmp/puread-review-wave5-final-qa-android.log 2>&1
+```
+
+Result: PASS, exit code 0.
+
+Required markers were present:
+
+```text
+== command plan ==
+qa_status=plan_only
+real_device_pass=false
+```
+
+### 4. Package zip entries
+
+Command:
+
+```sh
+scripts/package-module.sh > /tmp/puread-review-wave5-final-package.log 2>&1
+unzip -Z1 dist/PureAD-0.1.0-t25.zip > /tmp/puread-review-wave5-final-zip-list.txt
+```
+
+Result: PASS, both commands exit code 0.
+
+Required entries checked and present:
+
+```text
+module.prop
+customize.sh
+service.sh
+post-fs-data.sh
+uninstall.sh
+action.sh
+scripts/puread-module-lib.sh
+bin/x86_64/puread-cli
+bin/x86_64/puread-daemon
+rules/common/sdk-cache.toml
+```
+
+Forbidden entry scan result:
+
+```text
+forbidden_entries=none
+```
+
+Forbidden regex used:
+
+```text
+(^|/)(Example|\.git|target|\.omo|AgentLogs|Host)(/|$)|(^|/)(hosts|host\.sh|mount_hosts|iptables\.sh|AdGuardHome|Adguardhome)(/|$)|(^|/)upstream_manifest\.json$
+```
+
+### 5. Upstream report-only
+
+First attempted command:
+
+```sh
+scripts/update-upstream.sh --from-local Example --report-only --manifest /tmp/puread-review-wave5-final-manifest.json --report /tmp/puread-review-wave5-final-upstream-report.txt
+```
+
+Result: expected reviewer command misuse, exit code 2. The script supports `--manifest` but not `--report`; no manifest/report was created by that failed invocation.
+
+Actual supported command:
+
+```sh
+scripts/update-upstream.sh --from-local Example --report-only --manifest /tmp/puread-review-wave5-final-manifest.json > /tmp/puread-review-wave5-final-upstream-report.txt 2> /tmp/puread-review-wave5-final-upstream.err
+```
+
+Result: PASS, exit code 0.
+
+Required report markers:
+
+```text
+mode=report-only
+manifest_path=/tmp/puread-review-wave5-final-manifest.json
+rules_modified=false
+download_performed=false
+snapshots_modified=false
+```
+
+Protected path status after command:
+
+```text
+git status --short --ignored -- rules Example upstream/upstream_manifest.json
+!! Example/
+```
+
+No tracked diff appeared under `rules/` or `upstream/upstream_manifest.json`; `Example/` remained ignored only.
+
+### 6. README boundary and usage check
+
+Command:
+
+```sh
+rg -n '不是 DNS、hosts、Clash|可 dry-run、可审计、可回滚|真实执行必须显式传入 `--execute`|安全边界|恢复与卸载|安装与打包' README.md
+```
+
+Result: PASS. README still contains project boundary, packaging/install, dry-run/execute, restore/uninstall, and safety boundary sections.
+
+### 7. T25-T29 and zip-check fix evidence
+
+Command:
+
+```sh
+test -e .omo/evidence/task-25-package.txt \
+  && test -e .omo/evidence/task-26-zip-check-fix.txt \
+  && test -e .omo/evidence/task-27-android-qa-dry-run.txt \
+  && test -e .omo/evidence/task-28-readme-grep.txt \
+  && test -e .omo/evidence/task-29-upstream-summary.txt
+```
+
+Result: PASS.
+
+Key evidence files are present:
+
+```text
+.omo/evidence/task-25-package.txt
+.omo/evidence/task-26-zip-check-fix.txt
+.omo/evidence/task-27-android-qa-dry-run.txt
+.omo/evidence/task-28-readme-grep.txt
+.omo/evidence/task-29-upstream-summary.txt
+```
+
+### 8. local git config and final status
+
+Commands:
+
+```sh
+git config --local --get user.name
+git config --local --get user.email
+git status --short --ignored
+```
+
+Result: PASS for local identity unset. `user.name` rc=1 and `user.email` rc=1.
+
+Final status remained dirty with pre-existing modified/untracked work plus this evidence file. Ignored directories included `AgentLogs/`, `Example/`, `target/`, and `xtask/upstream-report/target/`.
+
+## Adversarial checks
+
+- stale_state: PASS. `scripts/verify-local.sh`, `scripts/package-module.sh`, and zip entry listing were rerun in this review. The current `.omo/evidence/task-26-zip-check.txt` has one clear `result=pass` and no `result=fail`.
+- misleading_success_output: PASS. Exit codes were checked in addition to success markers.
+- generated artifact: PASS. `dist/PureAD-0.1.0-t25.zip` was regenerated and inspected with `unzip -Z1`.
+- dirty_worktree: PASS with caveat. Dirty worktree existed before review and is reported; no code cleanup/revert was attempted.
+- cleanup: PASS for reviewer scope. Temporary review logs/manifests were placed under `/tmp`; no repository cleanup or generated artifact deletion was performed.
+- forbidden scope: PASS. No `Example/` rewrite, no commit/push, no local git identity changes, no protected `rules/` or `upstream/upstream_manifest.json` mutation observed.
+
+## Verdict
+
+`<verdict>PASS</verdict>`

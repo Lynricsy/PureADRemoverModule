@@ -1,0 +1,41 @@
+Archive:  dist/PureAD-0.1.0-t25.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      217  2026-06-19 10:33   module.prop
+     1543  2026-06-19 10:33   customize.sh
+     3017  2026-06-19 10:33   service.sh
+     1852  2026-06-19 10:33   uninstall.sh
+      888  2026-06-19 10:33   action.sh
+        0  2026-06-19 10:33   scripts/
+     7425  2026-06-19 10:33   scripts/puread-module-lib.sh
+        0  2026-06-19 10:33   bin/
+        0  2026-06-19 10:33   bin/x86_64/
+ 42536272  2026-06-19 10:33   bin/x86_64/puread-cli
+  4336576  2026-06-19 10:33   bin/x86_64/puread-daemon
+        0  2026-06-19 10:33   rules/
+        0  2026-06-19 10:33   rules/appops/
+        0  2026-06-19 10:33   rules/apps/
+        0  2026-06-19 10:33   rules/common/
+        0  2026-06-19 10:33   rules/components/
+        0  2026-06-19 10:33   rules/rom/
+        0  2026-06-19 10:33   rules/sqlite/
+     1544  2026-06-19 10:33   rules/appops/luna-and-reader-appops.toml
+     1730  2026-06-19 10:33   rules/apps/com.autonavi.minimap.toml
+     1604  2026-06-19 10:33   rules/apps/com.coolapk.market.toml
+     1819  2026-06-19 10:33   rules/apps/com.netease.cloudmusic.toml
+     1638  2026-06-19 10:33   rules/apps/com.ss.android.ugc.aweme.toml
+      877  2026-06-19 10:33   rules/apps/com.taobao.idlefish.toml
+     1726  2026-06-19 10:33   rules/apps/com.tencent.mobileqq.toml
+     1706  2026-06-19 10:33   rules/apps/com.zhihu.android.toml
+     1663  2026-06-19 10:33   rules/apps/ctrip.android.view.toml
+     2530  2026-06-19 10:33   rules/apps/tv.danmaku.bili.toml
+     4133  2026-06-19 10:33   rules/common/sdk-cache.toml
+     1608  2026-06-19 10:33   rules/components/mi-market-components.toml
+     1616  2026-06-19 10:33   rules/components/sdk-ad-components.toml
+     1606  2026-06-19 10:33   rules/rom/miui-ad-settings.toml
+      764  2026-06-19 10:33   rules/rom/miui-shared-prefs.toml
+     6606  2026-06-19 10:33   rules/sqlite/app-ad-databases.toml
+     5846  2026-06-19 10:33   rules/sqlite/common-sdk-databases.toml
+    10106  2026-06-19 10:33   rules/sqlite/coolapk-ad-databases.toml
+---------                     -------
+ 46936912                     36 files

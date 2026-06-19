@@ -1,0 +1,16 @@
+required_entries:
+present module.prop
+present customize.sh
+present service.sh
+present post-fs-data.sh
+present uninstall.sh
+present action.sh
+present scripts/puread-module-lib.sh
+native_entries:
+11:bin/x86_64/puread-cli
+12:bin/x86_64/puread-daemon
+rule_entries_count:
+18
+forbidden_entries:
+none
+exit=0

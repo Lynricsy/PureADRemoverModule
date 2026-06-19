@@ -1,0 +1,3 @@
+gate=cargo-fmt
+command=cargo fmt --all -- --check
+result=pass

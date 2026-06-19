@@ -1,0 +1,4 @@
+gate=cleanup-final-fix
+dist_staging_leftovers=none
+verify_local_tmp_leftovers=none
+result=pass

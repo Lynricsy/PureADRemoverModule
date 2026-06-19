@@ -1,0 +1,46 @@
+# Global Review Security Final
+reviewed_at=2026-06-19T13:17:49+08:00
+scope=Lightweight final security/scope sanity after global blockers fix
+mode=read-only reviewer; code unchanged; no commit/push; Example untouched
+
+## Verdict
+verdict=PASS
+
+## Targeted Forbidden Scan
+command=rg -n "hosts|Host|host\.sh|mount_hosts|private[_-]?dns|DNS|dns|iptables|Clash|clash|Mihomo|mihomo|AdGuardHome|adguardhome|adguard-home|proxy|ProxyConfig|ad_reward|ifw|zygisk|hide|wake lock|wakelock" scripts/lib/verify-local-zip.sh crates/puread-cli/src/profile_execute/profile_restore/ledger.rs crates/puread-cli/tests/cli_profile_restore_empty.rs crates/puread-android/src/file_actions/executor/test_support.rs crates/puread-android/src/profiles/xml/tests.rs crates/puread-android/tests/rom_profiles/support.rs module/action.sh scripts/verify-local.sh module/bin/README.md module/module.prop module/rules/README.md
+result=PASS
+matches=scripts/lib/verify-local-zip.sh forbidden-entry guard regex only (Python path and unzip fallback path). No production implementation of hosts/DNS/domain/proxy/iptables/AdGuardHome/ad_reward/IFW/root-hide/wakelock capability found in reviewed changed paths.
+
+## scripts/lib/verify-local-zip.sh
+inspection=PASS
+notes=no-python fallback uses unzip -t, unzip -Z1, required entry checks, rules/*.toml presence, daemon/cli ABI equality, and forbidden zip path grep. Temporary files stay under caller-provided TMP_ROOT. No Example mutation or production forbidden capability introduced.
+fallback_command=env PATH=/usr/bin:/bin zsh -c . scripts/lib/verify-local-zip.sh; TMP_ROOT=$(mktemp -d /tmp/puread-final-zip.XXXXXX); trap "rm -rf $TMP_ROOT" EXIT; zip_check_with_unzip dist/PureAD-0.1.0-t25.zip dist/PureAD-0.1.0-t25.zip
+fallback_result=PASS entry_count=37 rule_file_count=18 abis=x86_64 required_entries=present forbidden_path_entries=none
+
+## profile_restore Empty Ledger
+inspection=PASS
+notes=read_entries returns Ok(Vec::new()) on NotFound after module-root child and symlink component checks; existing ledger reads still use O_NOFOLLOW. rewrite_restored remains non-creating and only rewrites existing ledgers when restore actions succeed.
+test=cargo test -p puread-cli --test cli_profile_restore_empty
+test_result=PASS 1 passed
+
+## Test Cleanup RAII
+inspection=PASS
+notes=RAII Drop cleanup added only to test temp fixtures. file_actions helper removes its temp root and same-prefix extension siblings; XML and rom_profile test helpers remove their owned temp roots. No broad /tmp deletion pattern observed.
+tests=cargo test -p puread-android file_actions::executor; cargo test -p puread-android --test rom_profiles; cargo test -p puread-android commit_bool_rejects_regular_file_replacement_between_plan_and_commit
+test_results=PASS file_actions 23 passed; rom_profiles 11 passed; xml replacement test 1 passed
+
+## Zip Artifact
+zip=dist/PureAD-0.1.0-t25.zip
+unzip_test=PASS No errors detected in compressed data
+forbidden_entry_scan=PASS no matches for (^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw
+entries=37
+required_entries=module.prop, customize.sh, service.sh, post-fs-data.sh, uninstall.sh, action.sh, scripts/puread-module-lib.sh
+abis=x86_64
+
+## /tmp and Git
+tmp_puread_count=0 after cleanup and target tests
+local_git_identity=PASS user.name unset exit=1; user.email unset exit=1
+git_status=dirty worktree with pre-existing modified/untracked task artifacts; no staged files; Example ignored; no commit/push performed
+
+## Residual Risk
+residual_risk=This was a focused final security/scope sanity review of latest fixes, not a full repository audit. Broad unrelated dirty worktree files were not adjudicated.

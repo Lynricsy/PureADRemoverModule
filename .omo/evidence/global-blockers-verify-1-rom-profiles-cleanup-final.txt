@@ -1,0 +1,20 @@
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+[1m[92m     Running[0m tests/rom_profiles.rs (target/debug/deps/rom_profiles-d3af8eeccaf47c44)
+
+running 11 tests
+test rom_profile_skips_miui_settings_when_getprop_does_not_match ... ok
+test rom_settings_does_not_mutate_when_ledger_sink_fails ... ok
+test rom_rule_rejects_unsafe_rule_ids_before_backup_path ... ok
+test rom_shared_prefs_does_not_mutate_or_backup_when_ledger_sink_fails ... ok
+test security::rom_shared_prefs_rejects_parent_symlink_without_ledger_or_backup ... ok
+test rom_profile_modifies_and_restores_shared_prefs_xml_with_backup_and_hash ... ok
+test security::rom_shared_prefs_rejects_backup_dir_symlink_without_ledger ... ok
+test security::rom_shared_prefs_rejects_relative_and_traversal_paths ... ok
+test security::rom_shared_prefs_rejects_existing_backup_without_ledger ... ok
+test security::rom_shared_prefs_rejects_xml_symlink_target ... ok
+test security::rom_shared_prefs_rejects_backup_file_symlink_without_ledger ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

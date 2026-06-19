@@ -1,0 +1,15 @@
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m   Compiling[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 1.39s
+[1m[92m     Running[0m tests/rom_profiles.rs (target/debug/deps/rom_profiles-d3af8eeccaf47c44)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+
+exit_code=0

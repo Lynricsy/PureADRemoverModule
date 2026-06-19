@@ -1,0 +1,2 @@
+drwx------ root root /tmp/puread-empty-verify.jHS8r6
+count=1

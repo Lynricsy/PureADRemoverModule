@@ -1,0 +1,19 @@
+Usage: scripts/qa-android.sh [options]
+
+Android root module smoke QA for PureAD.
+
+Options:
+  --dry-run              Print the command plan and write unavailable artifacts only.
+  --serial SERIAL        Use a specific adb serial.
+  --module-dir PATH      Installed module path. Default: /data/adb/modules/PureAD.
+  --profile NAME         Profile for CLI dry-run. Default: conservative.
+  --device-root PATH     Root path passed to puread-cli profile dry-run. Default: /.
+  --scan-root PATH       Root path passed to action.sh scan-dry-run. Default: /data.
+  --push-zip PATH        Explicitly push a module zip to /data/local/tmp only.
+  --push-cli PATH        Explicitly push puread-cli into the installed module bin dir.
+  --push-daemon PATH     Explicitly push puread-daemon into the installed module bin dir.
+  --skip-daemon          Skip daemon start/stop smoke check.
+  -h, --help             Show this help.
+
+The script never flashes or removes a module. Dry-run mode never runs adb shell
+actions or adb push; it records the plan and marks real device QA as not run.

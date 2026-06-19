@@ -329,7 +329,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `cargo test -p puread-android rom_profiles -- --nocapture | tee .omo/evidence/task-24-rom-profiles.txt`
   Commit: N | feat(profiles): add reversible ROM ad settings profiles | Files `rules/rom/**`, `crates/puread-android/**`
 
-- [ ] 25. 集成完整 daemon/CLI/module 打包流
+- [x] 25. 集成完整 daemon/CLI/module 打包流
   What to do / Must NOT do: 构建 Rust binary，复制到 `module/bin/<arch>/`，生成刷入 zip。不要包含上游 zip 原件或域名规则文件。
   Parallelization: Can parallel Y | Wave 5 | Blocks F1-F4
   References: T16/T20/T22 outputs
@@ -337,7 +337,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `scripts/package-module.sh | tee .omo/evidence/task-25-package.txt`; `unzip -l dist/*.zip > .omo/evidence/task-25-zip-list.txt`; `! unzip -l dist/*.zip | rg "(^|/)hosts$|AdGuardHome|iptables"`
   Commit: N | build(module): package PureAD root module | Files `scripts/build-module.sh`, `scripts/package-module.sh`, `module/**`, `dist/`
 
-- [ ] 26. 添加本地全量验证脚本
+- [x] 26. 添加本地全量验证脚本
   What to do / Must NOT do: `scripts/verify-local.sh` 串联 fmt、clippy、tests、规则校验、禁用能力 grep、zip 结构校验、pure LOC 检查。禁用能力扫描必须支持文档白名单上下文，禁止实现路径出现 DNS/hosts/proxy/iptables/private-DNS/IFW/root-hiding。不要让脚本吞掉失败码。
   Parallelization: Can parallel Y | Wave 5 | Blocks F1-F4
   References: T1/T20/T21/T25 outputs
@@ -345,7 +345,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `scripts/verify-local.sh | tee .omo/evidence/task-26-verify-local.txt`
   Commit: N | chore(qa): add full local verification gate | Files `scripts/verify-local.sh`
 
-- [ ] 27. 添加 Android smoke QA 脚本
+- [x] 27. 添加 Android smoke QA 脚本
   What to do / Must NOT do: 提供 `scripts/qa-android.sh`，通过 adb 推送 zip/binary 或在已安装模块上执行 `puread-cli status`、dry-run scan、profile dry-run、daemon 启停检查。最低真机验收面：至少一台 arm64 root Android 设备；安装 zip 后验证 `module.prop`、`service.sh` 启动 daemon、`action.sh status`、手动扫描一条沙箱规则、卸载恢复。KSU/APatch 若无设备则只做脚本兼容性静态校验，不声称实机通过。设备不可用时必须输出明确 artifact，不得假装通过。
   Parallelization: Can parallel Y | Wave 5 | Blocks F1-F4
   References: 外部 Android/Rust 交叉编译约束; T22/T25 outputs
@@ -353,7 +353,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `scripts/qa-android.sh --dry-run | tee .omo/evidence/task-27-android-qa-dry-run.txt`
   Commit: N | test(android): add root module smoke QA script | Files `scripts/qa-android.sh`
 
-- [ ] 28. 编写 README 使用与边界说明
+- [x] 28. 编写 README 使用与边界说明
   What to do / Must NOT do: README 说明模块用途、安装、配置、默认安全配置、默认 profile、强力模式风险、Clash 分工、卸载恢复、上游规则更新入口指向 `AGENTS.md`。不要宣传 DNS/hosts 能力。
   Parallelization: Can parallel Y | Wave 5 | Blocks F1-F4
   References: `.omo/drafts/puread-rust-module.md`; `AGENTS.md`
@@ -361,7 +361,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `sed -n '1,260p' README.md > .omo/evidence/task-28-readme.txt`
   Commit: N | docs(readme): document PureAD scope and usage | Files `README.md`
 
-- [ ] 29. 完成上游更新回归场景
+- [x] 29. 完成上游更新回归场景
   What to do / Must NOT do: 用本地 `Example/` 做一次 report-only 更新流程，生成候选规则报告；验证报告不会自动改规则，并标出需要人工/agent 审核的候选。报告必须显示 `ads288.zip` SHA256、AdGuard 嵌套仓库 commit、accepted/rejected 分类。不要联网下载作为唯一证据。
   Parallelization: Can parallel Y | Wave 5 | Blocks F1-F4
   References: T2/T21 outputs; `Example/ads288.zip`; `Example/Adguard-Home-For-Magisk-Mod`
@@ -369,7 +369,7 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
   QA scenarios (name the exact tool + invocation): `scripts/update-upstream.sh --from-local Example --report-only | tee .omo/evidence/task-29-upstream-regression.txt`
   Commit: N | test(upstream): verify upstream rule update workflow | Files `scripts/update-upstream.sh`, `.omo/evidence/**`
 
-- [ ] 30. 记录规划落实日志
+- [x] 30. 记录规划落实日志
   What to do / Must NOT do: 使用 `record-agent-log` 记录实现阶段完成内容和原因。不要手工编辑 AgentLogs。若执行者无法调用 MCP，必须在最终报告中说明未记录。
   Parallelization: Can parallel N | Wave 5 | Blocks F1-F4
   References: 用户 AGENTS.md 指令; `AGENTS.md`
@@ -379,13 +379,13 @@ Critical path: T1 -> T3 -> T7 -> T10 -> T13 -> T16 -> T20 -> T25 -> Final verifi
 
 ## Final verification wave (after ALL todos)
 > Runs in parallel. ALL must APPROVE. Surface results and wait for the user's explicit okay before declaring complete.
-- [ ] F1. Plan compliance audit
+- [x] F1. Plan compliance audit
   Verify every Must have exists, every Must NOT have is absent, and `AGENTS.md` includes upstream sync instructions. Evidence: `.omo/evidence/f1-plan-compliance.txt`
-- [ ] F2. Code quality review
+- [x] F2. Code quality review
   Run `cargo fmt`, `cargo clippy -D warnings`, `cargo test`, pure LOC check, and shell parse checks. Evidence: `.omo/evidence/f2-code-quality.txt`
-- [ ] F3. Real manual QA
+- [x] F3. Real manual QA
   Run package zip validation, CLI dry-run against fixtures, daemon tempdir event scenario, Android smoke dry-run or device run, and power evidence capture when device exists. Evidence: `.omo/evidence/f3-manual-qa.txt`
-- [ ] F4. Scope fidelity
+- [x] F4. Scope fidelity
   Grep and inspect for forbidden DNS/hosts/domain/proxy/iptables/private-DNS/IFW/root-hiding behavior. Evidence: `.omo/evidence/f4-scope-fidelity.txt`
 
 ## Commit strategy

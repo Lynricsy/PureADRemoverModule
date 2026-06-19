@@ -1,0 +1,62 @@
+case=normal
+expected=pass
+result=pass
+failures=
+stdout=
+info: pass: zip check with unzip
+stderr=
+zip_check=
+gate=zip-check
+zip=/tmp/puread-zip-fallback.20NgZq/normal.zip
+entry_count=10
+rule_file_count=1
+abis=arm64-v8a
+required_entries=present
+forbidden_path_entries=none
+result=pass
+
+case=missing
+expected=fail
+result=fail
+failures=
+zip structure check failed; see /tmp/puread-zip-fallback.20NgZq/missing/task-zip-check.txt
+stdout=
+stderr=
+error: zip structure check failed; see /tmp/puread-zip-fallback.20NgZq/missing/task-zip-check.txt
+zip_check=
+gate=zip-check
+missing entries: service.sh
+exit_code=1
+result=fail
+
+case=forbidden
+expected=fail
+result=fail
+failures=
+zip structure check failed; see /tmp/puread-zip-fallback.20NgZq/forbidden/task-zip-check.txt
+stdout=
+stderr=
+error: zip structure check failed; see /tmp/puread-zip-fallback.20NgZq/forbidden/task-zip-check.txt
+zip_check=
+gate=zip-check
+forbidden zip path entries: Host/bad.txt
+exit_code=1
+result=fail
+
+case=abi
+expected=fail
+result=fail
+failures=
+zip structure check failed; see /tmp/puread-zip-fallback.20NgZq/abi/task-zip-check.txt
+stdout=
+stderr=
+error: zip structure check failed; see /tmp/puread-zip-fallback.20NgZq/abi/task-zip-check.txt
+zip_check=
+gate=zip-check
+daemon/cli ABI mismatch: daemon=arm64-v8a
+ cli=x86_64
+exit_code=1
+result=fail
+
+
+exit_code=0

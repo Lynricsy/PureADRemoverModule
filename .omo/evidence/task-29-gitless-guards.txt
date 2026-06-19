@@ -1,0 +1,135 @@
+7:rules_modified=false
+8:download_performed=false
+9:snapshots_modified=false
+21:  - source=Adguard-Home-For-Magisk-Mod type=directory path=Example/Adguard-Home-For-Magisk-Mod sha256=n/a commit=n/a remote_url=n/a file_count=21 executable_upstream_code=true auto_import_allowed=false
+22:  - source=ads288.zip type=zip path=Example/ads288.zip sha256=bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7 commit=n/a remote_url=n/a file_count=115 executable_upstream_code=true auto_import_allowed=false
+24:## accepted candidates
+25:  - source=ads288.zip path=META-INF/com/google/android/update-binary review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+26:  - source=ads288.zip path=key.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+27:  - source=ads288.zip path=mod/ad.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache reason=path suggests local ad material; content suggests local ad material
+28:  - source=ads288.zip path=mod/aweme.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+29:  - source=ads288.zip path=mod/alicloud.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+30:  - source=ads288.zip path=mod/bilibili.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sqlite reason=content suggests local ad material
+31:  - source=ads288.zip path=mod/browser.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+32:  - source=ads288.zip path=mod/chattr_file.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache reason=content suggests local ad material
+33:  - source=ads288.zip path=mod/coolapk.sh review_state=manual_review_only auto_import_allowed=false categories=appops,file_path,sdk_cache,sqlite reason=content suggests local ad material
+34:  - source=ads288.zip path=mod/dragon.sh review_state=manual_review_only auto_import_allowed=false categories=appops,file_path reason=content suggests local ad material
+35:  - source=ads288.zip path=mod/kill_Analysis.sh review_state=manual_review_only auto_import_allowed=false categories=component,file_path reason=content suggests local ad material
+36:  - source=ads288.zip path=mod/killpangle.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache reason=path suggests local ad material; content suggests local ad material
+37:  - source=ads288.zip path=mod/miui_ad.sh review_state=manual_review_only auto_import_allowed=false categories=component,file_path,rom_profile reason=path suggests local ad material; content suggests local ad material
+38:  - source=ads288.zip path=mod/util_functions.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+39:  - source=ads288.zip path=mod/zhihu.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+40:  - source=ads288.zip path=mod/com.UCMobile.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache,sqlite reason=content suggests local ad material
+41:  - source=ads288.zip path=mod/ximalaya.sh review_state=manual_review_only auto_import_allowed=false categories=appops reason=content suggests local ad material
+42:  - source=ads288.zip path=mod/com.baidu.tieba.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache reason=content suggests local ad material
+43:  - source=ads288.zip path=mod/com.smile.gifmaker.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache reason=content suggests local ad material
+44:  - source=ads288.zip path=mod/sqlite_clean_up.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache,sqlite reason=path suggests local ad material; content suggests local ad material
+45:  - source=ads288.zip path=mod/ads_monitor/ads_monitor_x86 review_state=manual_review_only auto_import_allowed=false categories=file_path reason=path suggests local ad material; content suggests local ad material
+46:  - source=ads288.zip path=mod/ads_monitor/ads_monitor.prop review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache reason=path suggests local ad material; content suggests local ad material
+47:  - source=ads288.zip path=mod/ads_monitor/ads_monitor_arm32 review_state=manual_review_only auto_import_allowed=false categories=file_path reason=path suggests local ad material; content suggests local ad material
+48:  - source=ads288.zip path=mod/ads_monitor/ads_monitor_arm64 review_state=manual_review_only auto_import_allowed=false categories=file_path reason=path suggests local ad material; content suggests local ad material
+49:  - source=ads288.zip path=mod/ads_monitor/ads_monitor_x86_64 review_state=manual_review_only auto_import_allowed=false categories=file_path reason=path suggests local ad material; content suggests local ad material
+50:  - source=ads288.zip path=mod/ads_monitor.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=path suggests local ad material
+51:  - source=ads288.zip path=mod/com.baidu.netdisk.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+52:  - source=ads288.zip path=mod/disable_app.sh review_state=manual_review_only auto_import_allowed=false categories=component reason=path suggests local ad material; content suggests local ad material
+53:  - source=ads288.zip path=mod/APPOPS.sh review_state=manual_review_only auto_import_allowed=false categories=appops reason=path suggests local ad material; content suggests local ad material
+54:  - source=ads288.zip path=mod/modtify_xml.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+55:  - source=ads288.zip path=mod/com.taobao.trip.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+56:  - source=ads288.zip path=mod/ads_file.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=path suggests local ad material; content suggests local ad material
+57:  - source=ads288.zip path=mod/com.luna.music.sh review_state=manual_review_only auto_import_allowed=false categories=appops,component,file_path reason=content suggests local ad material
+58:  - source=ads288.zip path=mod/kernel_su.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+59:  - source=ads288.zip path=mod/ads_monitor_Check.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=path suggests local ad material; content suggests local ad material
+60:  - source=ads288.zip path=mod/protect_information.sh review_state=manual_review_only auto_import_allowed=false categories=file_path,sdk_cache reason=content suggests local ad material
+61:  - source=ads288.zip path=mod/com.ss.android.auto.sh review_state=manual_review_only auto_import_allowed=false categories=appops,file_path reason=content suggests local ad material
+62:  - source=ads288.zip path=mod/ctrip.android.view.sh review_state=manual_review_only auto_import_allowed=false categories=appops,file_path reason=content suggests local ad material
+63:  - source=ads288.zip path=mod/com.jingdong.app.mall.sh review_state=manual_review_only auto_import_allowed=false categories=appops,file_path reason=content suggests local ad material
+64:  - source=ads288.zip path=mod/app_prem_fixes.sh review_state=manual_review_only auto_import_allowed=false categories=file_path reason=content suggests local ad material
+67:## rejected findings
+68:  - source=Adguard-Home-For-Magisk-Mod path=.github/ISSUE_TEMPLATE/bug-report.yml review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=content contains forbidden upstream scope
+69:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/action.sh review_state=manual_review_only auto_import_allowed=false categories=dns reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+70:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/AdGuardHome.yaml review_state=manual_review_only auto_import_allowed=false categories=dns,domain,ifw_clear,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+71:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/data/filters/1721861844.txt review_state=manual_review_only auto_import_allowed=false categories=dns,domain,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+72:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/data/filters/1721861846.txt review_state=manual_review_only auto_import_allowed=false categories=dns,domain,ifw_clear,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+73:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/bin/data/filters/1735560833.txt review_state=manual_review_only auto_import_allowed=false categories=dns,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+74:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/customize.sh review_state=manual_review_only auto_import_allowed=false categories=dns,hosts,ifw_clear,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+75:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/module.prop review_state=manual_review_only auto_import_allowed=false categories=dns reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+76:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/ModuleMOD.sh review_state=manual_review_only auto_import_allowed=false categories=dns reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+77:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/NoAdsService.sh review_state=manual_review_only auto_import_allowed=false categories=dns,ifw_clear reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+78:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/ProxyConfig.sh review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+79:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/config.prop review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+80:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/scripts/iptables.sh review_state=manual_review_only auto_import_allowed=false categories=dns,iptables_network reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+81:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/service.sh review_state=manual_review_only auto_import_allowed=false categories=dns,hosts,iptables_network,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+82:  - source=Adguard-Home-For-Magisk-Mod path=Adguardhome/uninstall.sh review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+83:  - source=Adguard-Home-For-Magisk-Mod path=README.en.md review_state=manual_review_only auto_import_allowed=false categories=dns,domain,iptables_network,proxy reason=content contains forbidden upstream scope
+84:  - source=Adguard-Home-For-Magisk-Mod path=README.md review_state=manual_review_only auto_import_allowed=false categories=dns,domain,proxy reason=content contains forbidden upstream scope
+85:  - source=Adguard-Home-For-Magisk-Mod path=changelog.md review_state=manual_review_only auto_import_allowed=false categories=dns,proxy reason=content contains forbidden upstream scope
+86:  - source=ads288.zip path=Host/挂载hosts.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=content contains forbidden upstream scope
+87:  - source=ads288.zip path=Host/读取白名单修改Host.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,domain,hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+88:  - source=ads288.zip path=README.md review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,dns,domain,hosts,ifw_clear,iptables_network reason=content contains forbidden upstream scope
+89:  - source=ads288.zip path=action.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,domain,hosts,iptables_network reason=content contains forbidden upstream scope
+90:  - source=ads288.zip path=check_bin.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=content contains forbidden upstream scope
+91:  - source=ads288.zip path=customize.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=content contains forbidden upstream scope
+92:  - source=ads288.zip path=host.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,domain,hosts,iptables_network reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+93:  - source=ads288.zip path=hosts review_state=manual_review_only auto_import_allowed=false categories=dns,domain,hosts,ifw_clear,iptables_network,proxy reason=content contains forbidden upstream scope
+94:  - source=ads288.zip path=mod/com.dragon.read.xml review_state=manual_review_only auto_import_allowed=false categories=domain,iptables_network,proxy reason=content contains forbidden upstream scope
+95:  - source=ads288.zip path=mod/com.ss.android.ugc.aweme$.xml review_state=manual_review_only auto_import_allowed=false categories=proxy reason=content contains forbidden upstream scope
+96:  - source=ads288.zip path=mod/com.sup.android.superb$.xml review_state=manual_review_only auto_import_allowed=false categories=proxy reason=content contains forbidden upstream scope
+97:  - source=ads288.zip path=mod/disable_other_module_hosts.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope
+98:  - source=ads288.zip path=mod/disable_other_module_hosts2.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope
+99:  - source=ads288.zip path=mod/iptables.sh review_state=manual_review_only auto_import_allowed=false categories=dns,domain,iptables_network reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+100:  - source=ads288.zip path=mod/kiwi.sh review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=content contains forbidden upstream scope
+101:  - source=ads288.zip path=mod/mi_market.sh review_state=manual_review_only auto_import_allowed=false categories=domain reason=content contains forbidden upstream scope
+102:  - source=ads288.zip path=mod/network_limit.sh review_state=manual_review_only auto_import_allowed=false categories=dns,domain,iptables_network reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+103:  - source=ads288.zip path=mod/notification.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=content contains forbidden upstream scope
+104:  - source=ads288.zip path=mod/rm_hosts.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope
+105:  - source=ads288.zip path=mod/123pan.sh review_state=manual_review_only auto_import_allowed=false categories=domain,proxy reason=content contains forbidden upstream scope
+106:  - source=ads288.zip path=mod/a0.app.xiaomi.com.sh review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=content contains forbidden upstream scope
+107:  - source=ads288.zip path=mod/ad_reward.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,domain,iptables_network reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+108:  - source=ads288.zip path=mod/ad_reward_2.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+109:  - source=ads288.zip path=mod/mount_hosts.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+110:  - source=ads288.zip path=mod/kii_fdkss.sbs.sh review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=content contains forbidden upstream scope
+111:  - source=ads288.zip path=mod/mount_hosts/mount_hosts_x86_64 review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+112:  - source=ads288.zip path=mod/mount_hosts/mount_hosts_arm32 review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+113:  - source=ads288.zip path=mod/mount_hosts/mount_hosts_x86 review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+114:  - source=ads288.zip path=mod/mount_hosts/配置包名.prop review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+115:  - source=ads288.zip path=mod/mount_hosts/mount_hosts_arm64 review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+116:  - source=ads288.zip path=mod/mount_hosts_Check.sh review_state=manual_review_only auto_import_allowed=false categories=hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+117:  - source=ads288.zip path=mod/check_disappear_host.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+118:  - source=ads288.zip path=module.prop review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=content contains forbidden upstream scope
+119:  - source=ads288.zip path=mount_bind_update.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,hosts reason=content contains forbidden upstream scope
+120:  - source=ads288.zip path=mount_hosts_no_reboot.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,hosts reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+121:  - source=ads288.zip path=post-fs-data.sh review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,hosts reason=content contains forbidden upstream scope
+122:  - source=ads288.zip path=uninstall.sh review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=content contains forbidden upstream scope
+123:  - source=ads288.zip path=其他脚本/废弃脚本/WeChat.sh review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=content contains forbidden upstream scope
+124:  - source=ads288.zip path=其他脚本/废弃脚本/miui_control.sh review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=content contains forbidden upstream scope
+125:  - source=ads288.zip path=其他脚本/废弃脚本/file_list.sha256 review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,hosts,iptables_network reason=content contains forbidden upstream scope
+126:  - source=ads288.zip path=其他脚本/IFW规则转PM命令.sh review_state=manual_review_only auto_import_allowed=false categories=ifw_clear reason=path matches forbidden upstream scope
+127:  - source=ads288.zip path=其他脚本/com.dragon.read.xml review_state=manual_review_only auto_import_allowed=false categories=domain,iptables_network,proxy reason=content contains forbidden upstream scope
+128:  - source=ads288.zip path=其他脚本/com.dragon.read.xml.script.sh review_state=manual_review_only auto_import_allowed=false categories=domain,iptables_network,proxy reason=content contains forbidden upstream scope
+129:  - source=ads288.zip path=其他脚本/ip.sh review_state=manual_review_only auto_import_allowed=false categories=iptables_network reason=path matches forbidden upstream scope
+130:  - source=ads288.zip path=其他脚本/源码/mount_bind.cpp review_state=manual_review_only auto_import_allowed=false categories=hosts reason=content contains forbidden upstream scope
+131:  - source=ads288.zip path=其他脚本/源码/mount_bind.c review_state=manual_review_only auto_import_allowed=false categories=hosts reason=content contains forbidden upstream scope
+132:  - source=ads288.zip path=广告奖励.prop review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,domain reason=path matches forbidden upstream scope; content contains forbidden upstream scope
+133:  - source=ads288.zip path=放行白名单.prop review_state=manual_review_only auto_import_allowed=false categories=domain,hosts reason=content contains forbidden upstream scope
+134:  - source=ads288.zip path=自定义.prop review_state=manual_review_only auto_import_allowed=false categories=hosts reason=content contains forbidden upstream scope
+135:  - source=ads288.zip path=配置.prop review_state=manual_review_only auto_import_allowed=false categories=ad_reward_domain,hosts reason=content contains forbidden upstream scope
+138:  - source=Adguard-Home-For-Magisk-Mod path=.github/ISSUE_TEMPLATE/config.yml review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+139:  - source=Adguard-Home-For-Magisk-Mod path=LICENSE review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+140:  - source=Adguard-Home-For-Magisk-Mod path=Update.json review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+141:  - source=ads288.zip path=Host/recovery review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+142:  - source=ads288.zip path=META-INF/com/google/android/updater-script review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+143:  - source=ads288.zip path=busybox.sh review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+144:  - source=ads288.zip path=mod/apps.conf review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+145:  - source=ads288.zip path=mod/tencent.sh review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+146:  - source=ads288.zip path=mod/webview_clean.sh review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+147:  - source=ads288.zip path=mod/a0.app.xiaomi.com2.sh review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+148:  - source=ads288.zip path=mod/Host_folder_script.sh review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+149:  - source=ads288.zip path=service.sh review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+150:  - source=ads288.zip path=system/app/AnalyticsCore/.replace review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+151:  - source=ads288.zip path=system/app/AnalyticsCore/Analytics.apk review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+152:  - source=ads288.zip path=tools/notification_arm32 review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+153:  - source=ads288.zip path=tools/notification_arm64 review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+154:  - source=ads288.zip path=tools/notification_x86 review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+155:  - source=ads288.zip path=tools/notification_x86_64 review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+156:  - source=ads288.zip path=update.json review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found
+157:  - source=ads288.zip path=verify.sh review_state=manual_review_only auto_import_allowed=false categories= reason=no local non-domain ad signal found

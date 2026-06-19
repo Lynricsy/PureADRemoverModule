@@ -1,0 +1,53 @@
+global review lane 3 code quality final
+timestamp: 2026-06-19T13:13:58+08:00
+scope: read-only review; only this evidence file and AgentLog may be written
+verdict: PASS
+
+required gate results:
+- cargo fmt --all -- --check: PASS
+- cargo clippy --workspace --all-targets --all-features -- -D warnings: PASS
+- cargo test --workspace: PASS
+- scripts/verify-local.sh: PASS
+- sh -n scripts/verify-local.sh scripts/lib/*.sh scripts/package-module.sh scripts/qa-android.sh module/*.sh module/scripts/*.sh: PASS
+
+focused code-quality review:
+- scripts/lib/verify-local-zip.sh no-python fallback: PASS
+  - The unzip path runs unzip -t and then validates exact required module entries, at least one rules/*.toml entry, daemon/cli ABI presence and equality, and forbidden zip path entries.
+  - It no longer has a pass-unzip-only behavior. Evidence from .omo/evidence/global-blockers-zip-fallback-final.txt shows normal=pass, missing-required=fail, forbidden=fail, abi-mismatch=fail with python3 absent and unzip present.
+  - I reran an independent no-python PATH probe. Third attempt result: normal zip passed; missing service.sh failed; Host/bad.txt failed; daemon arm64-v8a plus cli x86_64 failed; probe_python_available=no; probe_unzip_available=yes.
+  - Two earlier probe attempts were harness mistakes, not product failures: first lacked a zip creation command; second hid required POSIX utilities such as mktemp/sed. The final probe kept POSIX tools and still excluded python3.
+- profile-restore --dry-run --module-root <empty>: PASS
+  - crates/puread-cli/src/profile_execute/profile_restore/ledger.rs returns Ok(Vec::new()) when the profile ledger path is missing after path safety checks.
+  - crates/puread-cli/tests/cli_profile_restore_empty.rs covers the real CLI surface: profile-restore --dry-run --module-root <empty>; asserts record_count=0, pending_restore_count=0, will_mutate=false, and verifies state/run plus fake runner log are not created.
+  - cargo test --workspace ran this test successfully.
+- test temporary directory cleanup quality: PASS
+  - crates/puread-android/src/file_actions/executor/test_support.rs now uses a RAII TestTempRoot and Drop cleanup, including sibling cleanup for extension-style temp artifacts created by guard paths.
+  - crates/puread-android/src/profiles/xml/tests.rs and crates/puread-android/tests/rom_profiles/support.rs use RAII temp directory wrappers.
+  - Cleanup changes are limited to test support/test modules and do not weaken production behavior.
+
+LOC review:
+- Touched Rust/shell pure LOC are <=250.
+- Highest relevant counts observed:
+  - scripts/lib/verify-local-zip.sh: 218
+  - crates/puread-cli/src/profile_execute/profile_restore/ledger.rs: 211
+  - scripts/lib/verify-local-forbidden.sh: 173
+  - xtask/upstream-report/tests/directory_report.rs: 151
+  - xtask/upstream-report/src/report.rs: 137
+  - module/action.sh: 137
+  - crates/puread-android/tests/rom_profiles/support.rs: 115
+  - crates/puread-cli/tests/cli_profile_restore_empty.rs: 84
+  - crates/puread-android/src/file_actions/executor/test_support.rs: 81
+  - scripts/verify-local.sh: 80
+
+local git config:
+- git config --local --get user.name: unset (exit 1)
+- git config --local --get user.email: unset (exit 1)
+- git config --local --list --show-origin only reported core settings, origin remote, and main branch mapping.
+
+git status note:
+- Worktree had many pre-existing modified/untracked files before this review.
+- This review did not modify code, did not modify Example/, did not commit, did not push, and did not set local git config.
+- Running scripts/verify-local.sh refreshed its normal .omo/evidence/task-26-* outputs as part of the requested verification.
+
+blocking issues:
+- None found for lane 3 code quality.

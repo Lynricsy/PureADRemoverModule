@@ -1,0 +1,98 @@
+review=wave5-quality
+verdict=FAIL
+scope=T25-T29 code/script quality read-only review
+reviewer_mode=read_only
+
+commands_run:
+  - search_logs "PureADRemoverModule Wave5 T25 T26 T27 T29 代码 脚本 质量 复审 package forbidden dry-run upstream report"
+  - read_log 0205 0207 0204 0203
+  - git status --short --ignored
+  - git diff -- scripts/build-module.sh scripts/package-module.sh scripts/qa-android.sh scripts/verify-local.sh README.md xtask/upstream-report crates module rules .gitignore
+  - git diff --name-only
+  - sh -n scripts/build-module.sh scripts/package-module.sh scripts/qa-android.sh scripts/verify-local.sh scripts/update-upstream.sh
+  - nl -ba scripts/build-module.sh
+  - nl -ba scripts/package-module.sh
+  - nl -ba scripts/qa-android.sh
+  - nl -ba scripts/update-upstream.sh
+  - nl -ba README.md
+  - unzip -l dist/PureAD-0.1.0-t25.zip
+  - rg -n "real_device_pass|Android ABI|实机|host fixture|not Android|Android-device|dry-run|--execute|DNS|hosts|Clash|Mihomo|proxy|AdGuardHome|iptables" README.md module/bin/README.md module/rules/README.md scripts/*.sh xtask/upstream-report/src xtask/upstream-report/tests
+  - nl -ba .omo/evidence/task-26-forbidden-scan.txt
+  - nl -ba .omo/evidence/task-27-android-qa-dry-run.txt
+  - nl -ba .omo/evidence/task-29-upstream-regression.txt
+  - awk pure LOC check for reviewed shell/Rust files
+  - rg -n "|| true|2>/dev/null || true|return 0|exit 0|real_device_pass=true|rm -rf|mktemp|trap|TMP|temp|for .* in $|eval|source|\\. " scripts/build-module.sh scripts/package-module.sh scripts/qa-android.sh scripts/verify-local.sh
+  - git status --short -- rules Example upstream/upstream_manifest.json
+  - git status --short --ignored -- rules Example
+
+syntax_check:
+  result=pass
+  evidence=sh -n returned exit 0 for scripts/build-module.sh scripts/package-module.sh scripts/qa-android.sh scripts/verify-local.sh scripts/update-upstream.sh
+
+blocking_findings:
+  - id=Q1
+    result=fail
+    file=scripts/qa-android.sh
+    lines=1-434
+    evidence=392 pure LOC from awk LOC check
+    reason=Shell script exceeds the 250 pure LOC expectation. This is a maintainability blocker for a newly added QA script and violates the requested "Shell scripts ... stay within LOC expectations where relevant" check.
+    needed=Split into cohesive smaller scripts/functions or document an explicit accepted exception; rerun LOC evidence.
+  - id=Q2
+    result=fail
+    file=scripts/verify-local.sh
+    lines=1-510
+    evidence=443 pure LOC from awk LOC check
+    reason=Shell verification gate exceeds the 250 pure LOC expectation and is difficult to audit as one file. This violates the requested LOC quality check.
+    needed=Split forbidden scan, zip check, LOC check, shell parse check, and gate runner into smaller cohesive units or document an explicit accepted exception; rerun LOC evidence.
+  - id=Q3
+    result=fail
+    file=scripts/verify-local.sh
+    lines=463-465
+    evidence=TMP_ROOT="${TMPDIR:-/tmp}/puread-verify-local.$$"; mkdir -p "$TMP_ROOT"; trap 'rm -rf "$TMP_ROOT"' EXIT HUP INT TERM
+    reason=Predictable $$ temp directory with mkdir -p is not a sane temp-dir pattern for a verification script that deletes the path on exit. It can collide with stale paths and is weaker than mktemp -d.
+    needed=Use mktemp -d with a fixed prefix under TMPDIR and keep the trap scoped to that created directory; rerun sh -n and verify-local.
+  - id=Q4
+    result=fail
+    file=scripts/package-module.sh
+    lines=166-188,219-220
+    evidence=PUREAD_STAGE="$PUREAD_DIST/.puread-module-staging"; rm -rf "$PUREAD_STAGE"; mkdir -p "$PUREAD_STAGE"; later rm -rf "$PUREAD_STAGE"
+    reason=Package staging uses a fixed directory inside the user-selected dist path and deletes it with rm -rf. This is collision-prone and can delete unrelated stale staging content if another process or prior run used the same path.
+    needed=Use mktemp -d inside the dist directory or a guarded unique staging path; verify cleanup and packaging still pass.
+
+check_results:
+  build-module-maintainability=pass
+  build-module-failure-handling=pass
+  build-module-quoting=pass
+  build-module-tempdirs=not_applicable
+  package-module-maintainability=partial
+  package-module-failure-handling=pass
+  package-module-quoting=pass
+  package-module-tempdirs=fail_Q4
+  qa-android-maintainability=fail_Q1
+  qa-android-dry-run-device-mutation=pass
+  qa-android-real-device-claim=pass
+  verify-local-maintainability=fail_Q2
+  verify-local-forbidden-scan-classification=pass
+  verify-local-blocked-production-capability-would-fail=pass
+  verify-local-tempdirs=fail_Q3
+  t25-dist-forbidden-artifacts=pass
+  t29-report-only-no-rules-example-mutation=pass
+  t29-git-unavailable-fallback=pass
+  readme-boundary-accuracy=pass
+  changed-rust-loc=pass
+
+supporting_evidence:
+  - scripts/build-module.sh has set -eu, validates ABI/profile, quotes command arguments in command execution, and dry-run exits before cargo/copy. Pure LOC=206.
+  - scripts/package-module.sh stages only module.prop/customize.sh/service.sh/uninstall.sh/action.sh/scripts/bin/rules into zip. unzip listing for dist/PureAD-0.1.0-t25.zip contains no Example/, no nested .zip, no Host/upstream zip/domain/proxy artifacts by path.
+  - .omo/evidence/task-26-forbidden-scan.txt records allowed_contexts and per-match ALLOWED/BLOCKED classification, with allowed_matches=179, blocked_matches=0, result=pass. The code path writes BLOCKED blocked:production_capability_context and fails when blocked > 0.
+  - scripts/qa-android.sh --dry-run evidence records qa_status=plan_only and real_device_pass=false. Dry-run branch exits before run_device_smoke and push/shell actions.
+  - .omo/evidence/task-29-upstream-regression.txt records rules_modified=false, download_performed=false, snapshots_modified=false, sources with ads288.zip sha256 and AdGuard commit, accepted/rejected classifications, manual_review_only, auto_import_allowed=false.
+  - git status --short -- rules Example upstream/upstream_manifest.json produced no tracked changes; git status --short --ignored -- rules Example showed only "!! Example/".
+  - README lines 15-17 and 104 explicitly say local fixture/static checks are not real Android device/ABI coverage and require target-device validation.
+  - Rust LOC evidence from review: report.rs=137, source_meta.rs=49, directory_report.rs=151, git_unavailable.rs=119.
+
+nonblocking_observations:
+  - scripts/qa-android.sh intentionally continues after adb command failures to collect evidence, increments FAIL_COUNT, and reports real_device_pass=false unless FAIL_COUNT is zero. This is acceptable for a smoke QA collector, though the large file size makes future review harder.
+  - T29 git-unavailable fallback is implemented in xtask/upstream-report/src/scanner/source_meta.rs by degrading ErrorKind::NotFound to "n/a" while preserving other IO errors as failures.
+
+final_verdict=FAIL

@@ -1,0 +1,58 @@
+{
+  "summary": {
+    "sources": 2,
+    "accepted": 46,
+    "rejected": 68,
+    "ignored": 22
+  },
+  "sources": [
+    {
+      "source_id": "Adguard-Home-For-Magisk-Mod",
+      "type": "directory",
+      "path": "Example/Adguard-Home-For-Magisk-Mod",
+      "sha256": "n/a",
+      "size_bytes": 3901656,
+      "file_count": 21,
+      "remote_url": "n/a",
+      "commit": "n/a",
+      "executable_upstream_code": true,
+      "auto_import_allowed": false
+    },
+    {
+      "source_id": "ads288.zip",
+      "type": "zip",
+      "path": "Example/ads288.zip",
+      "sha256": "bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7",
+      "size_bytes": 430199,
+      "file_count": 115,
+      "remote_url": "n/a",
+      "commit": "n/a",
+      "executable_upstream_code": true,
+      "auto_import_allowed": false
+    }
+  ],
+  "policy": {
+    "download_performed": false,
+    "rules_modified": false,
+    "snapshots_modified": false,
+    "report_only": true,
+    "auto_import_allowed": false
+  },
+  "accepted_categories": [
+    "appops",
+    "component",
+    "file_path",
+    "rom_profile",
+    "sdk_cache",
+    "sqlite"
+  ],
+  "rejected_categories": [
+    "ad_reward_domain",
+    "dns",
+    "domain",
+    "hosts",
+    "ifw_clear",
+    "iptables_network",
+    "proxy"
+  ]
+}

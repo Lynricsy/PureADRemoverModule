@@ -1,0 +1,41 @@
+verify_local_rc=1
+[1m[92m   Doc-tests[0m puread_android
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_cli
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_daemon
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m   Doc-tests[0m puread_rules
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+error: forbidden tokens found in production paths

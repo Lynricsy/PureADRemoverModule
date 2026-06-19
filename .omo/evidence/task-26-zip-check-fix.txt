@@ -1,0 +1,80 @@
+# task-26 zip-check fix debug evidence
+started_at=2026-06-19T11:20:47+08:00
+## hypotheses
+H1=Python heredoc/argv returns nonzero after successful zip details
+H2=required zip entries do not match actual dist zip
+H3=evidence append order permits contradictory status, especially across overlapping runs
+H4=stale package zip path is checked instead of current dist zip
+## red evidence from reviewer artifact
+# Wave5 T25-T29 QA after script-quality fix
+
+reviewed_at=2026-06-19T03:18:00+08:00
+role=read_only_qa_reviewer
+verdict=FAIL
+
+## Scope
+
+- Repository: `/root/Projects/Ling/PureADRemoverModule`
+- Review mode: read-only QA; no code edits, no commit, no push, no `Example/` mutation.
+- Allowed writes: this evidence file and AgentLog only.
+- Initial dirty worktree was already present before this review, including modified README/script/xtask files and untracked evidence/dist/module-bin/script files.
+
+## Commands run
+
+### 1. Local verification
+
+Command:
+
+```sh
+scripts/verify-local.sh > /tmp/puread-review-wave5-verify-local.log 2>&1
+```
+
+Exit code: `1`
+
+Key output:
+
+```text
+## current pre-fix zip-check evidence after rerun
+gate=zip-check
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+entry_count=37
+rule_file_count=18
+abis=x86_64
+required_entries=present
+forbidden_path_entries=none
+result=pass
+
+## root cause confirmation
+H1_python_argv=refuted: direct zip_check_with_python on dist zip returned rc=0 and printed zip details.
+H2_entry_mismatch=refuted_for_current_zip: unzip list contains required entries; malformed temp zip missing uninstall.sh returned rc=1 with missing entry.
+H3_evidence_append_order=confirmed: overlapping writers against a shared evidence path can produce result=fail and result=pass in one file.
+H4_stale_zip_path=refuted: package evidence zip path equals dist/PureAD-0.1.0-t25.zip and exists.
+
+## fix
+file=scripts/lib/verify-local-zip.sh
+change=write zip-check output to a same-directory mktemp file and mv it over the final evidence only after a single result is complete.
+scope=zip-check evidence publication only; no zip rule or package logic changed.
+
+## green verification
+sh_n=pass: sh -n scripts/verify-local.sh scripts/lib/*.sh scripts/package-module.sh scripts/qa-android.sh
+verify_local=pass: scripts/verify-local.sh exit 0; output ended with info: local verification passed
+zip_evidence=pass: .omo/evidence/task-26-zip-check.txt has result=pass only and contradiction=no
+package=pass: scripts/package-module.sh exit 0; zip=dist/PureAD-0.1.0-t25.zip
+zip_entries=pass: module.prop, action.sh, service.sh, post-fs-data.sh, customize.sh, bin/x86_64/puread-cli, bin/x86_64/puread-daemon, rules/common/sdk-cache.toml present
+qa_android_dry_run=pass: scripts/qa-android.sh --dry-run exit 0; qa_status=plan_only; real_device_pass=false
+loc=pass: all scripts/*.sh and scripts/lib/*.sh <=250 pure LOC; max scripts/package-module.sh=215, scripts/lib/verify-local-forbidden.sh=173, scripts/lib/verify-local-zip.sh=107
+cleanup=pass: no matching /tmp puread debug dirs, no dist/.puread-module-staging.*, no task-26 zip tmp evidence files
+local_git_config=pass: local user.name and user.email unset (rc=1)
+
+## final verification after snapshot fix
+concurrent_red_before_snapshot=3 overlapping scripts/verify-local.sh runs produced rc set: 1 0, 2 1, 3 1; failing logs reported zip structure check failed.
+concurrent_green_after_snapshot=3 overlapping scripts/verify-local.sh runs produced rc set: 1 0, 2 0, 3 0; all ended local verification passed.
+final_sh_n=pass
+final_verify_local=pass: scripts/verify-local.sh exit 0
+final_package_module=pass: scripts/package-module.sh exit 0
+final_zip_entries=pass: required entries present in dist/PureAD-0.1.0-t25.zip
+final_qa_android_dry_run=pass: qa_status=plan_only; real_device_pass=false
+final_loc=pass: scripts/lib/verify-local-zip.sh=134 pure LOC; all scripts <=250
+final_zip_evidence=pass: contradiction=no and only result=pass
+final_cleanup=pass: no .debug-journal.md, no matching /tmp debug dirs, no .puread-module-staging.*, no task-26 zip tmp evidence files
+final_local_git_config=pass: local user.name/user.email unset

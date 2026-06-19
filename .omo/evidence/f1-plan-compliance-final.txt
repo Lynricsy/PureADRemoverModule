@@ -1,0 +1,402 @@
+review=f1-plan-compliance-final
+reviewed_at=2026-06-19T12:15:28+08:00
+role=read_only_final_verification_reviewer
+repo=/root/Projects/Ling/PureADRemoverModule
+verdict=PASS
+
+## Scope
+
+- Reran F1 final verification after the `module/action.sh` action surface fix.
+- Review-only constraints honored: no source code edits, no commits, no pushes, no local git config changes, no `Example/` changes.
+- Allowed writes: this evidence file and AgentLog only.
+- Temporary verification residue produced by action commands was removed: empty `module/state/profile-actions.jsonl` and empty `module/run/puread.lock`.
+
+## Plan Criteria Read
+
+- Read `.omo/plans/puread-rust-module.md`.
+- Must have lines include:
+  - Non-domain local ad cleanup only.
+  - Cautious/high-risk abilities require explicit profile, are not broadly default-enabled, and are reversible.
+  - `service.sh` starts root native daemon.
+  - `action.sh` calls Rust CLI and provides status, manual scan, profile apply/undo, and restore.
+  - Ledger state must support uninstall restore.
+  - daemon/CLI/uninstall use global lock.
+  - README explains this is not a DNS/hosts/Clash replacement.
+- Must NOT have lines include:
+  - No hosts generation/mounting/switching.
+  - No DNS redirect, AdGuard Home, private DNS forcing.
+  - No Clash/Box/Mihomo/proxy config edits.
+  - No domain lists or ad reward domain switching.
+  - No iptables network blocking.
+  - No IFW clear, root hiding, anti-detection, foreground service, default wake lock.
+  - No default `chattr +i` or default system package `.replace`.
+
+## Previous F1 Evidence Read
+
+- Read `.omo/evidence/f1-plan-compliance.txt`.
+- Previous verdict was FAIL.
+- Previous blocker was specifically: `module/action.sh` exposed only `status`, `diagnose`, `scan-dry-run`, and `restore-dry-run`; it did not expose profile apply / profile restore action surface even though Rust CLI supported it.
+
+## Required Action Surface Checks
+
+### `sh module/action.sh --help`
+
+Exit: 0.
+
+Observed actions:
+
+```text
+status
+diagnose
+scan-dry-run
+restore-dry-run
+apply-profile-dry-run <profile>
+apply-profile-execute <profile>
+profile-restore-dry-run
+profile-restore-execute
+```
+
+This satisfies the required user-facing module action surface:
+
+- status: present.
+- manual scan dry-run: `scan-dry-run` present.
+- restore dry-run: `restore-dry-run` present.
+- profile apply dry-run: `apply-profile-dry-run <profile>` present.
+- profile apply execute: `apply-profile-execute <profile>` present and explicit.
+- profile restore dry-run: `profile-restore-dry-run` present.
+- profile restore execute: `profile-restore-execute` present and explicit.
+
+### Required grep
+
+Command:
+
+```sh
+rg -n "apply-profile|profile-apply|profile-restore|restore-dry-run|scan-dry-run|status" module/action.sh
+```
+
+Key hits:
+
+- `PUREAD_ACTION="${1:-status}"`.
+- Help includes `status`, `scan-dry-run`, `restore-dry-run`, `apply-profile-dry-run <profile>`, `apply-profile-execute <profile>`, `profile-restore-dry-run`, `profile-restore-execute`.
+- `puread_action_apply_profile` invokes Rust CLI:
+  - `puread-cli apply-profile "$PUREAD_PROFILE_NAME" "--$PUREAD_APPLY_MODE" --rules ... --root ... --module-root ...`
+- `puread_action_restore_profile` invokes Rust CLI:
+  - `puread-cli profile-restore "--$PUREAD_RESTORE_MODE" --module-root ...`
+- Case arms include aliases:
+  - `apply-profile-dry-run|profile-apply-dry-run`
+  - `apply-profile-execute|profile-apply-execute`
+  - `profile-restore-dry-run`
+  - `profile-restore-execute`
+
+### Packaged zip action surface
+
+Command:
+
+```sh
+unzip -p dist/PureAD-0.1.0-t25.zip action.sh | rg -n "apply-profile|profile-restore|puread_prepare_profile_ledger"
+```
+
+Exit: 0.
+
+Key hits in packaged `action.sh`:
+
+- Help includes `apply-profile-dry-run <profile>`, `apply-profile-execute <profile>`, `profile-restore-dry-run`, `profile-restore-execute`.
+- Packaged script invokes `puread-cli apply-profile`.
+- Packaged script invokes `puread-cli profile-restore`.
+- Packaged script contains `puread_prepare_profile_ledger`.
+
+Conclusion: generated artifact is not stale; the dist zip contains the fixed action surface.
+
+## Dangerous Default / Explicit Execute Checks
+
+### Default action
+
+Command:
+
+```sh
+sh module/action.sh
+```
+
+Exit: 0.
+
+Observed output is status-only:
+
+```text
+PureAD status
+runtime=unknown
+abi=x86_64
+module_dir=module
+state=module/state/status.env
+log=module/logs/puread.log
+daemon=module/bin/x86_64/puread-daemon
+cli=module/bin/x86_64/puread-cli
+status_file=missing
+```
+
+Conclusion: default action is non-mutating `status`; it does not apply any profile.
+
+### Missing profile rejected for dry-run and execute
+
+Commands:
+
+```sh
+sh module/action.sh apply-profile-dry-run
+sh module/action.sh apply-profile-execute
+```
+
+Both exit: 2.
+
+Both print:
+
+```text
+PureAD profile is required: pass it as the second argument or set PUREAD_PROFILE.
+```
+
+Conclusion: neither dry-run nor execute defaults to a profile. This prevents accidental high-risk profile execution by omission.
+
+### Profile apply dry-run observed
+
+Command:
+
+```sh
+PUREAD_PROFILE_ROOT=tests/fixtures/android-fs sh module/action.sh apply-profile-dry-run conservative
+```
+
+Exit: 0.
+
+Key JSON:
+
+```json
+{
+  "command": "apply_profile",
+  "mode": "dry_run",
+  "profile": "conservative",
+  "root_path": "tests/fixtures/android-fs",
+  "module_root": "module",
+  "lock_acquired": false,
+  "will_mutate": false,
+  "applied": 0,
+  "skipped": 0,
+  "failed": 0
+}
+```
+
+Conclusion: action surface reaches Rust CLI dry-run path and reports `will_mutate=false`.
+
+### Profile apply execute observed
+
+Command:
+
+```sh
+PUREAD_PROFILE_ROOT=tests/fixtures/android-fs sh module/action.sh apply-profile-execute conservative
+```
+
+Exit: 0.
+
+Key JSON:
+
+```json
+{
+  "command": "apply_profile",
+  "mode": "execute",
+  "profile": "conservative",
+  "root_path": "tests/fixtures/android-fs",
+  "module_root": "module",
+  "lock_acquired": true,
+  "will_mutate": true,
+  "applied": 0,
+  "skipped": 0,
+  "failed": 0
+}
+```
+
+Conclusion: execute path exists, is explicit in action name, and acquires lock. This fixture had no applicable rule files under module-local rules for that command, so no mutation occurred during verification.
+
+### Profile restore dry-run / execute observed
+
+Commands:
+
+```sh
+sh module/action.sh profile-restore-dry-run
+sh module/action.sh profile-restore-execute
+```
+
+Both exit: 0.
+
+Dry-run key JSON:
+
+```json
+{
+  "command": "profile_restore",
+  "mode": "dry_run",
+  "ledger_path": "module/state/profile-actions.jsonl",
+  "record_count": 0,
+  "pending_restore_count": 0,
+  "will_mutate": false,
+  "restored": 0,
+  "skipped": 0,
+  "failed": 0
+}
+```
+
+Execute key JSON:
+
+```json
+{
+  "command": "profile_restore",
+  "mode": "execute",
+  "ledger_path": "module/state/profile-actions.jsonl",
+  "record_count": 0,
+  "pending_restore_count": 0,
+  "will_mutate": true,
+  "restored": 0,
+  "skipped": 0,
+  "failed": 0
+}
+```
+
+Conclusion: profile restore dry-run and explicit execute are exposed through action.sh and reach Rust CLI. The local ledger was empty, so no restore mutation occurred.
+
+### Scan / restore dry-run safety on host
+
+Commands:
+
+```sh
+sh module/action.sh scan-dry-run
+sh module/action.sh restore-dry-run
+```
+
+Observed:
+
+- `scan-dry-run` exits 1 with `root path does not exist: /data` on this host.
+- `restore-dry-run` exits 1 with `ledger file does not exist: module/state/actions.jsonl`.
+
+Conclusion: these are safe refusal paths on the host environment, not silent success and not mutation.
+
+## Local Verification
+
+Command:
+
+```sh
+scripts/verify-local.sh
+```
+
+Exit: 0.
+
+Key passes:
+
+- `verify-local-sh-parse`: pass.
+- `cargo fmt --all -- --check`: pass.
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings`: pass.
+- `cargo test --workspace`: pass.
+- `cargo run -p puread-cli -- rules validate ...`: pass.
+- `scripts/package-module.sh`: pass.
+- zip check: pass.
+- forbidden scan: pass.
+- pure Rust LOC: pass.
+- shell parse: pass.
+- final: `local verification passed`.
+
+## Required Project Surface Recheck
+
+### AGENTS / README
+
+- `AGENTS.md` contains project boundary, forbidden capabilities, upstream source list, snapshot fields, sync flow, classification matrix, provenance fields, validation commands, AgentLogs requirements, Git/non-Git notes, and `Example/` read-only convention.
+- README explicitly states the project is not a DNS/hosts/Clash/Mihomo/Box/AdGuardHome/proxy replacement.
+- README documents CLI `status`, `scan`, `apply-profile`, `profile-report`, `profile-restore`, `restore`, `dump-report`, and says `scan` / `apply-profile` default to dry-run while real execution requires explicit `--execute`.
+- README documents default safety, explicit high-risk profiles, strong mode risks, and ledger-backed restore.
+
+### Rules
+
+- Rules contain all required allowed categories:
+  - `file_path`
+  - `sdk_cache`
+  - `sqlite`
+  - `appops`
+  - `component`
+  - `rom_profile`
+- `rules/appops`, `rules/components`, `rules/rom`, and `rules/sqlite` have no `default_enabled = true` hits.
+- Rule grep showed source metadata and rollback fields across rule files:
+  - `source = ...`
+  - `source_line_or_pattern = ...`
+  - `rollback_strategy = ...`
+
+### Module / dist
+
+- `module/` contains:
+  - `module.prop`
+  - `customize.sh`
+  - `service.sh`
+  - `uninstall.sh`
+  - `action.sh`
+  - `scripts/puread-module-lib.sh`
+  - `rules/README.md`
+  - `bin/README.md`
+  - `bin/x86_64/puread-cli`
+  - `bin/x86_64/puread-daemon`
+- `dist/PureAD-0.1.0-t25.zip` contains module lifecycle scripts, `bin/x86_64/puread-cli`, `bin/x86_64/puread-daemon`, and 18 rule TOML files.
+- Zip forbidden entry scan for `hosts|Host/|host.sh|mount_hosts|iptables.sh|ad_reward|AdGuardHome|ProxyConfig|clash|mihomo|box` returned no matches.
+
+### Daemon / low power
+
+- `crates/puread-daemon` includes `inotify` and epoll event-loop code.
+- No production hit for `Duration::from_secs(5)`, wake lock, foreground service, or `startForeground`.
+- Only sleep hit was in a daemon test: `crates/puread-daemon/tests/event_loop.rs:84` uses `thread::sleep(Duration::from_millis(20))`.
+
+## Git / Dirty Worktree / Scope Controls
+
+### Local git config
+
+Command:
+
+```sh
+git config --local --get-regexp '^(user\.|author\.|committer\.)'
+```
+
+Exit: 1, empty output.
+
+Conclusion: local git identity is unset.
+
+### Final worktree state
+
+Command:
+
+```sh
+git status --short --ignored
+```
+
+Current dirty worktree remains, including pre-existing/shared changes:
+
+- Modified:
+  - `.omo/boulder.json`
+  - `.omo/plans/puread-rust-module.md`
+  - `.omo/start-work/ledger.jsonl`
+  - `README.md`
+  - `module/action.sh`
+  - `module/bin/README.md`
+  - `module/module.prop`
+  - `module/rules/README.md`
+  - `scripts/verify-local.sh`
+  - `xtask/upstream-report/src/report.rs`
+  - `xtask/upstream-report/src/scanner/source_meta.rs`
+  - `xtask/upstream-report/tests/directory_report.rs`
+- Untracked evidence/build/module helper files remain from ongoing work, including `dist/`, `module/bin/x86_64/`, `scripts/build-module.sh`, `scripts/package-module.sh`, `scripts/qa-android.sh`, and many `.omo/evidence/*` files.
+- Ignored:
+  - `AgentLogs/`
+  - `Example/`
+  - `target/`
+  - `xtask/upstream-report/target/`
+
+This reviewer did not revert, commit, push, or alter unrelated shared worktree changes.
+
+## Adversarial Checks
+
+- dangerous operation default: PASS. Default `action.sh` is status-only; apply requires profile; execute requires explicit `apply-profile-execute` or `profile-restore-execute`.
+- stale_state/generated artifact: PASS. `scripts/verify-local.sh` rebuilt package successfully, and final zip `action.sh` contains the fixed profile action surface.
+- misleading_success_output: PASS. Host `scan-dry-run` and `restore-dry-run` fail visibly when `/data` or ledger is missing; invalid profile fails visibly; no silent success observed.
+- dirty_worktree: PASS with caveat. Dirty worktree is present and documented; no unrelated changes were reverted or claimed clean.
+- scope creep: PASS. No code implementation was performed during this review; no `Example/` modification; no local git config set.
+
+## Final Verdict
+
+PASS: the previous F1 blocker is resolved. `module/action.sh` now exposes status, manual scan dry-run, restore dry-run, profile apply dry-run/explicit execute, and profile restore dry-run/explicit execute. The fixed action surface is also present in `dist/PureAD-0.1.0-t25.zip`, `scripts/verify-local.sh` exits 0, high-risk profile execution is not defaulted, and the documented project/module/rules/daemon/dist surfaces still satisfy F1 plan compliance.

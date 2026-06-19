@@ -1,0 +1,16 @@
+gate=shell-pure-loc
+limit=250
+206	scripts/build-module.sh
+164	scripts/package-module.sh
+113	scripts/qa-android.sh
+74	scripts/update-upstream.sh
+80	scripts/verify-local.sh
+54	scripts/lib/package-module-zip.sh
+76	scripts/lib/qa-android-common.sh
+129	scripts/lib/qa-android-device.sh
+79	scripts/lib/qa-android-static.sh
+43	scripts/lib/verify-local-common.sh
+173	scripts/lib/verify-local-forbidden.sh
+73	scripts/lib/verify-local-quality.sh
+134	scripts/lib/verify-local-zip.sh
+result=pass

@@ -1,0 +1,50 @@
+review=global-goal-constraint-verification
+reviewed_at=2026-06-19T13:18:00+08:00
+role=review-work-lane-1-goal-constraint-verifier
+repo=/root/Projects/Ling/PureADRemoverModule
+verdict=PASS
+confidence=HIGH
+
+## Scope
+
+- Read `.omo/plans/puread-rust-module.md`, `AGENTS.md`, `README.md`, `module/action.sh`, `module/service.sh`, `module/uninstall.sh`, `module/scripts/puread-module-lib.sh`, final F1-F4 evidence, and selected implementation files.
+- Used AgentLogs `search_logs` and `read_log` before relying on historical decisions.
+- Ran light independent checks: `git status --short --ignored`, `git remote -v`, `git log`, `git config --local --get-regexp`, `sh module/action.sh --help`, zip entry checks, packaged `action.sh` surface grep, rule category/provenance scans, high-risk default-enabled scan, Example ignore/tracked checks, forbidden token scan, and daemon inotify/epoll code inspection.
+- Review-only constraints honored: no code edits, no commits, no pushes, no local git config changes, no `Example/` changes.
+
+## Requirement Matrix
+
+| Requirement / Constraint | Verdict | Evidence |
+|---|---|---|
+| Rust implementation with structured workspace | PASS | Plan T1-T30 marked complete; F2 evidence records `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets --all-features -- -D warnings`, and `cargo test --workspace` exit 0. |
+| Pure non-domain local Android Root scope | PASS | README and AGENTS define only local files, SDK cache, SQLite, AppOps, component, and ROM profiles. Rule category scan found only `file_path`, `sdk_cache`, `sqlite`, `appops`, `component`, `rom_profile`. |
+| Do not duplicate DNS/hosts/domain/proxy/Clash/Mihomo/AdGuardHome/iptables/ad_reward/IFW/root hiding/anti-detection | PASS | F4 `blocked_matches=0`; independent forbidden scan hits were confined to docs, tests/fixtures, validation guards, upstream classifier, settings rejection guard, rule provenance/notes, or SDK component class names. Zip forbidden entry scan returned no matches. |
+| Include suggested and cautious non-domain abilities | PASS | Rules include file/SDK cache, SQLite DB profiles, AppOps, components, and ROM settings/shared_prefs. README documents all categories. |
+| Cautious/high-risk abilities explicit profile, not broadly default-enabled | PASS | `rg default_enabled = true` in `rules/appops`, `rules/components`, `rules/rom`, `rules/sqlite`, and `module/rules` returned no hits. High/medium rules show `default_enabled = false` and explicit profiles (`appops`, `component`, `rom`, `sqlite`). |
+| Low power daemon uses inotify + epoll blocking loop; no 5-second polling | PASS | `crates/puread-daemon/src/watcher.rs` uses `inotify::Inotify`; `crates/puread-daemon/src/event_loop.rs` registers the inotify fd with `mio::Poll` and blocks with `poll(..., None)` in the run loop. Scan found no production `Duration::from_secs(5)`, `sleep 5`, wake lock, or foreground service implementation. |
+| Dry-run first and real mutation explicit | PASS | README says `scan` and `apply-profile` default dry-run and `--execute` is explicit. `action.sh --help` exposes `apply-profile-dry-run` and separate `apply-profile-execute`; missing profile exits 2 in F1/F3 evidence. |
+| Reversible state ledger for file actions | PASS | `restore_ledger/record.rs` records original path, action, file type, mode, uid, gid, SELinux context, immutable state, timestamp, profile, and restore steps. `restore_ledger/store.rs` stores `/data/adb/modules/<id>/state/actions.jsonl`, deduplicates, orders restore, and retains failed records. |
+| Reversible AppOps/component/ROM profile ledger | PASS | `appops_components.rs` records original AppOps mode, component enabled/hidden state, and `pm hide` result; `profile_restore.rs` restores app_op, component, rom_setting, shared_prefs_bool, and rom_skipped entries; ledger uses `O_NOFOLLOW` and marks restored records only after successful action set. |
+| `module/action.sh` has status, manual scan, profile apply/revoke/restore entry points | PASS | Source and packaged action surface include `status`, `scan-dry-run`, `restore-dry-run`, `apply-profile-dry-run`, `apply-profile-execute`, `profile-restore-dry-run`, and `profile-restore-execute`. F1/F3 evidence drove source and zip surfaces. |
+| `service.sh` starts root native daemon | PASS | `module/service.sh` selects ABI, locates `puread-daemon`, writes status, and starts it in background. Default `PUREAD_DRY_RUN=1` is conservative, not a missing daemon start path. |
+| Uninstall/restore behavior | PASS | `module/uninstall.sh` checks ledger and runs `puread-cli restore --dry-run --ledger ...`; README documents explicit restore before removal. |
+| AGENTS.md upstream sync/update instructions | PASS | AGENTS includes project boundary, forbidden capabilities, upstream source list, snapshot fields, sync flow, classification matrix, provenance fields, validation commands, AgentLogs rules, git/non-git notes, and `Example/` read-only convention. |
+| `Example/` ignored/read-only | PASS | `git check-ignore -v Example/` shows `.gitignore:2:Example/`; `git ls-files Example` and `git diff --name-only HEAD -- Example` were empty; F4 confirms no `Example/` in zip. |
+| Final F1-F4 evidence exists and passes | PASS | `f1-plan-compliance-final.txt`, `f2-code-quality.txt`, `f3-manual-qa-final.txt`, and `f4-scope-fidelity.txt` all conclude PASS; AgentLogs 0230 and 0231 confirm earlier F1/F3 blockers were fixed and rerun. |
+| Real Android device limitation handled honestly | PASS_WITH_NOTE | F3 records `real_device_pass=false` and `device_unavailable=present`, matching the plan fallback. No real-device pass was claimed. |
+| Git remote, local identity, and commit format constraints | PASS_WITH_NOTE | Remote is `git@github.com:Lynricsy/PureADRemoverModule.git`; local git identity regexp exits 1 with no output; recent commits include required gitmoji format and `Co-authored-by: Wine Fox <fox@ling.plus>`. Current HEAD equals `origin/main`. |
+| Timely commit/push for final changed files | WARN | Earlier waves are committed and pushed, but current final-stage diff and generated evidence remain uncommitted/unpushed. This lane was explicitly instructed not to commit or push, so this is recorded as a process residual risk, not a functional blocker for goal/constraint verification. |
+
+## Blocking Issues
+
+None for lane 1 goal and constraint verification.
+
+## Residual Risks
+
+- Current worktree is intentionally dirty and includes final implementation/evidence artifacts not committed in this review lane.
+- Android real-device/root execution was not observed; evidence is host dry-run, fixture, package, daemon tempdir tests, and explicit device-unavailable artifact.
+- `dist/PureAD-0.1.0-t25.zip` contains `x86_64` host fixture binaries for layout validation, not Android ABI-verified binaries, as documented in README/F3 evidence.
+
+## Final Decision
+
+PASS: The implementation satisfies the explicit and implied functional/scope constraints for the final PureADRemoverModule implementation, with documented limitations around real-device availability and current uncommitted final-stage worktree state.

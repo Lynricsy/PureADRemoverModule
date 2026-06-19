@@ -1,0 +1,2 @@
+shellcheck=skipped
+reason=shellcheck not found

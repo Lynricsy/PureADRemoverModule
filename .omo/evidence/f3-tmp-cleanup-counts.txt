@@ -1,0 +1,5 @@
+  868 .omo/evidence/f3-tmp-cleanup-before.txt
+   22 .omo/evidence/f3-tmp-cleanup-current-verification-residue.txt
+    0 .omo/evidence/f3-tmp-cleanup-after.txt
+    0 .omo/evidence/f3-tmp-cleanup-after-verify.txt
+  890 total

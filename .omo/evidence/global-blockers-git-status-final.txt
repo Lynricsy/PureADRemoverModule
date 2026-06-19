@@ -1,0 +1,175 @@
+ M .omo/boulder.json
+ M .omo/plans/puread-rust-module.md
+ M .omo/start-work/ledger.jsonl
+ M README.md
+ M crates/puread-android/src/file_actions/executor/test_support.rs
+ M crates/puread-android/src/profiles/xml/tests.rs
+ M crates/puread-android/tests/rom_profiles/support.rs
+ M crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+ M module/action.sh
+ M module/bin/README.md
+ M module/module.prop
+ M module/rules/README.md
+ M scripts/verify-local.sh
+ M xtask/upstream-report/src/report.rs
+ M xtask/upstream-report/src/scanner/source_meta.rs
+ M xtask/upstream-report/tests/directory_report.rs
+?? .omo/evidence/f1-action-apply-dry-run-observed.txt
+?? .omo/evidence/f1-action-apply-requires-profile.txt
+?? .omo/evidence/f1-action-help.txt
+?? .omo/evidence/f1-action-profile-restore-dry-run-observed.txt
+?? .omo/evidence/f1-action-surface-grep.txt
+?? .omo/evidence/f1-action-temp-module-dry-runs.txt
+?? .omo/evidence/f1-f3-git-status-final.txt
+?? .omo/evidence/f1-f3-local-git-config.txt
+?? .omo/evidence/f1-f3-package.txt
+?? .omo/evidence/f1-f3-qa-android-dry-run.txt
+?? .omo/evidence/f1-f3-shell-parse.txt
+?? .omo/evidence/f1-f3-verify-local.txt
+?? .omo/evidence/f1-f3-zip-action-surface.txt
+?? .omo/evidence/f1-f3-zip-action.sh
+?? .omo/evidence/f1-f3-zip-list.txt
+?? .omo/evidence/f1-f3-zip-required-forbidden.txt
+?? .omo/evidence/f1-plan-compliance-final.txt
+?? .omo/evidence/f1-plan-compliance.txt
+?? .omo/evidence/f2-code-quality.txt
+?? .omo/evidence/f3-manual-qa-final.txt
+?? .omo/evidence/f3-manual-qa.txt
+?? .omo/evidence/f3-tmp-cleanup-after-verify.txt
+?? .omo/evidence/f3-tmp-cleanup-after.txt
+?? .omo/evidence/f3-tmp-cleanup-before.txt
+?? .omo/evidence/f3-tmp-cleanup-counts.txt
+?? .omo/evidence/f3-tmp-cleanup-current-verification-residue.txt
+?? .omo/evidence/f4-scope-fidelity.txt
+?? .omo/evidence/global-blockers-cli-profile-restore-suite.txt
+?? .omo/evidence/global-blockers-file-actions-cleanup-test.txt
+?? .omo/evidence/global-blockers-git-status-final.txt
+?? .omo/evidence/global-blockers-loc-after-edits.txt
+?? .omo/evidence/global-blockers-loc-after-split.txt
+?? .omo/evidence/global-blockers-loc-final.txt
+?? .omo/evidence/global-blockers-profile-restore-empty-final.txt
+?? .omo/evidence/global-blockers-profile-restore-empty-red.txt
+?? .omo/evidence/global-blockers-profile-restore-empty-test-green.txt
+?? .omo/evidence/global-blockers-profile-restore-empty-test-red.txt
+?? .omo/evidence/global-blockers-rom-profile-cleanup-test-all.txt
+?? .omo/evidence/global-blockers-rom-profile-cleanup-test.txt
+?? .omo/evidence/global-blockers-sh-n-after-zip-edit.txt
+?? .omo/evidence/global-blockers-tmp-after-cleanup.txt
+?? .omo/evidence/global-blockers-tmp-after-rerun-clean.txt
+?? .omo/evidence/global-blockers-tmp-after-tests-before-final-clean.txt
+?? .omo/evidence/global-blockers-tmp-before.txt
+?? .omo/evidence/global-blockers-tmp-final-clean.txt
+?? .omo/evidence/global-blockers-verify-1-file-actions-cleanup-final.txt
+?? .omo/evidence/global-blockers-verify-1-file-actions-cleanup-test.txt
+?? .omo/evidence/global-blockers-verify-1-profile-restore-empty-final.txt
+?? .omo/evidence/global-blockers-verify-1-profile-restore-empty-split-test-rerun.txt
+?? .omo/evidence/global-blockers-verify-1-profile-restore-empty-split-test.txt
+?? .omo/evidence/global-blockers-verify-1-profile-restore-suite-final.txt
+?? .omo/evidence/global-blockers-verify-1-profile-restore-test.txt
+?? .omo/evidence/global-blockers-verify-1-rom-profiles-cleanup-final.txt
+?? .omo/evidence/global-blockers-verify-1-rom-profiles-cleanup-test.txt
+?? .omo/evidence/global-blockers-verify-1-xml-cleanup-final.txt
+?? .omo/evidence/global-blockers-verify-1-xml-cleanup-test.txt
+?? .omo/evidence/global-blockers-verify-10-local-git-config-final.txt
+?? .omo/evidence/global-blockers-verify-10-local-git-config.txt
+?? .omo/evidence/global-blockers-verify-2-cargo-fmt-final.txt
+?? .omo/evidence/global-blockers-verify-2-cargo-fmt-rerun.txt
+?? .omo/evidence/global-blockers-verify-2-cargo-fmt.txt
+?? .omo/evidence/global-blockers-verify-3-cargo-clippy-final.txt
+?? .omo/evidence/global-blockers-verify-3-cargo-clippy.txt
+?? .omo/evidence/global-blockers-verify-4-cargo-test-workspace-final.txt
+?? .omo/evidence/global-blockers-verify-4-cargo-test-workspace.txt
+?? .omo/evidence/global-blockers-verify-5-sh-n-final.txt
+?? .omo/evidence/global-blockers-verify-5-sh-n-rerun.txt
+?? .omo/evidence/global-blockers-verify-5-sh-n.txt
+?? .omo/evidence/global-blockers-verify-6-verify-local-final.txt
+?? .omo/evidence/global-blockers-verify-6-verify-local.txt
+?? .omo/evidence/global-blockers-verify-8-profile-restore-empty-cli.txt
+?? .omo/evidence/global-blockers-xml-cleanup-test.txt
+?? .omo/evidence/global-blockers-zip-fallback-final.txt
+?? .omo/evidence/global-blockers-zip-fallback-missing-red.txt
+?? .omo/evidence/global-blockers-zip-fallback-no-python-green.txt
+?? .omo/evidence/global-review-context.txt
+?? .omo/evidence/global-review-goal.txt
+?? .omo/evidence/global-review-qa.txt
+?? .omo/evidence/global-review-quality.txt
+?? .omo/evidence/global-review-security.txt
+?? .omo/evidence/review-wave5-qa-after-fix.txt
+?? .omo/evidence/review-wave5-qa-final.txt
+?? .omo/evidence/review-wave5-qa.txt
+?? .omo/evidence/review-wave5-quality-after-fix.txt
+?? .omo/evidence/review-wave5-quality-final.txt
+?? .omo/evidence/review-wave5-quality-final2.txt
+?? .omo/evidence/review-wave5-quality.txt
+?? .omo/evidence/review-wave5-scope-after-fix.txt
+?? .omo/evidence/review-wave5-scope-final.txt
+?? .omo/evidence/review-wave5-scope-plan.txt
+?? .omo/evidence/task-25-26-27-script-quality-fix.txt
+?? .omo/evidence/task-25-build-dry-run.txt
+?? .omo/evidence/task-25-loc.txt
+?? .omo/evidence/task-25-package-cleanup-final-fix.txt
+?? .omo/evidence/task-25-package-loc-final-fix.txt
+?? .omo/evidence/task-25-package-local-git-config-final-fix.txt
+?? .omo/evidence/task-25-package-zip-check-final-fix.txt
+?? .omo/evidence/task-25-package-zip-list-final-fix.txt
+?? .omo/evidence/task-25-package.txt
+?? .omo/evidence/task-25-packaged-action-status.txt
+?? .omo/evidence/task-25-python-zip-fallback.txt
+?? .omo/evidence/task-25-shell-parse.txt
+?? .omo/evidence/task-25-shellcheck.txt
+?? .omo/evidence/task-25-shfmt.txt
+?? .omo/evidence/task-25-verify-local-summary.txt
+?? .omo/evidence/task-25-verify-local.txt
+?? .omo/evidence/task-25-zip-forbidden-scan.txt
+?? .omo/evidence/task-25-zip-list.txt
+?? .omo/evidence/task-25-zip-required.txt
+?? .omo/evidence/task-25-zip-test.txt
+?? .omo/evidence/task-26-cargo-clippy.txt
+?? .omo/evidence/task-26-cargo-fmt.txt
+?? .omo/evidence/task-26-cargo-test.txt
+?? .omo/evidence/task-26-forbidden-scan.txt
+?? .omo/evidence/task-26-loc.txt
+?? .omo/evidence/task-26-package.txt
+?? .omo/evidence/task-26-rules-validate.txt
+?? .omo/evidence/task-26-shell-parse.txt
+?? .omo/evidence/task-26-verify-local.txt
+?? .omo/evidence/task-26-verify-script-parse.txt
+?? .omo/evidence/task-26-zip-check-fix.txt
+?? .omo/evidence/task-26-zip-check.txt
+?? .omo/evidence/task-27-adb-devices.txt
+?? .omo/evidence/task-27-android-qa-dry-run.txt
+?? .omo/evidence/task-27-device-unavailable.txt
+?? .omo/evidence/task-27-dry-run-push-plan.txt
+?? .omo/evidence/task-27-forbidden-scan-summary.txt
+?? .omo/evidence/task-27-forbidden-scan.txt
+?? .omo/evidence/task-27-help.txt
+?? .omo/evidence/task-27-shell-parse.txt
+?? .omo/evidence/task-27-shellcheck.txt
+?? .omo/evidence/task-27-static-compat.txt
+?? .omo/evidence/task-28-readme-grep.txt
+?? .omo/evidence/task-28-readme.txt
+?? .omo/evidence/task-29-gitless-guards.txt
+?? .omo/evidence/task-29-gitless-manifest.json
+?? .omo/evidence/task-29-gitless-report.txt
+?? .omo/evidence/task-29-gitless-summary.txt
+?? .omo/evidence/task-29-loc.txt
+?? .omo/evidence/task-29-no-rule-mutation-final-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation-final.txt
+?? .omo/evidence/task-29-no-rule-mutation-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation.txt
+?? .omo/evidence/task-29-policy-guard.txt
+?? .omo/evidence/task-29-report-guards.txt
+?? .omo/evidence/task-29-upstream-regression.txt
+?? .omo/evidence/task-29-upstream-summary.txt
+?? crates/puread-cli/tests/cli_profile_restore_empty.rs
+?? dist/
+?? module/bin/x86_64/
+?? scripts/build-module.sh
+?? scripts/lib/
+?? scripts/package-module.sh
+?? scripts/qa-android.sh
+?? xtask/upstream-report/tests/git_unavailable.rs
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/

@@ -1,0 +1,3 @@
+adb=unavailable
+device-unavailable
+real_device_pass=false

@@ -1,0 +1,79 @@
+review=f1-plan-compliance
+reviewed_at=2026-06-19T12:20:00+08:00
+role=read_only_final_verification_reviewer
+repo=/root/Projects/Ling/PureADRemoverModule
+verdict=FAIL
+
+## 范围
+
+- 只读审查当前仓库是否满足 `.omo/plans/puread-rust-module.md` 的 Must have / Must NOT have / T1-T30 / F1-F4 前置要求。
+- 本次除写入 `.omo/evidence/f1-plan-compliance.txt` 和 AgentLog 外未改代码、未改 `Example/`、未提交、未推送、未设置 local git config。
+- 按 AGENTS.md 先用 `search_logs` 查询历史，命中 Wave5 final 相关日志。
+
+## 读取计划状态
+
+- 计划 Must have 位于 `.omo/plans/puread-rust-module.md:15` 起。
+- 计划 Must NOT have 位于 `.omo/plans/puread-rust-module.md:31` 起。
+- T1-T30 当前全部标记为 `[x]`：`.omo/plans/puread-rust-module.md:140` 到 `.omo/plans/puread-rust-module.md:372`。
+- F1-F4 当前仍为未完成 `[ ]`：`.omo/plans/puread-rust-module.md:382` 到 `.omo/plans/puread-rust-module.md:388`。
+
+## 当前命令证据
+
+- `git status --short --ignored`：工作树 dirty，包含已修改 `.omo/boulder.json`、`.omo/plans/puread-rust-module.md`、`.omo/start-work/ledger.jsonl`、`README.md`、`module/*.md`、`module/module.prop`、`scripts/verify-local.sh`、`xtask/upstream-report/**`；大量 untracked Wave5 evidence、`dist/`、`module/bin/x86_64/`、`scripts/build-module.sh`、`scripts/package-module.sh`、`scripts/qa-android.sh`、`scripts/lib/`；`AgentLogs/`、`Example/`、`target/` 被忽略。
+- `git config --local --list --show-origin`：仅 core、remote.origin、branch.main 设置。
+- `git config --local --get-regexp '^(user\.|author\.|committer\.)'`：exit=1，输出为空，local identity 未设置。
+- `git ls-files Example`：输出为空；`rg -n "^Example/$" .gitignore` 输出 `2:Example/`。
+- `cargo build --workspace`：exit=0。
+- `cargo check --workspace`：exit=0。
+- `cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom`：exit=0，`valid=true`，`rule_file_count=18`，`rule_count=56`。
+- `sh -n module/action.sh module/service.sh module/uninstall.sh module/customize.sh module/scripts/puread-module-lib.sh scripts/package-module.sh scripts/build-module.sh scripts/qa-android.sh scripts/verify-local.sh`：exit=0。
+- `scripts/package-module.sh --check`：exit=1，`unknown argument: --check`。该参数不是计划要求，但说明不能用这个命令作为 package check surface。
+- `unzip -l dist/*.zip`：`dist/PureAD-0.1.0-t25.zip` 存在，包含 `module.prop`、`customize.sh`、`service.sh`、`post-fs-data.sh`、`uninstall.sh`、`action.sh`、`scripts/puread-module-lib.sh`、`bin/x86_64/puread-cli`、`bin/x86_64/puread-daemon`、18 个规则 TOML。
+
+## 既有 Wave5 final evidence
+
+- `.omo/evidence/review-wave5-qa-final.txt`：verdict=PASS；重新跑过 `scripts/verify-local.sh`、`scripts/qa-android.sh --dry-run`、`scripts/package-module.sh`、zip 结构、upstream report-only、README 边界和 local git config 检查。
+- `.omo/evidence/review-wave5-quality-final2.txt`：verdict=PASS；脚本语法、脚本 LOC、临时目录/zip-check 原子写入、`scripts/verify-local.sh`、package、Android QA dry-run、zip entries 和 cleanup residue 均 PASS。
+- `.omo/evidence/review-wave5-scope-final.txt`：verdict=PASS；生产执行路径未发现 DNS/hosts/domain/proxy/iptables/private-DNS/IFW/root-hiding/ad_reward/AdGuardHome 服务接管等越界能力，禁用 token 仅出现在文档、guard、测试/fixture、上游分类、规则溯源或拒绝逻辑等允许上下文。
+
+## 核对矩阵
+
+| 项 | 结论 | 当前证据 |
+|---|---|---|
+| Rust workspace 和 crates 存在 | PASS | `Cargo.toml` workspace resolver=3，members 含 `puread-core`、`puread-rules`、`puread-android`、`puread-daemon`、`puread-cli`；`find crates -maxdepth 2 -name Cargo.toml` 输出 5 个 crate。 |
+| Rust workspace 可构建 | PASS | `cargo build --workspace` exit=0；`cargo check --workspace` exit=0。 |
+| strict Rust lint 基线 | PASS | workspace lints 禁止 `unwrap_used`、`expect_used`、`undocumented_unsafe_blocks` 等；Wave5 quality final2 记录 `scripts/verify-local.sh` 中 cargo fmt/clippy/test 全部 PASS。 |
+| 非域名 file/sdk_cache/sqlite/appops/component/rom profile 规则存在 | PASS | `rg -n 'category = "(file_path|sdk_cache|sqlite|appops|component|rom_profile)"' rules` 命中全部 6 类。 |
+| 规则可校验 | PASS | `puread-cli rules validate ...` exit=0，56 条规则有效。 |
+| daemon 低功耗事件循环，不是 5 秒轮询 | PASS | `crates/puread-daemon` 使用 `inotify` 和 epoll 相关模块；grep 命中 `inotify`/`epoll`，未命中 `Duration::from_secs(5)`；测试中只有 `Duration::from_millis(20)`。 |
+| CLI dry-run/apply/restore/profile 入口 | PASS | `puread-cli --help` 包含 `status`、`scan`、`apply-profile`、`restore`、`profile-restore`、`profile-report`、`dump-report`；`scan --help`、`apply-profile --help`、`restore --help`、`profile-restore --help` 均含 dry-run/execute 或恢复参数。 |
+| module 生命周期脚本 | PARTIAL | `module/action.sh`、`service.sh`、`uninstall.sh`、`customize.sh` 存在且 `sh -n` 通过；`service.sh` 选择 ABI 并启动 daemon；`uninstall.sh` 调 restore dry-run。阻塞项见下方：`action.sh` 未暴露 profile apply/restore 入口。 |
+| bin layout 与 dist zip | PASS | `module/bin/x86_64/puread-cli`、`module/bin/x86_64/puread-daemon` 存在；`dist/PureAD-0.1.0-t25.zip` 包含 module 脚本、`bin/x86_64/*` 和规则目录。 |
+| AGENTS.md 上游同步说明与禁止能力 | PASS | AGENTS.md 包含“项目边界”“禁止能力”“上游源清单”“当前快照记录”“同步流程”“规则分类矩阵”“规则溯源字段”“验证命令”“任务日志要求”“Git 与非 Git 注意事项”“Example/ 只读约定”。 |
+| README 说明不是 DNS/hosts/Clash 替代 | PASS | README 明确写明“本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品”。 |
+| 状态/恢复/rollback ledger 字段 | PASS | `puread-core` ledger 测试覆盖 `original_path`、`original_file_type`、`mode`、`uid`、`gid`、`selinux_context`、`immutable`、`timestamp`、`profile`、`restore_steps`；`puread-android` 文件/SQLite ledger 写入这些字段；profile ledger 覆盖 AppOps/component/ROM restore。 |
+| 规则 source metadata | PASS | `rules/**` 中每类规则含 `source`、`source_file` 或 `zip_entry`、`source_line_or_pattern`、`category`、`default_enabled`、`rollback_strategy`；规则校验通过。 |
+| 上游快照只读边界 | PASS | `Example/` 在 `.gitignore`；`git ls-files Example` 为空；本次未修改 `Example/`。 |
+| Must NOT: hosts 生成/挂载 | PASS | Wave5 scope final 记录生产路径未实现；zip forbidden entry scan 为空；规则 parser/category 仅有拒绝逻辑。 |
+| Must NOT: DNS/私人 DNS/AdGuardHome 服务接管 | PASS | Wave5 scope final 记录无生产实现；`puread-android` settings adapter 拒绝 `private_dns_mode`/`private_dns_specifier` 和含 dns key。 |
+| Must NOT: Clash/Mihomo/Box/proxy 配置接管 | PASS | Wave5 scope final 记录无生产实现；README/AGENTS 仅边界说明。 |
+| Must NOT: domain lists/ad_reward | PASS | Wave5 scope final 记录无生产实现；规则分类拒绝相关类别。 |
+| Must NOT: iptables network blocking/IFW clear/root hiding/反检测/常驻耗电 | PASS | Wave5 scope final 记录无生产实现；daemon 为事件驱动，未见 5 秒固定轮询、前台服务或默认 wake lock。 |
+
+## 阻塞项
+
+1. `module/action.sh` 未满足计划 Must have 中“`action.sh` 调用 Rust CLI 提供状态、手动扫描、应用/撤销 profile、恢复”的完整入口要求。
+   - 证据：`module/action.sh` 仅接受 `status`、`diagnose`、`scan-dry-run`、`restore-dry-run`。
+   - 证据：`module/scripts/puread-module-lib.sh` 仅实现 `puread_action_status`、`puread_action_diagnostics`、`puread_action_scan_dry_run`、`puread_action_restore_dry_run`。
+   - 影响：CLI 本体有 `apply-profile` 和 `profile-restore`，但模块用户入口没有 profile apply/撤销/restore surface；计划要求的是 module/action.sh surface，因此 F1 不能无条件通过。
+   - 需要的证据：`action.sh` 应暴露并验证 profile dry-run/apply/restore 入口，例如 profile apply 默认 dry-run、真实执行需显式 execute、防并发锁生效，以及 `sh module/action.sh <profile-action>` 或 Android dry-run 计划中出现对应入口。
+
+## 风险/说明
+
+- 工作树 dirty 是审查输入，不等于本次审查造成；但由于 `.omo/plans/puread-rust-module.md` 自身也处于 modified，F1 结论以当前文件内容为准，不能声称来自 clean baseline。
+- `scripts/package-module.sh --check` 不受支持，本次用 `unzip -l dist/*.zip` 和既有 Wave5 QA/quality evidence 验证 zip 结构。
+- Android 真机不是本 F1 直接要求的完成面；既有 Wave5 QA 只证明 `qa-android.sh --dry-run` 可用和设备不可用路径明确，不能替代 F3 真机/手动 QA。
+
+## 最终结论
+
+FAIL：当前仓库满足大部分计划合规项，且 Must NOT have 未发现生产实现越界；但 `module/action.sh` 未提供计划要求的 profile 应用/撤销入口，属于 Must have 缺口。

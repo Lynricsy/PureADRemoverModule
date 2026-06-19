@@ -1,4 +1,6 @@
 use std::fs;
+use std::ops::Deref;
+use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use super::{commit_bool, plan_bool};
@@ -42,9 +44,29 @@ fn commit_bool_rejects_regular_file_replacement_between_plan_and_commit() {
             .join("miui-weather-content-promotion.xml.bak")
             .exists()
     );
+    drop(root);
 }
 
-fn unique_temp_dir(name: &str) -> std::path::PathBuf {
+#[derive(Debug)]
+struct TestTempDir {
+    path: std::path::PathBuf,
+}
+
+impl Deref for TestTempDir {
+    type Target = Path;
+
+    fn deref(&self) -> &Self::Target {
+        self.path.as_path()
+    }
+}
+
+impl Drop for TestTempDir {
+    fn drop(&mut self) {
+        let _ignored = fs::remove_dir_all(&self.path);
+    }
+}
+
+fn unique_temp_dir(name: &str) -> TestTempDir {
     let nanos = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_or(0, |duration| duration.as_nanos());
@@ -52,5 +74,5 @@ fn unique_temp_dir(name: &str) -> std::path::PathBuf {
         std::env::temp_dir().join(format!("puread-xml-{name}-{}-{nanos}", std::process::id()));
     let _ = fs::remove_dir_all(&path);
     fs::create_dir_all(&path).expect("create temp dir");
-    path
+    TestTempDir { path }
 }

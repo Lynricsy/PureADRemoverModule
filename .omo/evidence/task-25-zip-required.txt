@@ -1,0 +1,9 @@
+zip=dist/PureAD-0.1.0-t25.zip
+ok: module.prop
+ok: service.sh
+ok: uninstall.sh
+ok: action.sh
+ok: rules/
+ok: bin/x86_64/puread-daemon
+ok: bin/x86_64/puread-cli
+ok: rules_toml_count=18

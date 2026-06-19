@@ -1,0 +1,47 @@
+review=global-review-quality
+reviewed_at=2026-06-19T13:05:00+08:00
+role=read_only_code_quality_reviewer
+repo=/root/Projects/Ling/PureADRemoverModule
+verdict=FAIL
+
+## Scope
+
+- Read project `AGENTS.md` and review-work/programming skill guidance.
+- Honored review-only constraints: no source implementation edits, no commits, no pushes, no local git config changes, no `Example/` changes.
+- Allowed write performed by this lane: `.omo/evidence/global-review-quality.txt`.
+- Historical context checked through AgentLogs MCP: `0222-F2-Final-Verification-code-quality-review.md`.
+
+## Commands Rerun
+
+- `cargo fmt --all -- --check`: PASS, exit 0.
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings`: PASS, exit 0.
+- `cargo test --workspace`: PASS, exit 0.
+- `scripts/verify-local.sh`: PASS in this environment, exit 0. The script reran fmt, clippy, tests, rules validate, package build, zip check, forbidden scan, Rust LOC, and shell parse.
+- Explicit shell parse: `find scripts module -type f -name '*.sh' -print0 | xargs -0 sh -n`: PASS, exit 0.
+
+## LOC Checks
+
+- Shell pure LOC maximum observed: `module/scripts/puread-module-lib.sh` at 220; all checked shell files <= 250.
+- Rust pure LOC maximum observed: `crates/puread-cli/src/restore_fs.rs` at 247; all checked Rust files <= 250.
+
+## Inspections
+
+- `module/action.sh`: exposes explicit dry-run/execute profile actions, rejects extra args, requires profile for apply, calls `puread-cli` explicitly, and checks profile ledger state path for symlink/non-file hazards before restore setup.
+- `scripts/package-module.sh`: uses a staging directory under `PUREAD_DIST`, validates required entries/native pairs/rules before zipping, and cleanup only removes paths matching `$PUREAD_DIST/.puread-module-staging.*`.
+- `scripts/build-module.sh`: clearly labels host-built binaries as host fixture artifacts when `PUREAD_ANDROID_ABIS` is unset.
+- `xtask/upstream-report`: report-only output includes source metadata; missing `git` degrades to `n/a` with test coverage in `xtask/upstream-report/tests/git_unavailable.rs`.
+- README/module docs: document host fixture limitation, module packaging, local-only/non-DNS scope, profile restore/report, and upstream report-only flow consistently with the implementation.
+- `.omo` plan/ledger: T25-T30 and F1-F4 are marked complete with artifact references; this is process metadata only and not treated as functional proof by itself.
+
+## Blocking Issue
+
+1. `scripts/lib/verify-local-zip.sh:132-144` allows `write_zip_check` to pass when `python3` is unavailable and `unzip` is available by running only `unzip -t "$zip_path"` and writing `result=pass-unzip-only`.
+
+   Why this blocks: the Python path at `scripts/lib/verify-local-zip.sh:25-64` verifies zip integrity, required module entries, rule TOML presence, daemon/CLI ABI pairing, and forbidden zip path entries. The unzip fallback verifies only archive integrity, so `scripts/verify-local.sh` can end with `local verification passed` while missing entries, forbidden path names, or ABI mismatches were never checked. That is a misleading evidence path for the local verification gate.
+
+   Required evidence to clear: update the fallback to perform the same structural checks with `unzip`/POSIX shell, or fail closed when `python3` is unavailable. Then rerun `scripts/verify-local.sh` in normal environment and an environment where `python3` is hidden but `unzip` remains available, with evidence showing missing required entries/forbidden entries/ABI mismatch are rejected rather than reported as pass.
+
+## Non-Blocking Notes
+
+- Current environment has `python3`, so the rerun evidence in `.omo/evidence/task-26-zip-check.txt` shows the full Python zip check passed with `required_entries=present`, `forbidden_path_entries=none`, and `result=pass`.
+- The worktree remains dirty with many pre-existing tracked and untracked artifacts; this lane did not revert or clean them.

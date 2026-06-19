@@ -1,0 +1,11 @@
+[1m[92m   Compiling[0m puread-cli v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-cli)
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+[1m[92m     Running[0m tests/cli_profile_restore_empty.rs (target/debug/deps/cli_profile_restore_empty-1337ed44f4624a1f)
+
+running 1 test
+test cli_profile_restore_dry_run_reports_empty_module_root_without_mutation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+exit_code=0

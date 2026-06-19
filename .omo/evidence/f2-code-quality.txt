@@ -1,0 +1,92 @@
+F2 Final Verification - Code quality review
+timestamp=2026-06-19T11:52:07+08:00
+reviewer=Codex final verification reviewer
+scope=read-only review; only this evidence file and AgentLog may be written
+
+Verdict: PASS
+
+Required command results:
+
+1. cargo fmt --all -- --check
+   exit_code=0
+   summary=passed with no formatter diff.
+
+2. cargo clippy --workspace --all-targets --all-features -- -D warnings
+   exit_code=0
+   summary=Finished dev profile in 0.11s; no warnings emitted.
+
+3. cargo test --workspace
+   exit_code=0
+   summary=all workspace unit, integration, and doc-test targets passed. No failed or ignored tests reported in the command output.
+
+4. cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom
+   exit_code=0
+   summary=valid=true; error_count=0; rule_file_count=18; rule_count=56.
+
+5. pure LOC checks
+   Rust non-test code exit_code=0
+   Rust over-limit summary=no Rust non-test production file above 250 pure LOC.
+   Rust largest sampled files:
+     247 crates/puread-cli/src/restore_fs.rs
+     244 crates/puread-android/src/file_actions/mutate/metadata_ops.rs
+     239 crates/puread-cli/src/rules.rs
+     238 xtask/upstream-report/src/scanner.rs
+     238 crates/puread-daemon/src/file_rule_integration/planner.rs
+   Shell exit_code=0
+   Shell over-limit summary=no checked shell file above 250 pure LOC.
+   Shell largest sampled files:
+     220 module/scripts/puread-module-lib.sh
+     206 scripts/build-module.sh
+     173 scripts/lib/verify-local-forbidden.sh
+     164 scripts/package-module.sh
+     134 scripts/lib/verify-local-zip.sh
+
+6. sh -n scripts/*.sh scripts/lib/*.sh module/*.sh module/scripts/*.sh
+   exit_code=0
+   summary=all specified shell files parsed successfully.
+
+7. scripts/verify-local.sh
+   exit_code=0
+   summary=reported pass for verify-local-sh-parse, cargo-fmt, cargo-clippy, cargo-test, rules-validate, package-module, zip check, forbidden scan, pure Rust LOC, shell parse; ended with "local verification passed".
+
+8. local git config unset; git status --short --ignored
+   local user.name exit_code=1
+   local user.email exit_code=1
+   summary=no local git identity is set. Local config contains repository/remote/branch keys only.
+   git status summary=dirty worktree existed before this review and remains dirty. Review did not clean, revert, commit, push, or edit implementation files.
+
+Code quality checkpoints:
+
+- unwrap/expect in non-test Rust production code: PASS.
+  Scan command found expect calls only in test-scoped files or #[cfg(test)] test blocks:
+  crates/puread-android/src/profiles/xml/tests.rs and crates/puread-android/src/file_actions/mutate/metadata_ops.rs test module lines.
+
+- unsafe in non-test Rust production code: PASS.
+  Scan found no unsafe block/unsafe fn. The only match was the word "unsafe" inside an error message at crates/puread-core/src/path_expansion/error.rs:64.
+
+- verify-local forbidden capability scan: PASS.
+  scripts/verify-local.sh executed the scan and reported "pass: forbidden scan".
+  Current .omo/evidence/task-26-forbidden-scan.txt records gate=forbidden-scan and only ALLOWED matches in documentation, tests/fixtures, verification grep guards, rejection guards, upstream audit classifier, settings rejection guard, package metadata boundary, rule notes/provenance, or SDK component class names. No BLOCKED lines were observed in the reviewed output.
+
+- zip-check evidence mixing fail/pass: PASS.
+  Current .omo/evidence/task-26-zip-check.txt:
+    gate=zip-check
+    zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+    entry_count=37
+    rule_file_count=18
+    abis=x86_64
+    required_entries=present
+    forbidden_path_entries=none
+    result=pass
+  No result=fail line was present in the current zip-check evidence. Historical evidence files contain older fail/pass records from earlier tasks, but they were not used as current F2 proof.
+
+Adversarial checks:
+
+- misleading_success_output: PASS. Success banners were cross-checked against command exit codes and current evidence files.
+- stale_state: PASS. Current commands were actually run during this review; stale historical evidence with failures was identified and excluded from current verdict.
+- dirty_worktree: PASS_WITH_NOTE. Dirty worktree is present, including pre-existing modifications and untracked evidence/dist files. This review only added .omo/evidence/f2-code-quality.txt and did not alter implementation code.
+- flaky_or_long_commands: PASS. Required commands completed successfully without retry or hang.
+- cleanup: PASS. No .omo/evidence temporary zip-check files matching *zip-check*.tmp* or *.tmp.* remained after verify-local.
+
+Final status:
+All required F2 code quality verification gates passed.

@@ -1,0 +1,3 @@
+  234 scripts/build-module.sh
+  223 scripts/package-module.sh
+  457 total

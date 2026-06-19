@@ -44,7 +44,14 @@ pub(super) fn read_entries(
         .map_err(|source| CliError::Filesystem {
             path: display_path(path),
             source,
-        })?;
+        });
+    let file = match file {
+        Ok(file) => file,
+        Err(CliError::Filesystem { source, .. }) if source.kind() == io::ErrorKind::NotFound => {
+            return Ok(Vec::new());
+        }
+        Err(error) => return Err(error),
+    };
     BufReader::new(file)
         .lines()
         .filter_map(|line| transpose_non_empty_line(line, path))

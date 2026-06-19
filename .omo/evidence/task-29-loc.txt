@@ -1,0 +1,4 @@
+xtask/upstream-report/src/report.rs 137
+xtask/upstream-report/src/scanner/source_meta.rs 49
+xtask/upstream-report/tests/directory_report.rs 151
+xtask/upstream-report/tests/git_unavailable.rs 119

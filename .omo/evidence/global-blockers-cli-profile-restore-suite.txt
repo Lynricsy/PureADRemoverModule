@@ -1,0 +1,22 @@
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+[1m[92m     Running[0m tests/cli_profile_restore.rs (target/debug/deps/cli_profile_restore-f3652bc7ffdc0d92)
+
+running 13 tests
+test cli_profile_restore_dry_run_reports_empty_module_root_without_mutation ... ok
+test cli_profile_restore_execute_lock_contention_prevents_ledger_read ... ok
+test cli_profile_restore_rejects_profile_ledger_symlink_before_mutation ... ok
+test cli_profile_restore_rejects_lock_symlink_before_mutation ... ok
+test cli_profile_restore_keeps_component_final_state_per_user_id ... ok
+test cli_profile_restore_keeps_component_skipped_only_record_without_unhide ... ok
+test cli_profile_restore_rejects_state_symlink_before_mutation ... ok
+test cli_apply_profile_rejects_state_symlink_before_android_mutation ... ok
+test cli_profile_restore_default_runner_ignores_env_fake_runner ... ok
+test cli_profile_restore_rejects_run_symlink_before_mutation ... ok
+test cli_profile_restore_reports_persisted_records_without_mutation ... ok
+test cli_profile_restore_restores_all_profile_record_kinds ... ok
+test cli_profile_restore_folds_component_provisional_and_confirmed_records ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+exit_code=0

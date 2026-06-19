@@ -1,0 +1,16 @@
+gate=package-module
+command=scripts/package-module.sh
+PureAD build-module
+root=/root/Projects/Ling/PureADRemoverModule
+profile=debug
+mode=host-fixture
+abis=x86_64
+note=PUREAD_ANDROID_ABIS is unset; this builds current-host fixture binaries for package layout validation only.
+note=The resulting binaries are not Android ABI verified.
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-daemon
+copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-cli
+done=build-module
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+done=package-module
+result=pass

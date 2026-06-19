@@ -1,0 +1,150 @@
+review=wave5-scope-final
+reviewed_at=2026-06-19T11:34:08+08:00
+mode=read-only-review
+verdict=PASS
+
+scope:
+  - 只复核 zip-check 修复后的范围边界。
+  - 未改代码，未改 Example/，未提交/推送，未设置 local git config。
+  - 本次只新增本 evidence 文件，并通过 AgentLogs MCP 记录复核日志。
+
+history_lookup:
+  command=search_logs "PureADRemoverModule zip-check forbidden token scope final review wave5"
+  result=found related logs, including Wave5 scope after fix and zip-check minimal fix records.
+  reason=按仓库规则先查历史，避免重复判断已经记录过的 zip-check 范围结论。
+
+git_diff_name_only_head:
+  command=git diff --name-only HEAD
+  output:
+    .omo/boulder.json
+    README.md
+    module/bin/README.md
+    module/module.prop
+    module/rules/README.md
+    scripts/verify-local.sh
+    xtask/upstream-report/src/report.rs
+    xtask/upstream-report/src/scanner/source_meta.rs
+    xtask/upstream-report/tests/directory_report.rs
+  classification:
+    - README.md and module README/module.prop changes are documentation or package metadata boundary changes.
+    - scripts/verify-local.sh now delegates to scripts/lib verification helpers; reviewed helper contents separately because they are untracked but active in the script path.
+    - xtask/upstream-report/src/report.rs adds source metadata to report output; no executable DNS/hosts/proxy/network capability.
+    - xtask/upstream-report/src/scanner/source_meta.rs treats missing git binary as n/a; no scope expansion.
+    - xtask/upstream-report/tests/directory_report.rs is test coverage for report source metadata.
+
+script_review:
+  reviewed_files:
+    - scripts/verify-local.sh
+    - scripts/lib/verify-local-common.sh
+    - scripts/lib/verify-local-forbidden.sh
+    - scripts/lib/verify-local-quality.sh
+    - scripts/lib/verify-local-zip.sh
+    - scripts/build-module.sh
+    - scripts/package-module.sh
+    - scripts/qa-android.sh
+    - scripts/lib/qa-android-common.sh
+    - scripts/lib/qa-android-device.sh
+    - scripts/lib/qa-android-static.sh
+  classification:
+    - scripts/lib/verify-local-zip.sh contains forbidden tokens only in zip entry guard regex.
+    - scripts/lib/verify-local-forbidden.sh contains forbidden tokens only in verification/classification guard policy.
+    - scripts/build-module.sh builds/copies puread-cli and puread-daemon artifacts only.
+    - scripts/package-module.sh stages module lifecycle scripts, bin artifacts, and local rules only; no Example copy and no DNS/hosts/proxy/iptables implementation.
+    - qa scripts are QA/static/device helpers, not production out-of-scope capability implementations.
+  result=pass
+
+forbidden_token_scan:
+  command=rg -n -i --with-filename 'hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|domain|ad_reward|ifw|zygisk|root_hide|root[-_ ]?hiding|denylist|shamiko' crates scripts module rules xtask
+  raw_matches=139
+  allowed_contexts:
+    - documentation and module README/package metadata boundary text
+    - tests and fixtures
+    - verification grep guards
+    - rule parser/category rejection guards
+    - upstream-report classifier
+    - Android settings rejection guard for private_dns/hosts/proxy keys
+    - rule notes/source/source_file/zip_entry/source_line_or_pattern provenance fields
+    - SDK component class names containing ".proxy." as literal Android component names
+  blocked_candidates=0
+  result=pass
+
+zip_entries:
+  command=unzip -Z1 dist/PureAD-0.1.0-t25.zip
+  entry_count=37
+  notable_entries:
+    module.prop
+    customize.sh
+    service.sh
+    post-fs-data.sh
+    uninstall.sh
+    action.sh
+    scripts/puread-module-lib.sh
+    bin/x86_64/puread-cli
+    bin/x86_64/puread-daemon
+    rules/appops/luna-and-reader-appops.toml
+    rules/apps/com.autonavi.minimap.toml
+    rules/apps/com.coolapk.market.toml
+    rules/apps/com.netease.cloudmusic.toml
+    rules/apps/com.ss.android.ugc.aweme.toml
+    rules/apps/com.taobao.idlefish.toml
+    rules/apps/com.tencent.mobileqq.toml
+    rules/apps/com.zhihu.android.toml
+    rules/apps/ctrip.android.view.toml
+    rules/apps/tv.danmaku.bili.toml
+    rules/common/sdk-cache.toml
+    rules/components/mi-market-components.toml
+    rules/components/sdk-ad-components.toml
+    rules/rom/miui-ad-settings.toml
+    rules/rom/miui-shared-prefs.toml
+    rules/sqlite/app-ad-databases.toml
+    rules/sqlite/common-sdk-databases.toml
+    rules/sqlite/coolapk-ad-databases.toml
+  forbidden_entry_scan:
+    command=unzip -Z1 dist/PureAD-0.1.0-t25.zip | rg -n -i '(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw'
+    exit=1
+    output=empty
+  result=pass
+
+example_boundary:
+  command=rg -n "^Example/$" .gitignore
+  output=2:Example/
+  command=git ls-files Example
+  output=empty
+  command=git diff --name-only HEAD -- Example
+  output=empty
+  status_output_contains=!! Example/
+  classification=Example/ is ignored and has no tracked diff.
+  result=pass
+
+local_git_config:
+  command=git config --local --list --show-origin
+  output:
+    file:.git/config core.repositoryformatversion=0
+    file:.git/config core.filemode=true
+    file:.git/config core.bare=false
+    file:.git/config core.logallrefupdates=true
+    file:.git/config remote.origin.url=git@github.com:Lynricsy/PureADRemoverModule.git
+    file:.git/config remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+    file:.git/config branch.main.remote=origin
+    file:.git/config branch.main.merge=refs/heads/main
+  command=git config --local --get-regexp '^(user\.|author\.|committer\.)'
+  exit=1
+  output=empty
+  classification=local identity config unset.
+  result=pass
+
+git_status_short_ignored:
+  command=git status --short --ignored
+  summary:
+    - Modified tracked files remain from implementation work; not changed by this reviewer except this evidence file.
+    - Existing untracked evidence/dist/module bin/script/test artifacts remain present.
+    - AgentLogs/, Example/, target/, and xtask/upstream-report/target/ are ignored.
+  result=pass
+
+final_assessment:
+  - No forbidden zip entries were found in dist/PureAD-0.1.0-t25.zip.
+  - No production execution path implements DNS, hosts, domain list, proxy/Clash/Mihomo/Box, iptables/network blocking, AdGuardHome service takeover, ad_reward, Root hiding, or anti-detection capability.
+  - Forbidden tokens that remain are confined to allowed contexts: documentation, guards, tests/fixtures, upstream classifier, rule provenance, and rejection logic.
+  - Example/ remains ignored and has no tracked diff.
+  - Local git identity config remains unset.
+  verdict=PASS

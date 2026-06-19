@@ -1,0 +1,171 @@
+review=Wave5 T25-T29 QA
+reviewed_at=2026-06-19T02:53:44Z
+verdict=PASS
+
+scope=T25,T26,T27,T28,T29
+mode=read-only/run-verification
+allowed_writes=.omo/evidence/review-wave5-qa.txt,AgentLog
+commit_push=false
+git_config_changed=false
+
+## command results
+
+### scripts/verify-local.sh
+command=scripts/verify-local.sh
+exit_code=0
+result=pass
+observed_output_summary:
+  - pass: verify-local-sh-parse
+  - pass: cargo-fmt
+  - pass: cargo-clippy
+  - pass: cargo-test
+  - pass: rules-validate
+  - pass: package-module
+  - pass: zip check
+  - pass: forbidden scan
+  - pass: pure Rust LOC
+  - pass: shell parse
+  - local verification passed
+
+### scripts/qa-android.sh --dry-run
+command=scripts/qa-android.sh --dry-run
+exit_code=0
+result=pass
+command_plan_emitted=true
+real_device_pass=false
+observed_output:
+  - "== command plan =="
+  - "plan: adb devices"
+  - "plan: adb shell dumpsys batterystats"
+  - "plan: adb shell su -c 'sh /data/adb/modules/PureAD/action.sh status'"
+  - "plan: adb shell su -c 'PUREAD_SCAN_ROOT=/data sh /data/adb/modules/PureAD/action.sh scan-dry-run'"
+  - "qa_status=plan_only"
+  - "real_device_pass=false"
+
+## package zip validation
+
+zip=dist/PureAD-0.1.0-t25.zip
+zip_exists=true
+zip_test=ok
+entry_count=36
+required_entries_present=true
+required_entries:
+  - module.prop
+  - customize.sh
+  - service.sh
+  - uninstall.sh
+  - action.sh
+  - scripts/puread-module-lib.sh
+rule_file_count=18
+daemon_abis=x86_64
+cli_abis=x86_64
+forbidden_zip_entries_absent=true
+forbidden_zip_entries=[]
+
+## upstream report-only validation
+
+command=scripts/update-upstream.sh --from-local Example --report-only --manifest /tmp/puread-review-wave5-upstream-manifest.<pid>.json
+exit_code=0
+result=pass
+report_only=true
+rules_modified=false
+download_performed=false
+snapshots_modified=false
+sources_total=2
+accepted_total=46
+rejected_total=68
+ignored_total=22
+ads288_sha256=bf1c936222a43f1807bce30ded96f34246a907e287be1c812f39011cc6dad2a7
+adguard_commit=098ba8c78cf57dbd180fe2c72b05405b76eaa769
+adguard_remote=https://github.com/liuzq2002/Adguard-Home-For-Magisk-Mod.git
+accepted_categories=appops,component,file_path,rom_profile,sdk_cache,sqlite
+rejected_categories=ad_reward_domain,dns,domain,hosts,ifw_clear,iptables_network,proxy
+auto_import_allowed=false
+manual_review_only=true
+no_rules_example_manifest_mutation=true
+mutation_check:
+  - "git status --short -- rules Example upstream/upstream_manifest.json" produced no output
+  - "git status --short --ignored -- rules Example upstream/upstream_manifest.json" produced only "!! Example/"
+  - "git diff --name-only -- rules Example upstream/upstream_manifest.json" produced no output
+
+## README validation
+
+required_terms_present=true
+required_terms:
+  - Clash
+  - 非域名
+  - 低功耗
+  - 恢复
+  - 上游
+  - AGENTS
+  - profile-restore
+  - package-module
+forbidden_promotional_phrases_absent=true
+forbidden_promotional_phrases:
+  - DNS重定向
+  - hosts挂载
+  - AdGuard Home
+
+## evidence files
+
+task_25_key_evidence_present=true
+task_25_key_evidence:
+  - .omo/evidence/task-25-package.txt
+  - .omo/evidence/task-25-zip-list.txt
+  - .omo/evidence/task-25-zip-required.txt
+  - .omo/evidence/task-25-zip-forbidden-scan.txt
+  - .omo/evidence/task-25-verify-local.txt
+task_26_key_evidence_present=true
+task_26_key_evidence:
+  - .omo/evidence/task-26-cargo-fmt.txt
+  - .omo/evidence/task-26-cargo-clippy.txt
+  - .omo/evidence/task-26-cargo-test.txt
+  - .omo/evidence/task-26-rules-validate.txt
+  - .omo/evidence/task-26-package.txt
+  - .omo/evidence/task-26-zip-check.txt
+  - .omo/evidence/task-26-forbidden-scan.txt
+  - .omo/evidence/task-26-loc.txt
+  - .omo/evidence/task-26-shell-parse.txt
+task_27_key_evidence_present=true
+task_27_key_evidence:
+  - .omo/evidence/task-27-android-qa-dry-run.txt
+  - .omo/evidence/task-27-adb-devices.txt
+  - .omo/evidence/task-27-device-unavailable.txt
+  - .omo/evidence/task-27-static-compat.txt
+task_28_key_evidence_present=true
+task_28_key_evidence:
+  - .omo/evidence/task-28-readme.txt
+  - .omo/evidence/task-28-readme-grep.txt
+task_29_key_evidence_present=true
+task_29_key_evidence:
+  - .omo/evidence/task-29-upstream-regression.txt
+  - .omo/evidence/task-29-upstream-summary.txt
+  - .omo/evidence/task-29-report-guards.txt
+  - .omo/evidence/task-29-policy-guard.txt
+  - .omo/evidence/task-29-no-rule-mutation-final.txt
+  - .omo/evidence/task-29-gitless-report.txt
+  - .omo/evidence/task-29-gitless-summary.txt
+
+## cleanup check
+
+untracked_adb_data_pollution=false
+untracked_adb_data_check_command=git status --porcelain=v1 --untracked-files=all | awk '$1 == "??" {print substr($0,4)}' | grep -Ei '(^|/)(adb|data|\.android|adbkey)' || true
+untracked_adb_data_check_output=empty
+
+known_untracked_wave5_outputs:
+  - .omo/evidence/task-25*.txt
+  - .omo/evidence/task-26*.txt
+  - .omo/evidence/task-27*.txt
+  - .omo/evidence/task-28*.txt
+  - .omo/evidence/task-29*.txt
+  - dist/PureAD-0.1.0-t25.zip
+  - module/bin/x86_64/puread-cli
+  - module/bin/x86_64/puread-daemon
+  - scripts/build-module.sh
+  - scripts/package-module.sh
+  - scripts/qa-android.sh
+  - xtask/upstream-report/tests/git_unavailable.rs
+
+notes:
+  - Existing modified/untracked Wave5 implementation files remain in the worktree; this review did not restore, commit, push, or set git config.
+  - scripts/verify-local.sh and scripts/qa-android.sh write their own task evidence as part of the requested verification commands.

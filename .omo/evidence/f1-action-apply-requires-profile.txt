@@ -1,0 +1,2 @@
+PureAD profile is required: pass it as the second argument or set PUREAD_PROFILE.
+exit=2

@@ -1,0 +1,1060 @@
+# F3 Manual QA Final Verification
+timestamp=2026-06-19T12:12:45+08:00
+cwd=/root/Projects/Ling/PureADRemoverModule
+
+## Initial /tmp puread-* residue
+initial_count=0
+
+## Initial local git config
+file:.git/config	core.repositoryformatversion=0
+file:.git/config	core.filemode=true
+file:.git/config	core.bare=false
+file:.git/config	core.logallrefupdates=true
+file:.git/config	remote.origin.url=git@github.com:Lynricsy/PureADRemoverModule.git
+file:.git/config	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config	branch.main.remote=origin
+file:.git/config	branch.main.merge=refs/heads/main
+
+## Initial git status --short --ignored
+ M .omo/boulder.json
+ M .omo/plans/puread-rust-module.md
+ M .omo/start-work/ledger.jsonl
+ M README.md
+ M module/action.sh
+ M module/bin/README.md
+ M module/module.prop
+ M module/rules/README.md
+ M scripts/verify-local.sh
+ M xtask/upstream-report/src/report.rs
+ M xtask/upstream-report/src/scanner/source_meta.rs
+ M xtask/upstream-report/tests/directory_report.rs
+?? .omo/evidence/f1-action-apply-dry-run-observed.txt
+?? .omo/evidence/f1-action-apply-requires-profile.txt
+?? .omo/evidence/f1-action-help.txt
+?? .omo/evidence/f1-action-profile-restore-dry-run-observed.txt
+?? .omo/evidence/f1-action-surface-grep.txt
+?? .omo/evidence/f1-action-temp-module-dry-runs.txt
+?? .omo/evidence/f1-f3-git-status-final.txt
+?? .omo/evidence/f1-f3-local-git-config.txt
+?? .omo/evidence/f1-f3-package.txt
+?? .omo/evidence/f1-f3-qa-android-dry-run.txt
+?? .omo/evidence/f1-f3-shell-parse.txt
+?? .omo/evidence/f1-f3-verify-local.txt
+?? .omo/evidence/f1-f3-zip-action-surface.txt
+?? .omo/evidence/f1-f3-zip-action.sh
+?? .omo/evidence/f1-f3-zip-list.txt
+?? .omo/evidence/f1-f3-zip-required-forbidden.txt
+?? .omo/evidence/f1-plan-compliance.txt
+?? .omo/evidence/f2-code-quality.txt
+?? .omo/evidence/f3-manual-qa-final.txt
+?? .omo/evidence/f3-manual-qa.txt
+?? .omo/evidence/f3-tmp-cleanup-after-verify.txt
+?? .omo/evidence/f3-tmp-cleanup-after.txt
+?? .omo/evidence/f3-tmp-cleanup-before.txt
+?? .omo/evidence/f3-tmp-cleanup-counts.txt
+?? .omo/evidence/f3-tmp-cleanup-current-verification-residue.txt
+?? .omo/evidence/f4-scope-fidelity.txt
+?? .omo/evidence/review-wave5-qa-after-fix.txt
+?? .omo/evidence/review-wave5-qa-final.txt
+?? .omo/evidence/review-wave5-qa.txt
+?? .omo/evidence/review-wave5-quality-after-fix.txt
+?? .omo/evidence/review-wave5-quality-final.txt
+?? .omo/evidence/review-wave5-quality-final2.txt
+?? .omo/evidence/review-wave5-quality.txt
+?? .omo/evidence/review-wave5-scope-after-fix.txt
+?? .omo/evidence/review-wave5-scope-final.txt
+?? .omo/evidence/review-wave5-scope-plan.txt
+?? .omo/evidence/task-25-26-27-script-quality-fix.txt
+?? .omo/evidence/task-25-build-dry-run.txt
+?? .omo/evidence/task-25-loc.txt
+?? .omo/evidence/task-25-package-cleanup-final-fix.txt
+?? .omo/evidence/task-25-package-loc-final-fix.txt
+?? .omo/evidence/task-25-package-local-git-config-final-fix.txt
+?? .omo/evidence/task-25-package-zip-check-final-fix.txt
+?? .omo/evidence/task-25-package-zip-list-final-fix.txt
+?? .omo/evidence/task-25-package.txt
+?? .omo/evidence/task-25-packaged-action-status.txt
+?? .omo/evidence/task-25-python-zip-fallback.txt
+?? .omo/evidence/task-25-shell-parse.txt
+?? .omo/evidence/task-25-shellcheck.txt
+?? .omo/evidence/task-25-shfmt.txt
+?? .omo/evidence/task-25-verify-local-summary.txt
+?? .omo/evidence/task-25-verify-local.txt
+?? .omo/evidence/task-25-zip-forbidden-scan.txt
+?? .omo/evidence/task-25-zip-list.txt
+?? .omo/evidence/task-25-zip-required.txt
+?? .omo/evidence/task-25-zip-test.txt
+?? .omo/evidence/task-26-cargo-clippy.txt
+?? .omo/evidence/task-26-cargo-fmt.txt
+?? .omo/evidence/task-26-cargo-test.txt
+?? .omo/evidence/task-26-forbidden-scan.txt
+?? .omo/evidence/task-26-loc.txt
+?? .omo/evidence/task-26-package.txt
+?? .omo/evidence/task-26-rules-validate.txt
+?? .omo/evidence/task-26-shell-parse.txt
+?? .omo/evidence/task-26-verify-local.txt
+?? .omo/evidence/task-26-verify-script-parse.txt
+?? .omo/evidence/task-26-zip-check-fix.txt
+?? .omo/evidence/task-26-zip-check.txt
+?? .omo/evidence/task-27-adb-devices.txt
+?? .omo/evidence/task-27-android-qa-dry-run.txt
+?? .omo/evidence/task-27-device-unavailable.txt
+?? .omo/evidence/task-27-dry-run-push-plan.txt
+?? .omo/evidence/task-27-forbidden-scan-summary.txt
+?? .omo/evidence/task-27-forbidden-scan.txt
+?? .omo/evidence/task-27-help.txt
+?? .omo/evidence/task-27-shell-parse.txt
+?? .omo/evidence/task-27-shellcheck.txt
+?? .omo/evidence/task-27-static-compat.txt
+?? .omo/evidence/task-28-readme-grep.txt
+?? .omo/evidence/task-28-readme.txt
+?? .omo/evidence/task-29-gitless-guards.txt
+?? .omo/evidence/task-29-gitless-manifest.json
+?? .omo/evidence/task-29-gitless-report.txt
+?? .omo/evidence/task-29-gitless-summary.txt
+?? .omo/evidence/task-29-loc.txt
+?? .omo/evidence/task-29-no-rule-mutation-final-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation-final.txt
+?? .omo/evidence/task-29-no-rule-mutation-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation.txt
+?? .omo/evidence/task-29-policy-guard.txt
+?? .omo/evidence/task-29-report-guards.txt
+?? .omo/evidence/task-29-upstream-regression.txt
+?? .omo/evidence/task-29-upstream-summary.txt
+?? dist/
+?? module/bin/x86_64/
+?? scripts/build-module.sh
+?? scripts/lib/
+?? scripts/package-module.sh
+?? scripts/qa-android.sh
+?? xtask/upstream-report/tests/git_unavailable.rs
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/
+
+## Package command
+zip_sha256_before=b44a3639387d9826d17d420e59d66e2ab511f001aeb230352ea4eeb3b8c08fb7  dist/PureAD-0.1.0-t25.zip
+$ scripts/package-module.sh
+PureAD build-module
+root=/root/Projects/Ling/PureADRemoverModule
+profile=debug
+mode=host-fixture
+abis=x86_64
+note=PUREAD_ANDROID_ABIS is unset; this builds current-host fixture binaries for package layout validation only.
+note=The resulting binaries are not Android ABI verified.
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-daemon
+copied: /root/Projects/Ling/PureADRemoverModule/module/bin/x86_64/puread-cli
+done=build-module
+zip=/root/Projects/Ling/PureADRemoverModule/dist/PureAD-0.1.0-t25.zip
+done=package-module
+exit_code=0
+zip_sha256_after=b44a3639387d9826d17d420e59d66e2ab511f001aeb230352ea4eeb3b8c08fb7  dist/PureAD-0.1.0-t25.zip
+zip_size_after=12038016
+
+## /tmp puread-* after package
+/tmp/puread-file-actions-guard-2237322-19.outside.bin
+/tmp/puread-rom-profile-2237401-1781842397731888802
+/tmp/puread-rom-profile-2237401-1781842397731962591
+/tmp/puread-rom-profile-2237401-1781842397731999670
+/tmp/puread-rom-profile-2237401-1781842397732032732
+/tmp/puread-rom-profile-2237401-1781842397732111969
+/tmp/puread-rom-profile-2237401-1781842397732121757
+/tmp/puread-rom-profile-2237401-1781842397732193952
+/tmp/puread-rom-profile-2237401-1781842397732219370
+/tmp/puread-rom-profile-2237401-1781842397732219640
+/tmp/puread-xml-identity-replace-2237322-1781842397721738911
+count=11
+
+## Zip entry list
+$ unzip -Z1 dist/PureAD-0.1.0-t25.zip
+module.prop
+customize.sh
+service.sh
+post-fs-data.sh
+uninstall.sh
+action.sh
+scripts/
+scripts/puread-module-lib.sh
+bin/
+bin/x86_64/
+bin/x86_64/puread-cli
+bin/x86_64/puread-daemon
+rules/
+rules/appops/
+rules/apps/
+rules/common/
+rules/components/
+rules/rom/
+rules/sqlite/
+rules/appops/luna-and-reader-appops.toml
+rules/apps/com.autonavi.minimap.toml
+rules/apps/com.coolapk.market.toml
+rules/apps/com.netease.cloudmusic.toml
+rules/apps/com.ss.android.ugc.aweme.toml
+rules/apps/com.taobao.idlefish.toml
+rules/apps/com.tencent.mobileqq.toml
+rules/apps/com.zhihu.android.toml
+rules/apps/ctrip.android.view.toml
+rules/apps/tv.danmaku.bili.toml
+rules/common/sdk-cache.toml
+rules/components/mi-market-components.toml
+rules/components/sdk-ad-components.toml
+rules/rom/miui-ad-settings.toml
+rules/rom/miui-shared-prefs.toml
+rules/sqlite/app-ad-databases.toml
+rules/sqlite/common-sdk-databases.toml
+rules/sqlite/coolapk-ad-databases.toml
+
+## Zip required/forbidden check
+required_present=module.prop
+required_present=customize.sh
+required_present=service.sh
+required_present=post-fs-data.sh
+required_present=uninstall.sh
+required_present=action.sh
+required_present=scripts/puread-module-lib.sh
+required_present=bin/x86_64/puread-cli
+required_present=bin/x86_64/puread-daemon
+rules_toml_count=18
+forbidden_entries_found=none
+
+## Zip action.sh profile surface
+$ unzip -p dist/PureAD-0.1.0-t25.zip action.sh | sed -n 1,260p
+#!/system/bin/sh
+
+MODDIR="${0%/*}"
+PUREAD_MODULE_DIR="$MODDIR"
+export PUREAD_MODULE_DIR
+PUREAD_LIB="$MODDIR/scripts/puread-module-lib.sh"
+
+if [ ! -r "$PUREAD_LIB" ]; then
+    printf '%s\n' "PureAD: missing helper script: $PUREAD_LIB"
+    exit 1
+fi
+
+. "$PUREAD_LIB"
+
+puread_init_context "$MODDIR"
+
+PUREAD_ACTION="${1:-status}"
+PUREAD_CLI_BIN="$(puread_binary_path puread-cli)"
+export PUREAD_ACTION PUREAD_CLI_BIN
+
+puread_action_usage() {
+    puread_print "Usage: sh action.sh <action> [profile]"
+    puread_print "PureAD actions:"
+    puread_print "  status"
+    puread_print "  diagnose"
+    puread_print "  scan-dry-run"
+    puread_print "  restore-dry-run"
+    puread_print "  apply-profile-dry-run <profile>"
+    puread_print "  apply-profile-execute <profile>"
+    puread_print "  profile-restore-dry-run"
+    puread_print "  profile-restore-execute"
+    puread_print "Environment:"
+    puread_print "  PUREAD_PROFILE=<profile> may replace the apply-profile profile argument"
+    puread_print "  PUREAD_RULES_DIR=<path> overrides profile rule directory"
+    puread_print "  PUREAD_PROFILE_ROOT=<path> overrides profile target root"
+}
+
+puread_require_profile_arg() {
+    PUREAD_REQUESTED_PROFILE=""
+    if [ -n "${1:-}" ]; then
+        PUREAD_REQUESTED_PROFILE="$1"
+        return 0
+    fi
+    if [ -n "${PUREAD_PROFILE:-}" ]; then
+        PUREAD_REQUESTED_PROFILE="$PUREAD_PROFILE"
+        return 0
+    fi
+
+    puread_print "PureAD profile is required: pass it as the second argument or set PUREAD_PROFILE."
+    return 2
+}
+
+puread_require_no_extra_arg() {
+    if [ -n "${1:-}" ]; then
+        puread_print "PureAD action does not accept an extra argument: $1"
+        return 2
+    fi
+    return 0
+}
+
+puread_action_apply_profile() {
+    PUREAD_APPLY_MODE="$1"
+    PUREAD_PROFILE_NAME="$2"
+    PUREAD_CLI="$(puread_binary_path puread-cli)"
+    if [ ! -x "$PUREAD_CLI" ]; then
+        puread_print "PureAD CLI missing: $PUREAD_CLI"
+        return 1
+    fi
+
+    PUREAD_RULES_DIR="${PUREAD_RULES_DIR:-$PUREAD_MODDIR/rules}"
+    PUREAD_PROFILE_ROOT="${PUREAD_PROFILE_ROOT:-/}"
+    "$PUREAD_CLI" apply-profile "$PUREAD_PROFILE_NAME" "--$PUREAD_APPLY_MODE" --rules "$PUREAD_RULES_DIR" --root "$PUREAD_PROFILE_ROOT" --module-root "$PUREAD_MODDIR"
+}
+
+puread_action_restore_profile() {
+    PUREAD_RESTORE_MODE="$1"
+    PUREAD_CLI="$(puread_binary_path puread-cli)"
+    if [ ! -x "$PUREAD_CLI" ]; then
+        puread_print "PureAD CLI missing: $PUREAD_CLI"
+        return 1
+    fi
+
+    puread_prepare_profile_ledger || return $?
+    "$PUREAD_CLI" profile-restore "--$PUREAD_RESTORE_MODE" --module-root "$PUREAD_MODDIR"
+}
+
+puread_prepare_profile_ledger() {
+    PUREAD_PROFILE_LEDGER_DIR="$PUREAD_MODDIR/state"
+    PUREAD_PROFILE_LEDGER_FILE="$PUREAD_PROFILE_LEDGER_DIR/profile-actions.jsonl"
+    if [ -L "$PUREAD_PROFILE_LEDGER_DIR" ] || [ -L "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+        puread_print "PureAD profile ledger path must not be a symlink."
+        return 1
+    fi
+    if [ -e "$PUREAD_PROFILE_LEDGER_DIR" ] && [ ! -d "$PUREAD_PROFILE_LEDGER_DIR" ]; then
+        puread_print "PureAD profile ledger parent is not a directory: $PUREAD_PROFILE_LEDGER_DIR"
+        return 1
+    fi
+    if [ -e "$PUREAD_PROFILE_LEDGER_FILE" ] && [ ! -f "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+        puread_print "PureAD profile ledger is not a file: $PUREAD_PROFILE_LEDGER_FILE"
+        return 1
+    fi
+
+    mkdir -p "$PUREAD_PROFILE_LEDGER_DIR" 2>/dev/null || return 1
+    chmod 700 "$PUREAD_PROFILE_LEDGER_DIR" 2>/dev/null || true
+    if [ ! -f "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+        : >"$PUREAD_PROFILE_LEDGER_FILE" || return 1
+        chmod 600 "$PUREAD_PROFILE_LEDGER_FILE" 2>/dev/null || true
+    fi
+}
+
+case "$PUREAD_ACTION" in
+    -h|--help|help)
+        puread_action_usage
+        ;;
+    status)
+        puread_require_no_extra_arg "${2:-}" || exit $?
+        puread_action_status
+        ;;
+    diagnose|diagnostic|diagnostics)
+        puread_require_no_extra_arg "${2:-}" || exit $?
+        puread_action_diagnostics
+        ;;
+    scan-dry-run)
+        puread_require_no_extra_arg "${2:-}" || exit $?
+        puread_action_scan_dry_run
+        ;;
+    restore-dry-run)
+        puread_require_no_extra_arg "${2:-}" || exit $?
+        puread_action_restore_dry_run
+        ;;
+    apply-profile-dry-run|profile-apply-dry-run)
+        puread_require_profile_arg "${2:-}" || exit $?
+        puread_require_no_extra_arg "${3:-}" || exit $?
+        puread_action_apply_profile "dry-run" "$PUREAD_REQUESTED_PROFILE"
+        ;;
+    apply-profile-execute|profile-apply-execute)
+        puread_require_profile_arg "${2:-}" || exit $?
+        puread_require_no_extra_arg "${3:-}" || exit $?
+        puread_action_apply_profile "execute" "$PUREAD_REQUESTED_PROFILE"
+        ;;
+    profile-restore-dry-run)
+        puread_require_no_extra_arg "${2:-}" || exit $?
+        puread_action_restore_profile "dry-run"
+        ;;
+    profile-restore-execute)
+        puread_require_no_extra_arg "${2:-}" || exit $?
+        puread_action_restore_profile "execute"
+        ;;
+    *)
+        puread_action_usage
+        puread_print "Unknown action: $PUREAD_ACTION"
+        exit 2
+        ;;
+esac
+
+## Zip action.sh grep apply/restore surface
+27:    puread_print "  restore-dry-run"
+28:    puread_print "  apply-profile-dry-run <profile>"
+29:    puread_print "  apply-profile-execute <profile>"
+30:    puread_print "  profile-restore-dry-run"
+31:    puread_print "  profile-restore-execute"
+33:    puread_print "  PUREAD_PROFILE=<profile> may replace the apply-profile profile argument"
+35:    puread_print "  PUREAD_PROFILE_ROOT=<path> overrides profile target root"
+44:    if [ -n "${PUREAD_PROFILE:-}" ]; then
+45:        PUREAD_REQUESTED_PROFILE="$PUREAD_PROFILE"
+49:    puread_print "PureAD profile is required: pass it as the second argument or set PUREAD_PROFILE."
+63:    PUREAD_PROFILE_NAME="$2"
+71:    PUREAD_PROFILE_ROOT="${PUREAD_PROFILE_ROOT:-/}"
+72:    "$PUREAD_CLI" apply-profile "$PUREAD_PROFILE_NAME" "--$PUREAD_APPLY_MODE" --rules "$PUREAD_RULES_DIR" --root "$PUREAD_PROFILE_ROOT" --module-root "$PUREAD_MODDIR"
+75:puread_action_restore_profile() {
+84:    "$PUREAD_CLI" profile-restore "--$PUREAD_RESTORE_MODE" --module-root "$PUREAD_MODDIR"
+88:    PUREAD_PROFILE_LEDGER_DIR="$PUREAD_MODDIR/state"
+89:    PUREAD_PROFILE_LEDGER_FILE="$PUREAD_PROFILE_LEDGER_DIR/profile-actions.jsonl"
+90:    if [ -L "$PUREAD_PROFILE_LEDGER_DIR" ] || [ -L "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+94:    if [ -e "$PUREAD_PROFILE_LEDGER_DIR" ] && [ ! -d "$PUREAD_PROFILE_LEDGER_DIR" ]; then
+95:        puread_print "PureAD profile ledger parent is not a directory: $PUREAD_PROFILE_LEDGER_DIR"
+98:    if [ -e "$PUREAD_PROFILE_LEDGER_FILE" ] && [ ! -f "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+99:        puread_print "PureAD profile ledger is not a file: $PUREAD_PROFILE_LEDGER_FILE"
+103:    mkdir -p "$PUREAD_PROFILE_LEDGER_DIR" 2>/dev/null || return 1
+104:    chmod 700 "$PUREAD_PROFILE_LEDGER_DIR" 2>/dev/null || true
+105:    if [ ! -f "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+106:        : >"$PUREAD_PROFILE_LEDGER_FILE" || return 1
+107:        chmod 600 "$PUREAD_PROFILE_LEDGER_FILE" 2>/dev/null || true
+127:    restore-dry-run)
+129:        puread_action_restore_dry_run
+131:    apply-profile-dry-run|profile-apply-dry-run)
+136:    apply-profile-execute|profile-apply-execute)
+141:    profile-restore-dry-run)
+143:        puread_action_restore_profile "dry-run"
+145:    profile-restore-execute)
+147:        puread_action_restore_profile "execute"
+
+## /tmp puread-* after zip checks
+/tmp/puread-file-actions-guard-2237322-19.outside.bin
+/tmp/puread-rom-profile-2237401-1781842397731888802
+/tmp/puread-rom-profile-2237401-1781842397731962591
+/tmp/puread-rom-profile-2237401-1781842397731999670
+/tmp/puread-rom-profile-2237401-1781842397732032732
+/tmp/puread-rom-profile-2237401-1781842397732111969
+/tmp/puread-rom-profile-2237401-1781842397732121757
+/tmp/puread-rom-profile-2237401-1781842397732193952
+/tmp/puread-rom-profile-2237401-1781842397732219370
+/tmp/puread-rom-profile-2237401-1781842397732219640
+/tmp/puread-xml-identity-replace-2237322-1781842397721738911
+count=11
+
+## CLI scan dry-run fixture hashes before
+16b835b572634a5a2c4809c11871f76cbd66926c86cdf3b5c443c0988aface7e  tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card/.fixture
+e9b6416400285c23f6c120f91b4af029b155bfdccd22984dd3db036bc742b80e  tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache/.fixture
+
+## CLI scan dry-run
+$ cargo run -p puread-cli -- scan --dry-run --rules rules/files --root tests/fixtures/android-fs
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+[1m[92m     Running[0m `target/debug/puread-cli scan --dry-run --rules rules/files --root tests/fixtures/android-fs`
+{
+  "schema_version": 1,
+  "mode": "dry_run",
+  "dry_run": true,
+  "root_path": "tests/fixtures/android-fs",
+  "rule_file_count": 10,
+  "action_count": 2,
+  "will_mutate": false,
+  "actions": [
+    {
+      "rule_id": "aweme-internal-splash-commerce-card",
+      "category": "file_path",
+      "package": "com.ss.android.ugc.aweme",
+      "action": "empty_dir",
+      "profile": "conservative",
+      "risk_level": "low",
+      "default_enabled": true,
+      "android_path": "/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "host_path": "tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "target_kind": "path",
+      "component": null,
+      "appop": null,
+      "appop_mode": null,
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/aweme.sh"
+    },
+    {
+      "rule_id": "aweme-external-splash-cache",
+      "category": "file_path",
+      "package": "com.ss.android.ugc.aweme",
+      "action": "empty_dir",
+      "profile": "conservative",
+      "risk_level": "low",
+      "default_enabled": true,
+      "android_path": "/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "host_path": "tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "target_kind": "path",
+      "component": null,
+      "appop": null,
+      "appop_mode": null,
+      "source": "ads288.zip",
+      "source_file": "Example/ads288.zip",
+      "zip_entry": "mod/ad.sh"
+    }
+  ]
+}
+exit_code=0
+
+## CLI scan dry-run fixture hashes after
+16b835b572634a5a2c4809c11871f76cbd66926c86cdf3b5c443c0988aface7e  tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card/.fixture
+e9b6416400285c23f6c120f91b4af029b155bfdccd22984dd3db036bc742b80e  tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache/.fixture
+
+## CLI scan dry-run assertions
+will_mutate_false=present
+fixture_hash_unchanged=true
+
+## /tmp puread-* after CLI scan dry-run
+/tmp/puread-file-actions-guard-2237322-19.outside.bin
+/tmp/puread-fixture-hash-after.txt
+/tmp/puread-fixture-hash-before.txt
+/tmp/puread-rom-profile-2237401-1781842397731888802
+/tmp/puread-rom-profile-2237401-1781842397731962591
+/tmp/puread-rom-profile-2237401-1781842397731999670
+/tmp/puread-rom-profile-2237401-1781842397732032732
+/tmp/puread-rom-profile-2237401-1781842397732111969
+/tmp/puread-rom-profile-2237401-1781842397732121757
+/tmp/puread-rom-profile-2237401-1781842397732193952
+/tmp/puread-rom-profile-2237401-1781842397732219370
+/tmp/puread-rom-profile-2237401-1781842397732219640
+/tmp/puread-scan-final.out
+/tmp/puread-xml-identity-replace-2237322-1781842397721738911
+count=14
+
+## Daemon event-loop integration test
+$ cargo test -p puread-daemon event_loop -- --nocapture
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_daemon-5f3bfc2a7f18f55a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/main.rs (target/debug/deps/puread_daemon-c04b6f29fc9db890)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/event_loop.rs (target/debug/deps/event_loop-8ef9a4e0534e93da)
+
+running 5 tests
+test event_loop_emits_reload_event_when_reload_signal_arrives ... ok
+test event_loop_stops_when_shutdown_signal_arrives ... ok
+test event_loop_does_not_restart_after_shutdown_during_file_control_race ... ok
+test event_loop_drains_reload_and_shutdown_during_debounce ... ok
+test event_loop_emits_debounced_file_event_when_file_is_created ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+[1m[92m     Running[0m tests/file_rule_integration.rs (target/debug/deps/file_rule_integration-9b0b5dd6b3f5a3ff)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/scheduler.rs (target/debug/deps/scheduler-da2ef1b72b709fcc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+exit_code=0
+
+## Daemon file-rule integration test
+$ cargo test -p puread-daemon file_rule_integration -- --nocapture
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m unittests src/lib.rs (target/debug/deps/puread_daemon-5f3bfc2a7f18f55a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m unittests src/main.rs (target/debug/deps/puread_daemon-c04b6f29fc9db890)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/event_loop.rs (target/debug/deps/event_loop-8ef9a4e0534e93da)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+[1m[92m     Running[0m tests/file_rule_integration.rs (target/debug/deps/file_rule_integration-9b0b5dd6b3f5a3ff)
+
+running 3 tests
+test file_rule_integration_excludes_sqlite_appops_and_component_from_watch_roots ... ok
+test file_rule_integration_apply_mode_executes_file_action_and_writes_ledger ... ok
+test file_rule_integration_outputs_dry_run_plan_when_splash_cache_is_created ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+[1m[92m     Running[0m tests/scheduler.rs (target/debug/deps/scheduler-da2ef1b72b709fcc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+exit_code=0
+
+## /tmp puread-* after daemon tests
+/tmp/puread-file-actions-guard-2237322-19.outside.bin
+/tmp/puread-rom-profile-2237401-1781842397731888802
+/tmp/puread-rom-profile-2237401-1781842397731962591
+/tmp/puread-rom-profile-2237401-1781842397731999670
+/tmp/puread-rom-profile-2237401-1781842397732032732
+/tmp/puread-rom-profile-2237401-1781842397732111969
+/tmp/puread-rom-profile-2237401-1781842397732121757
+/tmp/puread-rom-profile-2237401-1781842397732193952
+/tmp/puread-rom-profile-2237401-1781842397732219370
+/tmp/puread-rom-profile-2237401-1781842397732219640
+/tmp/puread-xml-identity-replace-2237322-1781842397721738911
+count=11
+
+## Android QA dry-run
+$ scripts/qa-android.sh --dry-run
+info: static compatibility evidence: .omo/evidence/task-27-static-compat.txt
+== command plan ==
+plan: adb devices
+plan: adb shell dumpsys batterystats
+plan: adb shell dumpsys alarm
+plan: adb shell dumpsys deviceidle
+plan: adb shell top -b -n 1
+plan: adb shell su -c 'sh /data/adb/modules/PureAD/action.sh status'
+plan: adb shell su -c 'PUREAD_SCAN_ROOT=/data sh /data/adb/modules/PureAD/action.sh scan-dry-run'
+plan: adb shell su -c '/data/adb/modules/PureAD/bin/<abi>/puread-cli apply-profile conservative --dry-run --rules /data/adb/modules/PureAD/rules --root / --module-root /data/adb/modules/PureAD'
+plan: adb shell su -c 'PUREAD_DRY_RUN=1 sh /data/adb/modules/PureAD/service.sh'
+plan: adb shell su -c 'check /data/adb/modules/PureAD/run/puread-daemon.pid and stop only a pid started by this QA run'
+== end command plan ==
+qa_status=plan_only
+real_device_pass=false
+info: device unavailable evidence: .omo/evidence/task-27-device-unavailable.txt
+exit_code=0
+
+## Android QA dry-run assertions
+real_device_pass_false=present
+device_unavailable=present
+
+## /tmp puread-* after Android QA dry-run
+/tmp/puread-file-actions-guard-2237322-19.outside.bin
+/tmp/puread-qa-android-final.out
+/tmp/puread-rom-profile-2237401-1781842397731888802
+/tmp/puread-rom-profile-2237401-1781842397731962591
+/tmp/puread-rom-profile-2237401-1781842397731999670
+/tmp/puread-rom-profile-2237401-1781842397732032732
+/tmp/puread-rom-profile-2237401-1781842397732111969
+/tmp/puread-rom-profile-2237401-1781842397732121757
+/tmp/puread-rom-profile-2237401-1781842397732193952
+/tmp/puread-rom-profile-2237401-1781842397732219370
+/tmp/puread-rom-profile-2237401-1781842397732219640
+/tmp/puread-xml-identity-replace-2237322-1781842397721738911
+count=12
+
+## /tmp puread-* detected before cleanup
+/tmp/puread-file-actions-guard-2237322-19.outside.bin
+/tmp/puread-rom-profile-2237401-1781842397731888802
+/tmp/puread-rom-profile-2237401-1781842397731962591
+/tmp/puread-rom-profile-2237401-1781842397731999670
+/tmp/puread-rom-profile-2237401-1781842397732032732
+/tmp/puread-rom-profile-2237401-1781842397732111969
+/tmp/puread-rom-profile-2237401-1781842397732121757
+/tmp/puread-rom-profile-2237401-1781842397732193952
+/tmp/puread-rom-profile-2237401-1781842397732219370
+/tmp/puread-rom-profile-2237401-1781842397732219640
+/tmp/puread-xml-identity-replace-2237322-1781842397721738911
+count=11
+cleanup_policy=remove only /tmp top-level paths matching puread-* produced during this verification run
+
+## /tmp puread-* after cleanup
+count=0
+
+## Restore dry-run host/fixture immutability
+e0a41a00f67a12b23a1665bf700c3922373bcf34be0536e314a18ed605e9a21b  tests/fixtures/ledger.json
+16b835b572634a5a2c4809c11871f76cbd66926c86cdf3b5c443c0988aface7e  tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card/.fixture
+e9b6416400285c23f6c120f91b4af029b155bfdccd22984dd3db036bc742b80e  tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache/.fixture
+$ cargo run -p puread-cli -- restore --dry-run --ledger tests/fixtures/ledger.json
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+[1m[92m     Running[0m `target/debug/puread-cli restore --dry-run --ledger tests/fixtures/ledger.json`
+{
+  "schema_version": 1,
+  "mode": "dry_run",
+  "ledger_path": "tests/fixtures/ledger.json",
+  "action_count": 2,
+  "will_mutate": false,
+  "restored": 0,
+  "failed": 0,
+  "actions": [
+    {
+      "original_path": "/data/data/com.demo/cache/ad.bin",
+      "host_path": "",
+      "status": "planned",
+      "error": null
+    },
+    {
+      "original_path": "/data/data/com.demo/cache",
+      "host_path": "",
+      "status": "planned",
+      "error": null
+    }
+  ]
+}
+exit_code=0
+e0a41a00f67a12b23a1665bf700c3922373bcf34be0536e314a18ed605e9a21b  tests/fixtures/ledger.json
+16b835b572634a5a2c4809c11871f76cbd66926c86cdf3b5c443c0988aface7e  tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card/.fixture
+e9b6416400285c23f6c120f91b4af029b155bfdccd22984dd3db036bc742b80e  tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache/.fixture
+
+## Restore dry-run assertions
+will_mutate_false=present
+ledger_hash_unchanged=true
+android_fixture_hash_unchanged=true
+
+## /tmp puread-* after restore dry-run before temp cleanup
+/tmp/puread-fixture-after.sha
+/tmp/puread-fixture-before.sha
+/tmp/puread-ledger-after.sha
+/tmp/puread-ledger-before.sha
+/tmp/puread-restore-final.out
+count=5
+
+## /tmp puread-* after restore dry-run cleanup
+count=0
+
+## Profile dry-run CLI and action dry-run surface
+temp_module=/tmp/puread-action-final.DVJnmB
+$ unzip -q dist/PureAD-0.1.0-t25.zip -d temp_module
+
+### CLI apply-profile conservative --dry-run
+$ cargo run -p puread-cli -- apply-profile conservative --dry-run --rules rules/appops --root tests/fixtures/android-fs --module-root temp_module
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+[1m[92m     Running[0m `target/debug/puread-cli apply-profile conservative --dry-run --rules rules/appops --root tests/fixtures/android-fs --module-root /tmp/puread-action-final.DVJnmB`
+{
+  "schema_version": 1,
+  "command": "apply_profile",
+  "mode": "dry_run",
+  "profile": "conservative",
+  "root_path": "tests/fixtures/android-fs",
+  "module_root": "/tmp/puread-action-final.DVJnmB",
+  "lock_path": "/tmp/puread-action-final.DVJnmB/run/puread.lock",
+  "lock_acquired": false,
+  "rule_file_count": 1,
+  "action_count": 0,
+  "will_mutate": false,
+  "applied": 0,
+  "skipped": 0,
+  "failed": 0,
+  "actions": []
+}
+exit_code=0
+
+### Packaged action missing profile refusal
+$ PUREAD_RULES_DIR=... PUREAD_PROFILE_ROOT=... sh temp_module/action.sh apply-profile-dry-run
+PureAD profile is required: pass it as the second argument or set PUREAD_PROFILE.
+exit_code=2
+
+### Packaged action apply-profile-dry-run conservative
+$ PUREAD_RULES_DIR=... PUREAD_PROFILE_ROOT=... sh temp_module/action.sh apply-profile-dry-run conservative
+{
+  "schema_version": 1,
+  "command": "apply_profile",
+  "mode": "dry_run",
+  "profile": "conservative",
+  "root_path": "/root/Projects/Ling/PureADRemoverModule/tests/fixtures/android-fs",
+  "module_root": "/tmp/puread-action-final.DVJnmB",
+  "lock_path": "/tmp/puread-action-final.DVJnmB/run/puread.lock",
+  "lock_acquired": false,
+  "rule_file_count": 18,
+  "action_count": 2,
+  "will_mutate": false,
+  "applied": 0,
+  "skipped": 0,
+  "failed": 0,
+  "actions": [
+    {
+      "rule_id": "aweme-internal-splash-commerce-card",
+      "action": "empty_dir",
+      "target_kind": "path",
+      "package": "com.ss.android.ugc.aweme",
+      "android_path": "/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "host_path": "/root/Projects/Ling/PureADRemoverModule/tests/fixtures/android-fs/data/user/0/com.ss.android.ugc.aweme/cache/splash_commerce_card",
+      "status": "planned",
+      "record": null,
+      "error": null
+    },
+    {
+      "rule_id": "aweme-external-splash-cache",
+      "action": "empty_dir",
+      "target_kind": "path",
+      "package": "com.ss.android.ugc.aweme",
+      "android_path": "/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "host_path": "/root/Projects/Ling/PureADRemoverModule/tests/fixtures/android-fs/sdcard/Android/data/com.ss.android.ugc.aweme/splashCache",
+      "status": "planned",
+      "record": null,
+      "error": null
+    }
+  ]
+}
+exit_code=0
+
+### Packaged action profile-restore-dry-run
+$ sh temp_module/action.sh profile-restore-dry-run
+{
+  "schema_version": 1,
+  "command": "profile_restore",
+  "mode": "dry_run",
+  "ledger_path": "/tmp/puread-action-final.DVJnmB/state/profile-actions.jsonl",
+  "record_count": 0,
+  "pending_restore_count": 0,
+  "will_mutate": false,
+  "restored": 0,
+  "skipped": 0,
+  "failed": 0,
+  "actions": []
+}
+exit_code=0
+
+## Profile/action dry-run assertions
+cli_profile_will_mutate_false=present
+action_apply_will_mutate_false=present
+action_restore_will_mutate_false=present
+missing_profile_refusal=present
+android_fixture_hash_unchanged=true
+temp_module_hash_changed=true_expected_profile_restore_creates_empty_profile_ledger_in_temp_module_only
+--- /tmp/puread-action-mod-before.sha	2026-06-19 12:16:00.044050419 +0800
++++ /tmp/puread-action-mod-after.sha	2026-06-19 12:16:00.167049739 +0800
+@@ -24,4 +24,5 @@
+ 62ea532075c57bb2017a36f1b280067f353d7eff5fbf27ff93b0f2821db56c45  /tmp/puread-action-final.DVJnmB/rules/sqlite/coolapk-ad-databases.toml
+ d94914c1edc8de80998ec626b5090a2b81aa9b89d43d4c591d7f4218aee9ed5a  /tmp/puread-action-final.DVJnmB/scripts/puread-module-lib.sh
+ cb0aaa181f700463ca26df059e9d80362597a511b0332400e971acfb6182751a  /tmp/puread-action-final.DVJnmB/service.sh
++e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /tmp/puread-action-final.DVJnmB/state/profile-actions.jsonl
+ 07d9fc77a6c5a39ea92db69b0c8d13dd2c8dd090a3251f0845fd4d7d3a7d2dbc  /tmp/puread-action-final.DVJnmB/uninstall.sh
+
+## /tmp puread-* before action temp cleanup
+/tmp/puread-action-apply-final.out
+/tmp/puread-action-final.DVJnmB
+/tmp/puread-action-fixture-after.sha
+/tmp/puread-action-fixture-before.sha
+/tmp/puread-action-missing-profile-final.out
+/tmp/puread-action-mod-after.sha
+/tmp/puread-action-mod-before.sha
+/tmp/puread-action-restore-final.out
+/tmp/puread-profile-cli-final.out
+count=9
+
+## /tmp puread-* after action temp cleanup
+count=0
+
+## Final /tmp puread-* cleanup check
+final_count=0
+
+## Final local git config
+file:.git/config	core.repositoryformatversion=0
+file:.git/config	core.filemode=true
+file:.git/config	core.bare=false
+file:.git/config	core.logallrefupdates=true
+file:.git/config	remote.origin.url=git@github.com:Lynricsy/PureADRemoverModule.git
+file:.git/config	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config	branch.main.remote=origin
+file:.git/config	branch.main.merge=refs/heads/main
+local_user_name=UNSET
+local_user_email=UNSET
+
+## Final git status --short --ignored
+ M .omo/boulder.json
+ M .omo/plans/puread-rust-module.md
+ M .omo/start-work/ledger.jsonl
+ M README.md
+ M module/action.sh
+ M module/bin/README.md
+ M module/module.prop
+ M module/rules/README.md
+ M scripts/verify-local.sh
+ M xtask/upstream-report/src/report.rs
+ M xtask/upstream-report/src/scanner/source_meta.rs
+ M xtask/upstream-report/tests/directory_report.rs
+?? .omo/evidence/f1-action-apply-dry-run-observed.txt
+?? .omo/evidence/f1-action-apply-requires-profile.txt
+?? .omo/evidence/f1-action-help.txt
+?? .omo/evidence/f1-action-profile-restore-dry-run-observed.txt
+?? .omo/evidence/f1-action-surface-grep.txt
+?? .omo/evidence/f1-action-temp-module-dry-runs.txt
+?? .omo/evidence/f1-f3-git-status-final.txt
+?? .omo/evidence/f1-f3-local-git-config.txt
+?? .omo/evidence/f1-f3-package.txt
+?? .omo/evidence/f1-f3-qa-android-dry-run.txt
+?? .omo/evidence/f1-f3-shell-parse.txt
+?? .omo/evidence/f1-f3-verify-local.txt
+?? .omo/evidence/f1-f3-zip-action-surface.txt
+?? .omo/evidence/f1-f3-zip-action.sh
+?? .omo/evidence/f1-f3-zip-list.txt
+?? .omo/evidence/f1-f3-zip-required-forbidden.txt
+?? .omo/evidence/f1-plan-compliance.txt
+?? .omo/evidence/f2-code-quality.txt
+?? .omo/evidence/f3-manual-qa-final.txt
+?? .omo/evidence/f3-manual-qa.txt
+?? .omo/evidence/f3-tmp-cleanup-after-verify.txt
+?? .omo/evidence/f3-tmp-cleanup-after.txt
+?? .omo/evidence/f3-tmp-cleanup-before.txt
+?? .omo/evidence/f3-tmp-cleanup-counts.txt
+?? .omo/evidence/f3-tmp-cleanup-current-verification-residue.txt
+?? .omo/evidence/f4-scope-fidelity.txt
+?? .omo/evidence/review-wave5-qa-after-fix.txt
+?? .omo/evidence/review-wave5-qa-final.txt
+?? .omo/evidence/review-wave5-qa.txt
+?? .omo/evidence/review-wave5-quality-after-fix.txt
+?? .omo/evidence/review-wave5-quality-final.txt
+?? .omo/evidence/review-wave5-quality-final2.txt
+?? .omo/evidence/review-wave5-quality.txt
+?? .omo/evidence/review-wave5-scope-after-fix.txt
+?? .omo/evidence/review-wave5-scope-final.txt
+?? .omo/evidence/review-wave5-scope-plan.txt
+?? .omo/evidence/task-25-26-27-script-quality-fix.txt
+?? .omo/evidence/task-25-build-dry-run.txt
+?? .omo/evidence/task-25-loc.txt
+?? .omo/evidence/task-25-package-cleanup-final-fix.txt
+?? .omo/evidence/task-25-package-loc-final-fix.txt
+?? .omo/evidence/task-25-package-local-git-config-final-fix.txt
+?? .omo/evidence/task-25-package-zip-check-final-fix.txt
+?? .omo/evidence/task-25-package-zip-list-final-fix.txt
+?? .omo/evidence/task-25-package.txt
+?? .omo/evidence/task-25-packaged-action-status.txt
+?? .omo/evidence/task-25-python-zip-fallback.txt
+?? .omo/evidence/task-25-shell-parse.txt
+?? .omo/evidence/task-25-shellcheck.txt
+?? .omo/evidence/task-25-shfmt.txt
+?? .omo/evidence/task-25-verify-local-summary.txt
+?? .omo/evidence/task-25-verify-local.txt
+?? .omo/evidence/task-25-zip-forbidden-scan.txt
+?? .omo/evidence/task-25-zip-list.txt
+?? .omo/evidence/task-25-zip-required.txt
+?? .omo/evidence/task-25-zip-test.txt
+?? .omo/evidence/task-26-cargo-clippy.txt
+?? .omo/evidence/task-26-cargo-fmt.txt
+?? .omo/evidence/task-26-cargo-test.txt
+?? .omo/evidence/task-26-forbidden-scan.txt
+?? .omo/evidence/task-26-loc.txt
+?? .omo/evidence/task-26-package.txt
+?? .omo/evidence/task-26-rules-validate.txt
+?? .omo/evidence/task-26-shell-parse.txt
+?? .omo/evidence/task-26-verify-local.txt
+?? .omo/evidence/task-26-verify-script-parse.txt
+?? .omo/evidence/task-26-zip-check-fix.txt
+?? .omo/evidence/task-26-zip-check.txt
+?? .omo/evidence/task-27-adb-devices.txt
+?? .omo/evidence/task-27-android-qa-dry-run.txt
+?? .omo/evidence/task-27-device-unavailable.txt
+?? .omo/evidence/task-27-dry-run-push-plan.txt
+?? .omo/evidence/task-27-forbidden-scan-summary.txt
+?? .omo/evidence/task-27-forbidden-scan.txt
+?? .omo/evidence/task-27-help.txt
+?? .omo/evidence/task-27-shell-parse.txt
+?? .omo/evidence/task-27-shellcheck.txt
+?? .omo/evidence/task-27-static-compat.txt
+?? .omo/evidence/task-28-readme-grep.txt
+?? .omo/evidence/task-28-readme.txt
+?? .omo/evidence/task-29-gitless-guards.txt
+?? .omo/evidence/task-29-gitless-manifest.json
+?? .omo/evidence/task-29-gitless-report.txt
+?? .omo/evidence/task-29-gitless-summary.txt
+?? .omo/evidence/task-29-loc.txt
+?? .omo/evidence/task-29-no-rule-mutation-final-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation-final.txt
+?? .omo/evidence/task-29-no-rule-mutation-ignored.txt
+?? .omo/evidence/task-29-no-rule-mutation.txt
+?? .omo/evidence/task-29-policy-guard.txt
+?? .omo/evidence/task-29-report-guards.txt
+?? .omo/evidence/task-29-upstream-regression.txt
+?? .omo/evidence/task-29-upstream-summary.txt
+?? dist/
+?? module/bin/x86_64/
+?? scripts/build-module.sh
+?? scripts/lib/
+?? scripts/package-module.sh
+?? scripts/qa-android.sh
+?? xtask/upstream-report/tests/git_unavailable.rs
+!! AgentLogs/
+!! Example/
+!! target/
+!! xtask/upstream-report/target/
+
+## Evidence assertion index
+$ rg key assertions in evidence
+34:?? .omo/evidence/f1-action-profile-restore-dry-run-observed.txt
+152:exit_code=0
+211:required_present=module.prop
+212:required_present=customize.sh
+213:required_present=service.sh
+214:required_present=post-fs-data.sh
+215:required_present=uninstall.sh
+216:required_present=action.sh
+217:required_present=scripts/puread-module-lib.sh
+218:required_present=bin/x86_64/puread-cli
+219:required_present=bin/x86_64/puread-daemon
+220:rules_toml_count=18
+221:forbidden_entries_found=none
+252:    puread_print "  apply-profile-dry-run <profile>"
+254:    puread_print "  profile-restore-dry-run"
+355:    apply-profile-dry-run|profile-apply-dry-run)
+365:    profile-restore-dry-run)
+382:28:    puread_print "  apply-profile-dry-run <profile>"
+384:30:    puread_print "  profile-restore-dry-run"
+410:131:    apply-profile-dry-run|profile-apply-dry-run)
+412:141:    profile-restore-dry-run)
+486:exit_code=0
+493:will_mutate_false=present
+494:fixture_hash_unchanged=true
+514:$ cargo test -p puread-daemon event_loop -- --nocapture
+520:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+526:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+528:[1m[92m     Running[0m tests/event_loop.rs (target/debug/deps/event_loop-8ef9a4e0534e93da)
+531:test event_loop_emits_reload_event_when_reload_signal_arrives ... ok
+532:test event_loop_stops_when_shutdown_signal_arrives ... ok
+533:test event_loop_does_not_restart_after_shutdown_during_file_control_race ... ok
+534:test event_loop_drains_reload_and_shutdown_during_debounce ... ok
+535:test event_loop_emits_debounced_file_event_when_file_is_created ... ok
+537:test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+539:[1m[92m     Running[0m tests/file_rule_integration.rs (target/debug/deps/file_rule_integration-9b0b5dd6b3f5a3ff)
+543:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+549:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+551:exit_code=0
+554:$ cargo test -p puread-daemon file_rule_integration -- --nocapture
+560:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+566:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+568:[1m[92m     Running[0m tests/event_loop.rs (target/debug/deps/event_loop-8ef9a4e0534e93da)
+572:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+574:[1m[92m     Running[0m tests/file_rule_integration.rs (target/debug/deps/file_rule_integration-9b0b5dd6b3f5a3ff)
+577:test file_rule_integration_excludes_sqlite_appops_and_component_from_watch_roots ... ok
+578:test file_rule_integration_apply_mode_executes_file_action_and_writes_ledger ... ok
+579:test file_rule_integration_outputs_dry_run_plan_when_splash_cache_is_created ... ok
+581:test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+587:test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+589:exit_code=0
+623:exit_code=0
+626:real_device_pass_false=present
+627:device_unavailable=present
+692:exit_code=0
+698:will_mutate_false=present
+699:ledger_hash_unchanged=true
+700:android_fixture_hash_unchanged=true
+738:exit_code=0
+741:$ PUREAD_RULES_DIR=... PUREAD_PROFILE_ROOT=... sh temp_module/action.sh apply-profile-dry-run
+743:exit_code=2
+745:### Packaged action apply-profile-dry-run conservative
+746:$ PUREAD_RULES_DIR=... PUREAD_PROFILE_ROOT=... sh temp_module/action.sh apply-profile-dry-run conservative
+787:exit_code=0
+789:### Packaged action profile-restore-dry-run
+790:$ sh temp_module/action.sh profile-restore-dry-run
+804:exit_code=0
+807:cli_profile_will_mutate_false=present
+808:action_apply_will_mutate_false=present
+809:action_restore_will_mutate_false=present
+810:missing_profile_refusal=present
+811:android_fixture_hash_unchanged=true
+838:final_count=0
+849:local_user_name=UNSET
+850:local_user_email=UNSET
+868:?? .omo/evidence/f1-action-profile-restore-dry-run-observed.txt
+
+## Final reviewer conclusion
+verdict=PASS
+package_pass=true
+zip_required_forbidden_pass=true
+action_profile_surface_pass=true
+cli_scan_dry_run_no_mutation_pass=true
+daemon_event_loop_file_rule_tests_pass=true
+android_qa_dry_run_device_unavailable_pass=true
+restore_profile_action_dry_run_no_host_mutation_pass=true
+tmp_cleanup_final_pass=true
+local_git_identity_unset_pass=true
+notes=Initial /tmp puread-* count was 0. Rust/package/action verification produced temporary /tmp puread-* entries during the run; they were recorded, removed, and final_count is 0. Android hardware was unavailable as expected for dry-run, and real_device_pass=false is recorded.
+<verdict>PASS</verdict>

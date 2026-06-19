@@ -1,0 +1,6 @@
+scan=zip-entry-name-classified
+zip=dist/PureAD-0.1.0-t25.zip
+pattern=(^|/)Example/|[.]zip$|(^|/)hosts$|(^|/)(Host|host)[.]sh$|(^|/)(dns|DNS|domain|Domain)([-_.]|$)|AdGuardHome|adguardhome|iptables|Clash|clash|mihomo|Mihomo|proxy|ProxyConfig|mount_hosts|ad_reward
+result=passed
+matches=0
+notes=Classified path scan covers Example snapshots, nested zip files, hosts/DNS/domain rule-file names, AdGuardHome, iptables, Clash/mihomo/proxy config names, mount_hosts, and ad_reward. Rule text may contain boundary notes, so content-token scanning is intentionally handled by project guards separately.

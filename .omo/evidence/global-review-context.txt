@@ -1,0 +1,136 @@
+review=global-review-context
+reviewed_at=2026-06-19T13:44:00+08:00
+role=review-work-lane-5-context-miner
+repo=/root/Projects/Ling/PureADRemoverModule
+verdict=FAIL
+
+## Scope
+
+- Read-only context mining for missed requirements/background.
+- Allowed writes honored: this evidence file and AgentLog only.
+- No implementation files changed, no commits, no pushes, no local git config changes, no `Example/` changes.
+
+## Sources Searched
+
+### AgentLogs via MCP
+
+- `search_logs`: `PureADRemoverModule Example 上游 快照 允许 禁止 hosts DNS domain iptables ads288 Wave5`.
+- `search_logs`: `PureADRemoverModule Wave5 F1 F2 F3 F4 review blockers action.sh package upstream report`.
+- `search_logs`: `PureADRemoverModule AGENTS.md remote URL Example .gitignore AgentLogs local git config commit push`.
+- `read_log`: `0108-PureADRemoverModule-T21-上游同步-report-only-实现.md`.
+- `read_log`: `0116-PureADRemoverModule-T21-report-only-复审阻塞修复.md`.
+- `read_log`: `0203-PureADRemoverModule-T29-本地-Example-report-only-回归.md`.
+- `read_log`: `0223-F1-Plan-compliance-final-verification-FAIL.md`.
+- `read_log`: `0227-PureADRemoverModule-F1-action-surface-补齐.md`.
+- `read_log`: `0229-PureADRemoverModule-F1-F3-最终修复验证.md`.
+- `read_log`: `0230-PureAD-F1-action.sh-修复后终验复跑.md`.
+- `read_log`: `0232-PureAD-F1-F4-最终验证全绿.md`.
+- `read_log`: `0013-执行-PureAD-T2-AGENTS上游同步指南完成.md`.
+
+### Git and GitHub
+
+- `git status --short --ignored`: dirty worktree with tracked implementation/doc/script changes and many untracked evidence/dist/module artifacts; `AgentLogs/`, `Example/`, `target/`, and `xtask/upstream-report/target/` ignored.
+- `git status --short --branch`: `## main...origin/main`; no ahead/behind marker, but final-stage changes remain uncommitted/unpushed.
+- `git remote -v`: `origin` fetch/push is `git@github.com:Lynricsy/PureADRemoverModule.git`.
+- `git config --local --list --show-origin`: only core/remote/branch keys.
+- `git config --local --get-regexp '^(user\.|author\.|committer\.)'`: exit 1 with no output, so no local identity is set.
+- `git log --oneline --decorate -n 12`: latest commit is `1143a5b feat(wave4): 🧩 add reversible profile execution`, matching `origin/main`.
+- `git diff --name-only`: tracked final-stage changes include `.omo/plans/puread-rust-module.md`, `README.md`, `module/action.sh`, `scripts/verify-local.sh`, and `xtask/upstream-report/**`.
+- `git diff --stat`: 12 tracked files changed, 311 insertions and 117 deletions.
+- `git check-ignore -v Example/`: `.gitignore:2:Example/`.
+- `git ls-files Example`: no tracked files.
+- `gh auth status`: configured for account `Lynricsy`; token output was masked by gh.
+- `gh repo view Lynricsy/PureADRemoverModule --json nameWithOwner,url,defaultBranchRef,pushedAt`: default branch `main`, last pushed `2026-06-18T13:06:09Z`.
+- `gh issue list --repo Lynricsy/PureADRemoverModule --state all --limit 20`: no issues returned.
+- `gh pr list --repo Lynricsy/PureADRemoverModule --state all --limit 20`: no PRs returned.
+
+### Codebase and Evidence Cross-References
+
+- `.omo/plans/puread-rust-module.md`: T25-T30 and F1-F4 are marked complete; commit strategy still requires timely commits/pushes.
+- `AGENTS.md`: project boundary, forbidden capabilities, upstream source handling, AgentLogs usage, git remote, local identity ban, and commit/push requirements.
+- `.gitignore`: `AgentLogs/`, `Example/`, `target/`, `module/logs/`, `module/run/`, `module/state/`.
+- `README.md`: non-domain local scope, `Example/` ignored/read-only, report-only upstream sync and manual-review-only candidates.
+- `module/action.sh`: current source exposes `status`, `diagnose`, `scan-dry-run`, `restore-dry-run`, `apply-profile-dry-run`, `apply-profile-execute`, `profile-restore-dry-run`, and `profile-restore-execute`.
+- `scripts/update-upstream.sh`: report-only wrapper around `xtask/upstream-report`; requires `cargo`; no download/extract/snapshot mutation logic found in the shell wrapper.
+- `xtask/upstream-report/src/report.rs`: renders source metadata and `rules_modified=false`, `download_performed=false`, `snapshots_modified=false`, `auto_import_allowed=false`.
+- `xtask/upstream-report/src/scanner/source_meta.rs`: missing `git` degrades to `n/a`, matching T29 history.
+- `.omo/evidence/f1-plan-compliance-final.txt`: F1 PASS after `action.sh` surface fix.
+- `.omo/evidence/f2-code-quality.txt`: F2 PASS from final verification.
+- `.omo/evidence/f3-manual-qa-final.txt`: F3 PASS, but evidence shows package/test commands produced `/tmp/puread-*` residue before cleanup in that lane.
+- `.omo/evidence/f4-scope-fidelity.txt`: F4 PASS; no forbidden production capability found.
+- `.omo/evidence/global-review-goal.txt`: lane 1 PASS, with process residual risk for uncommitted/unpushed final-stage work.
+- `.omo/evidence/global-review-qa.txt`: lane 2 hands-on QA PASS.
+- `.omo/evidence/global-review-quality.txt`: lane 3 FAIL with a concrete blocking issue in `scripts/lib/verify-local-zip.sh`.
+- `.omo/evidence/global-review-security.txt`: lane 4 PASS.
+
+## Positive Context Confirmed
+
+- Historical T21/T29 decisions are reflected in current code: upstream local snapshots are treated as report-only/manual-review-only; forbidden hosts/DNS/domain/proxy/iptables/ad_reward/IFW categories are rejected rather than auto-imported.
+- `Example/` is ignored and untracked; no evidence found that this lane or current implementation modified it.
+- Remote URL matches the required `git@github.com:Lynricsy/PureADRemoverModule.git`.
+- Local git identity is not set.
+- F1's earlier blocker, missing `action.sh` profile apply/restore surface, is fixed in current `module/action.sh` and was also checked in packaged zip evidence.
+- GitHub issue/PR search did not reveal external open requirements.
+
+## Blocking Issues / Missed Requirements
+
+1. `scripts/lib/verify-local-zip.sh:132-144` can report local verification success without structural zip validation when `python3` is unavailable.
+
+   Evidence:
+   - `.omo/evidence/global-review-quality.txt` records `verdict=FAIL` and identifies this as a blocking issue.
+   - `scripts/lib/verify-local-zip.sh:117-129` performs full Python validation: required module entries, rules TOML, daemon/CLI ABI pairing, forbidden path entries, and archive integrity.
+   - `scripts/lib/verify-local-zip.sh:132-144` falls back to `unzip -t "$zip_path"` and writes `result=pass-unzip-only`, which only verifies archive integrity.
+
+   Why this blocks:
+   - Plan T26 requires `scripts/verify-local.sh` to perform zip structure validation and not swallow failures.
+   - A package missing required entries, containing forbidden path names, or having daemon/CLI ABI mismatch could still pass in an environment with `unzip` but without `python3`.
+
+   Evidence needed to clear:
+   - Change fallback to fail closed without `python3`, or implement equivalent structural checks using `unzip`/POSIX shell.
+   - Rerun `scripts/verify-local.sh` normally.
+   - Rerun with `python3` hidden and `unzip` available, proving missing required entries, forbidden entries, and ABI mismatch fail instead of producing `result=pass-unzip-only`.
+   - Update `.omo/evidence/global-review-quality.txt` or rerun lane 3 to PASS.
+
+2. Final-stage changes remain uncommitted and unpushed despite explicit project requirements for timely commits/pushes.
+
+   Evidence:
+   - `AGENTS.md:174` says development needs timely commits and pushes.
+   - `.omo/plans/puread-rust-module.md:392` says the user explicitly requested timely commits and pushes during development.
+   - `.omo/plans/puread-rust-module.md:401` says to push after each completed atomic commit or wave-level checkpoint when remote access succeeds.
+   - `git status --short --branch` shows `main...origin/main` with no ahead marker, but `git diff --name-only` lists tracked final-stage changes and many untracked artifacts.
+   - GitHub repo `pushedAt` is `2026-06-18T13:06:09Z`, while current final verification/evidence is from `2026-06-19`.
+
+   Why this blocks:
+   - The implementation may satisfy many functional constraints locally, but the explicit process requirement has not been fulfilled for the final-stage diff.
+   - This reviewer was instructed not to commit or push, so the issue is reported rather than fixed.
+
+   Evidence needed to clear:
+   - After resolving remaining blockers, create atomic commit(s) with required format and `Co-authored-by: Wine Fox <fox@ling.plus>`.
+   - Push to `origin/main`, or record exact push failure if authentication/connectivity blocks it.
+   - Provide `git status --short --branch`, `git log -1 --format=fuller`, and remote/push evidence.
+
+3. Current `/tmp/puread-*` residue contradicts earlier "after cleanup = 0" evidence and should be reconciled before a final all-green claim.
+
+   Evidence:
+   - Current `find /tmp -maxdepth 1 -name 'puread-*' -print | wc -l` returned `33`.
+   - Examples include `/tmp/puread-file-actions-guard-*`, `/tmp/puread-rom-profile-*`, and `/tmp/puread-xml-identity-replace-*`.
+   - Historical `.omo/evidence/f3-manual-qa-final.txt` records an initial count of 0, but its own package/test section also shows temporary `/tmp/puread-*` entries during verification.
+
+   Why this blocks:
+   - F3 cleanup was previously a real final-verification blocker, and stale `/tmp` state can make QA evidence misleading.
+   - Some later review lanes appear to have run tests/package gates after the F3 cleanup, producing new residue. Even if these are test artifacts, the current evidence no longer proves final environment cleanup.
+
+   Evidence needed to clear:
+   - Identify whether the 33 entries are current test residue or pre-existing unrelated artifacts.
+   - Clean only safe PureAD-owned test residue, respecting the task's non-code-change constraints or with explicit authorization.
+   - Record before/after evidence showing `find /tmp -maxdepth 1 -name 'puread-*'` is reconciled, or explicitly justify why these paths are acceptable residual test fixtures.
+
+## Non-Blocking Notes
+
+- Real Android/root device QA remains unavailable; existing evidence correctly reports dry-run/plan-only and does not claim real-device pass.
+- `dist/PureAD-0.1.0-t25.zip` is a host-fixture x86_64 package for layout validation when `PUREAD_ANDROID_ABIS` is unset; README and QA evidence state this limitation.
+- `scripts/update-upstream.sh --dry-run` is still documented as compatibility entry and forwards to the Rust report tool; current report code preserves manual-review-only and auto-import-disabled semantics.
+
+## Final Context Verdict
+
+FAIL: context mining found at least one unresolved review blocker from another lane (`verify-local` zip-check fallback), an explicit commit/push process requirement not satisfied for the current final diff, and current `/tmp/puread-*` residue that should be reconciled before declaring final all-green.

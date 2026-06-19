@@ -1,0 +1,222 @@
+PureADRemoverModule global review lane 2 hands-on QA final
+reviewer_mode=read_only
+code_modified=false
+allowed_writes=.omo/evidence/global-review-qa-final.txt,AgentLog
+example_modified=false
+commit_or_push_performed=false
+local_git_config_identity_set=false
+verdict=PASS
+
+Scope
+- Task: rerun global review lane 2 hands-on QA after global blockers fix.
+- Repository: /root/Projects/Ling/PureADRemoverModule
+- Date: 2026-06-19 Asia/Hong_Kong
+- Existing worktree had many modified/untracked files before this QA; reviewer did not restore or edit them.
+
+1. scripts/verify-local.sh
+- Command: scripts/verify-local.sh
+- Exit: 0
+- Result: PASS
+- Key output:
+  - pass: verify-local-sh-parse
+  - pass: cargo-fmt
+  - pass: cargo-clippy
+  - pass: cargo-test
+  - pass: rules-validate
+  - pass: package-module
+  - pass: zip check
+  - pass: forbidden scan
+  - pass: pure Rust LOC
+  - pass: shell parse
+  - local verification passed
+
+2. scripts/package-module.sh and zip inspection
+- Command: scripts/package-module.sh
+- Exit: 0
+- Result: PASS
+- Package: dist/PureAD-0.1.0-t25.zip
+- Build mode: host-fixture x86_64, with note that binaries are not Android ABI verified.
+- Required zip entries:
+  - module.prop: present
+  - customize.sh: present
+  - service.sh: present
+  - post-fs-data.sh: present
+  - uninstall.sh: present
+  - action.sh: present
+  - scripts/puread-module-lib.sh: present
+- Native pairs:
+  - x86_64: puread-daemon present, puread-cli present
+- Rule TOML entries: 18
+- Forbidden staging entries:
+  - bin/README.md: absent
+  - rules/README.md: absent
+- Forbidden zip entry/content terms checked:
+  - Host/
+  - host.sh
+  - mount_hosts
+  - AdGuardHome
+  - adguardhome
+  - clash
+  - mihomo
+  - iptables
+- Forbidden matches: none
+- dist staging after package: none under dist/.puread-module-staging.*
+
+3. Packaged action.sh surface
+- Command: unzip -p dist/PureAD-0.1.0-t25.zip action.sh > /tmp/puread-packaged-action.$$ && sh -n ...
+- Exit: 0
+- Result: PASS
+- Exposed actions observed in packaged action.sh:
+  - status
+  - diagnose
+  - scan-dry-run
+  - restore-dry-run
+  - apply-profile-dry-run <profile>
+  - apply-profile-execute <profile>
+  - profile-restore-dry-run
+  - profile-restore-execute
+- Profile restore implementation calls:
+  - puread_prepare_profile_ledger
+  - puread-cli profile-restore --dry-run/--execute --module-root "$PUREAD_MODDIR"
+- Packaged shell syntax: sh -n passed.
+
+4. CLI scan dry-run fixture no mutation
+- Command: cargo test -p puread-cli --test scan_dry_run cli_dry_run_preserves_android_fixture_when_planning_scan -- --nocapture
+- Exit: 0
+- Result: PASS
+- Test result: 1 passed, 0 failed.
+- Evidence: test records fixture listing before scan dry-run, runs puread-cli scan --dry-run --rules rules/files --root tests/fixtures/android-fs, then asserts the listing is unchanged.
+
+5. Empty module profile-restore dry-run
+- Command: target/debug/puread-cli profile-restore --dry-run --module-root <empty>
+- Exit: 0
+- Result: PASS
+- Empty module root: /tmp/puread-review-empty-module.Zw8Lb3/module
+- stdout JSON key fields:
+  - schema_version: 1
+  - command: profile_restore
+  - mode: dry_run
+  - record_count: 0
+  - pending_restore_count: 0
+  - will_mutate: false
+  - restored: 0
+  - skipped: 0
+  - failed: 0
+  - actions: []
+- stderr: empty
+- Non-mutating checks:
+  - state_exists=false
+  - run_exists=false
+  - only module directory plus reviewer stdout/stderr capture files appeared under the temporary QA root.
+- Cleanup: temporary root removed.
+
+6. Daemon event_loop and file_rule_integration tests
+- Command: cargo test -p puread-daemon --test event_loop -- --nocapture
+- Exit: 0
+- Result: PASS
+- event_loop tests: 5 passed, 0 failed.
+- Passed tests:
+  - event_loop_stops_when_shutdown_signal_arrives
+  - event_loop_emits_reload_event_when_reload_signal_arrives
+  - event_loop_drains_reload_and_shutdown_during_debounce
+  - event_loop_emits_debounced_file_event_when_file_is_created
+  - event_loop_does_not_restart_after_shutdown_during_file_control_race
+- Command: cargo test -p puread-daemon --test file_rule_integration -- --nocapture
+- Exit: 0
+- Result: PASS
+- file_rule_integration tests: 3 passed, 0 failed.
+- Passed tests:
+  - file_rule_integration_excludes_sqlite_appops_and_component_from_watch_roots
+  - file_rule_integration_outputs_dry_run_plan_when_splash_cache_is_created
+  - file_rule_integration_apply_mode_executes_file_action_and_writes_ledger
+
+7. Android QA dry-run
+- Command: scripts/qa-android.sh --dry-run
+- Exit: 0
+- Result: PASS for dry-run plan surface; real device not available.
+- Key output:
+  - qa_status=plan_only
+  - real_device_pass=false
+  - device unavailable evidence: .omo/evidence/task-27-device-unavailable.txt
+- Planned device commands include:
+  - adb devices
+  - dumpsys batterystats/alarm/deviceidle
+  - top
+  - action.sh status
+  - action.sh scan-dry-run
+  - puread-cli apply-profile conservative --dry-run
+  - service.sh with PUREAD_DRY_RUN=1
+  - pid check/stop limited to a pid started by this QA run
+
+8. Upstream report-only smoke with /tmp manifest
+- Command: scripts/update-upstream.sh --from-local /tmp/puread-upstream-smoke.Q70ZI6/input --manifest /tmp/puread-upstream-smoke.Q70ZI6/manifest.json --report-only
+- Exit: 0
+- Result: PASS
+- Temporary input contained:
+  - app/cache/splashCache.txt
+  - forbidden/hosts.txt
+- Key output:
+  - mode=report-only
+  - legacy_dry_run=false
+  - manifest_path=/tmp/puread-upstream-smoke.Q70ZI6/manifest.json
+  - rules_modified=false
+  - download_performed=false
+  - snapshots_modified=false
+  - sources_total=2
+  - accepted_total=1
+  - rejected_total=0
+  - ignored_total=1
+  - auto_import_allowed=false
+- /tmp manifest:
+  - existed before: false
+  - existed after: true
+  - policy.report_only=true
+  - policy.rules_modified=false
+  - policy.snapshots_modified=false
+  - policy.download_performed=false
+  - policy.auto_import_allowed=false
+- Mutation checks:
+  - rules hash before: f1784bde80d3373dcab76e61297dcbb219eb35f5841c7ae2eba104e4443d6fa8
+  - rules hash after:  f1784bde80d3373dcab76e61297dcbb219eb35f5841c7ae2eba104e4443d6fa8
+  - Example file count before: 50
+  - Example file count after:  50
+  - upstream/upstream_manifest.json hash before: 884c22cb5d6275ff0aba52be3c148b692ea368941a6e74b1e03c26e4626afc53
+  - upstream/upstream_manifest.json hash after:  884c22cb5d6275ff0aba52be3c148b692ea368941a6e74b1e03c26e4626afc53
+- Cleanup: temporary upstream smoke root removed.
+
+9. Cleanup and repository controls
+- /tmp cleanup command removed top-level /tmp/puread-* entries.
+- /tmp top-level puread-* count after cleanup: 0
+- dist staging directories after cleanup: none
+- Local git identity check:
+  - git config --local --get-regexp '^(user\.name|user\.email)$' produced no entries.
+  - git config --local --list --show-origin showed only core, remote.origin, and branch.main settings.
+- remote.origin.url remains git@github.com:Lynricsy/PureADRemoverModule.git
+
+Final note
+- All required hands-on QA checks passed.
+- No real Android device was available; dry-run QA explicitly recorded real_device_pass=false.
+- Reviewer wrote only this evidence file and AgentLog. No code changes, commits, pushes, local git identity changes, or Example modifications were performed by this reviewer.
+
+Final git status summary
+- Existing tracked modifications remained in:
+  - .omo/boulder.json
+  - .omo/plans/puread-rust-module.md
+  - .omo/start-work/ledger.jsonl
+  - README.md
+  - crates/puread-android/src/file_actions/executor/test_support.rs
+  - crates/puread-android/src/profiles/xml/tests.rs
+  - crates/puread-android/tests/rom_profiles/support.rs
+  - crates/puread-cli/src/profile_execute/profile_restore/ledger.rs
+  - module/action.sh
+  - module/bin/README.md
+  - module/module.prop
+  - module/rules/README.md
+  - scripts/verify-local.sh
+  - xtask/upstream-report/src/report.rs
+  - xtask/upstream-report/src/scanner/source_meta.rs
+  - xtask/upstream-report/tests/directory_report.rs
+- New reviewer evidence:
+  - .omo/evidence/global-review-qa-final.txt
+- Other untracked evidence/build files pre-existed or were generated by permitted verification surfaces.
+- Ignored paths include AgentLogs/, Example/, target/, and xtask/upstream-report/target/.

@@ -1,0 +1,3 @@
+crates/puread-cli/tests/cli_profile_restore.rs	212
+crates/puread-cli/tests/cli_profile_restore_empty.rs	84
+scripts/lib/verify-local-zip.sh	218

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "command": "profile_restore",
+  "mode": "dry_run",
+  "ledger_path": "/tmp/puread-empty-verify.jHS8r6/state/profile-actions.jsonl",
+  "record_count": 0,
+  "pending_restore_count": 0,
+  "will_mutate": false,
+  "restored": 0,
+  "skipped": 0,
+  "failed": 0,
+  "actions": []
+}
+
+exit_code=0

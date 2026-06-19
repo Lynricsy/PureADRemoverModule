@@ -1,0 +1,9 @@
+PureAD status
+runtime=unknown
+abi=x86_64
+module_dir=/tmp/tmp.fFFyYrevzT/module
+state=/tmp/tmp.fFFyYrevzT/state/status.env
+log=/tmp/tmp.fFFyYrevzT/logs/puread.log
+daemon=/tmp/tmp.fFFyYrevzT/module/bin/x86_64/puread-daemon
+cli=/tmp/tmp.fFFyYrevzT/module/bin/x86_64/puread-cli
+status_file=missing

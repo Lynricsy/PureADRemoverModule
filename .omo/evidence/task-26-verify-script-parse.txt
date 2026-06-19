@@ -1,0 +1,3 @@
+gate=verify-local-sh-parse
+command=sh -n scripts/verify-local.sh
+result=pass

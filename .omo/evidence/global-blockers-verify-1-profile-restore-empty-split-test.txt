@@ -1,0 +1,138 @@
+[1m[92m   Compiling[0m puread-cli v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-cli)
+[1m[91merror[0m[1m: constant `ANDROID_FS_FIXTURE` is never used[0m
+  [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:17:18
+   [1m[94m|[0m
+[1m[94m17[0m [1m[94m|[0m pub(crate) const ANDROID_FS_FIXTURE: &str = concat!(
+   [1m[94m|[0m                  [1m[91m^^^^^^^^^^^^^^^^^^[0m
+   [1m[94m|[0m
+   [1m[94m= [0m[1mnote[0m: `-D dead-code` implied by `-D warnings`
+   [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+[1m[91merror[0m[1m: function `appops_rules` is never used[0m
+  [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:22:21
+   [1m[94m|[0m
+[1m[94m22[0m [1m[94m|[0m pub(crate) const fn appops_rules() -> &'static str {
+   [1m[94m|[0m                     [1m[91m^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `run_puread_with_profile_test` is never used[0m
+  [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:33:15
+   [1m[94m|[0m
+[1m[94m33[0m [1m[94m|[0m pub(crate) fn run_puread_with_profile_test<const N: usize>(
+   [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `assert_failed_without_runner_mutation` is never used[0m
+  [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:60:15
+   [1m[94m|[0m
+[1m[94m60[0m [1m[94m|[0m pub(crate) fn assert_failed_without_runner_mutation(
+   [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `assert_lock_failed_without_runner_mutation` is never used[0m
+  [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:71:15
+   [1m[94m|[0m
+[1m[94m71[0m [1m[94m|[0m pub(crate) fn assert_lock_failed_without_runner_mutation(
+   [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `profile_records` is never used[0m
+  [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:82:15
+   [1m[94m|[0m
+[1m[94m82[0m [1m[94m|[0m pub(crate) fn profile_records(fixture: &TempFixture) -> Result<String, Box<dyn Error>> {
+   [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `appop_record` is never used[0m
+  [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:97:21
+   [1m[94m|[0m
+[1m[94m97[0m [1m[94m|[0m pub(crate) const fn appop_record() -> &'static str {
+   [1m[94m|[0m                     [1m[91m^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `component_record` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:101:10
+    [1m[94m|[0m
+[1m[94m101[0m [1m[94m|[0m const fn component_record() -> &'static str {
+    [1m[94m|[0m          [1m[91m^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `rom_setting_record` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:105:10
+    [1m[94m|[0m
+[1m[94m105[0m [1m[94m|[0m const fn rom_setting_record() -> &'static str {
+    [1m[94m|[0m          [1m[91m^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `shared_prefs_record` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:109:4
+    [1m[94m|[0m
+[1m[94m109[0m [1m[94m|[0m fn shared_prefs_record(fixture: &TempFixture, backup: &Path) -> String {
+    [1m[94m|[0m    [1m[91m^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `state_symlink_is_rejected_before_mutation` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:118:15
+    [1m[94m|[0m
+[1m[94m118[0m [1m[94m|[0m pub(crate) fn state_symlink_is_rejected_before_mutation() -> Result<(), Box<dyn Error>> {
+    [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `profile_ledger_symlink_is_rejected_before_mutation` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:129:15
+    [1m[94m|[0m
+[1m[94m129[0m [1m[94m|[0m pub(crate) fn profile_ledger_symlink_is_rejected_before_mutation() -> Result<(), Box<dyn Error>> {
+    [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `run_symlink_is_rejected_before_mutation` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:140:15
+    [1m[94m|[0m
+[1m[94m140[0m [1m[94m|[0m pub(crate) fn run_symlink_is_rejected_before_mutation() -> Result<(), Box<dyn Error>> {
+    [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `lock_symlink_is_rejected_before_mutation` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:152:15
+    [1m[94m|[0m
+[1m[94m152[0m [1m[94m|[0m pub(crate) fn lock_symlink_is_rejected_before_mutation() -> Result<(), Box<dyn Error>> {
+    [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `execute_lock_contention_prevents_ledger_read` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:163:15
+    [1m[94m|[0m
+[1m[94m163[0m [1m[94m|[0m pub(crate) fn execute_lock_contention_prevents_ledger_read() -> Result<(), Box<dyn Error>> {
+    [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: function `restore_args` is never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:173:4
+    [1m[94m|[0m
+[1m[94m173[0m [1m[94m|[0m fn restore_args(fixture: &TempFixture) -> [&str; 7] {
+    [1m[94m|[0m    [1m[91m^^^^^^^^^^^^[0m
+
+[1m[91merror[0m[1m: field `runner_log_arg` is never read[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:190:5
+    [1m[94m|[0m
+[1m[94m186[0m [1m[94m|[0m pub(crate) struct TempFixture {
+    [1m[94m|[0m                   [1m[94m-----------[0m [1m[94mfield in this struct[0m
+[1m[94m...[0m
+[1m[94m190[0m [1m[94m|[0m     runner_log_arg: String,
+    [1m[94m|[0m     [1m[91m^^^^^^^^^^^^^^[0m
+    [1m[94m|[0m
+    [1m[94m= [0m[1mnote[0m: `TempFixture` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+[1m[91merror[0m[1m: methods `root`, `profile_ledger_path`, `runner_log_str`, `hold_global_lock`, `shared_prefs_path`, and `shared_prefs_backup_path` are never used[0m
+   [1m[94m--> [0mcrates/puread-cli/tests/support/cli_profile_restore.rs:216:19
+    [1m[94m|[0m
+[1m[94m193[0m [1m[94m|[0m impl TempFixture {
+    [1m[94m|[0m [1m[94m----------------[0m [1m[94mmethods in this implementation[0m
+[1m[94m...[0m
+[1m[94m216[0m [1m[94m|[0m     pub(crate) fn root(&self) -> &Path {
+    [1m[94m|[0m                   [1m[91m^^^^[0m
+[1m[94m...[0m
+[1m[94m228[0m [1m[94m|[0m     pub(crate) fn profile_ledger_path(&self) -> PathBuf {
+    [1m[94m|[0m                   [1m[91m^^^^^^^^^^^^^^^^^^^[0m
+[1m[94m...[0m
+[1m[94m236[0m [1m[94m|[0m     pub(crate) fn runner_log_str(&self) -> &str {
+    [1m[94m|[0m                   [1m[91m^^^^^^^^^^^^^^[0m
+[1m[94m...[0m
+[1m[94m240[0m [1m[94m|[0m     fn hold_global_lock(&self) -> Result<fs::File, Box<dyn Error>> {
+    [1m[94m|[0m        [1m[91m^^^^^^^^^^^^^^^^[0m
+[1m[94m...[0m
+[1m[94m249[0m [1m[94m|[0m     pub(crate) fn shared_prefs_path(&self) -> PathBuf {
+    [1m[94m|[0m                   [1m[91m^^^^^^^^^^^^^^^^^[0m
+[1m[94m...[0m
+[1m[94m254[0m [1m[94m|[0m     fn shared_prefs_backup_path(&self) -> PathBuf {
+    [1m[94m|[0m        [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[91merror[0m: could not compile `puread-cli` (test "cli_profile_restore_empty") due to 18 previous errors
+
+exit_code=101

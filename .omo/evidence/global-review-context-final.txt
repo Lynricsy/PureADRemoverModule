@@ -1,0 +1,182 @@
+review=global-review-context-final
+reviewed_at=2026-06-19T14:18:00+08:00
+role=lane-5-context-mining-rerun
+mode=read-only-review
+repo=/root/Projects/Ling/PureADRemoverModule
+verdict=PASS
+
+## Scope
+
+- Task: rerun global review lane 5 context mining after blocker fixes.
+- Allowed writes honored: this evidence file and AgentLog only.
+- No code changes, no commits, no pushes, no `Example/` changes, no local git config changes.
+- Commit/push is intentionally treated as a non-blocking pre-commit step for this review gate because the task explicitly says commit/push is expected after review gate passes.
+
+## Historical Context Checked
+
+- `search_logs`: `PureADRemoverModule global review lane 5 blockers zip fallback profile restore tmp final clean commit push`
+- `read_log 0237`: previous lane 5 context mining FAIL.
+- `read_log 0238`: global blockers midpoint, showing fixes started for zip fallback, empty profile restore, and `/tmp` residue.
+- `read_log 0239`: handoff/baseline check for global blockers.
+- `read_log 0240`: final blocker-fix verification log.
+- `search_logs`: `PureADRemoverModule latest review final PASS unresolved requirements commit push global blockers verification`
+
+Result:
+- Previous lane 5 blockers were: zip fallback could pass without structural validation, final-stage changes were uncommitted/unpushed, and `/tmp/puread-*` residue had returned.
+- Current evidence and source checks clear the zip fallback and `/tmp` blockers.
+- Commit/push remains pending by design and is non-blocking before this review gate passes.
+- No new missed requirement was found in the fresh AgentLogs/context search.
+
+## Current Evidence Checked
+
+### zip fallback
+
+File checked: `.omo/evidence/global-blockers-zip-fallback-final.txt`
+
+Findings:
+- `probe=no-python-unzip-fallback`
+- `python3_in_probe_path=absent`
+- `unzip_in_probe_path=present`
+- normal package case: expected pass, result pass.
+- missing required entry case: expected fail, result fail, `missing entries: service.sh`.
+- forbidden entry case: expected fail, result fail, `forbidden zip path entries: Host/bad.txt`.
+- ABI mismatch case: expected fail, result fail, `daemon/cli ABI mismatch`.
+- `final_result=pass`.
+
+Source spot-check:
+- `scripts/lib/verify-local-zip.sh:78-136` implements unzip fallback structural validation for required entries, `rules/*.toml`, daemon/CLI ABI pairing, and forbidden path entries.
+- `scripts/lib/verify-local-zip.sh:226-243` uses the unzip fallback when `python3` is absent and fails closed if both `python3` and `unzip` are unavailable.
+
+Verdict: previous zip fallback blocker resolved.
+
+### empty module profile restore
+
+File checked: `.omo/evidence/global-blockers-profile-restore-empty-final.txt`
+
+Findings:
+- Command: `target/debug/puread-cli profile-restore --dry-run --module-root /tmp/puread-empty-profile-final.O0Ddrz`
+- `exit_code=0`
+- `state_exists=no`
+- `run_exists=no`
+- JSON output has `record_count=0`, `pending_restore_count=0`, `will_mutate=false`, `restored=0`, `skipped=0`, `failed=0`, and empty `actions`.
+
+Source spot-check:
+- `crates/puread-cli/src/profile_execute/profile_restore/ledger.rs:35-59` returns an empty ledger on missing `state/profile-actions.jsonl` after safe path checks.
+
+Verdict: empty module root dry-run no-op behavior is resolved.
+
+### tmp cleanup
+
+File checked: `.omo/evidence/global-blockers-tmp-final-clean.txt`
+
+Findings:
+- `gate=tmp-puread-cleanup`
+- `count=0`
+- `result=pass`
+
+Fresh command:
+- `find /tmp -maxdepth 1 -name 'puread-*' -print | wc -l`
+- Output: `0`
+
+Verdict: previous `/tmp/puread-*` residue blocker resolved.
+
+## Repo / Process Checks
+
+### remote URL
+
+Command:
+- `git remote -v`
+
+Finding:
+- `origin` fetch/push is `git@github.com:Lynricsy/PureADRemoverModule.git`.
+
+Verdict: PASS.
+
+### Example ignored and untracked
+
+Commands:
+- `git check-ignore -v Example/`
+- `git ls-files Example`
+- `git diff --name-only HEAD -- Example`
+
+Findings:
+- `.gitignore:2:Example/`
+- `git ls-files Example` output is empty.
+- `git diff --name-only HEAD -- Example` output is empty.
+- `git status --short --ignored` shows `!! Example/`.
+
+Verdict: PASS.
+
+### local git config
+
+Commands:
+- `git config --local --list --show-origin`
+- `git config --local --get-regexp '^(user\.|author\.|committer\.)'`
+
+Findings:
+- Local config contains only core, remote.origin, and branch.main settings.
+- Identity regexp exits 1 with no output.
+- `.omo/evidence/global-blockers-verify-10-local-git-config-final.txt` records `identity_entries=absent`.
+
+Verdict: PASS.
+
+### plan status
+
+Command:
+- `rg -n "^- \[[ xX]\]|^- \[[^xX ]\]" .omo/plans/puread-rust-module.md`
+
+Findings:
+- Todos 1 through 30 are checked.
+- F1 through F4 are checked.
+- Commit strategy still says push after completed atomic commit or wave-level checkpoint when remote access succeeds.
+
+Verdict:
+- Plan completion status PASS.
+- Commit/push is pending after this review gate and non-blocking for this pre-commit lane 5 rerun per task instruction.
+
+### AgentLogs used
+
+Findings:
+- This review used `search_logs` before and during context mining.
+- Specific relevant logs were read via `read_log`.
+- A new AgentLog will be recorded for this review.
+
+Verdict: PASS.
+
+### Git status / commit-push state
+
+Command:
+- `git status --short --branch --ignored`
+
+Findings:
+- Branch line: `## main...origin/main`
+- Worktree remains dirty with existing tracked/untracked implementation, generated, and evidence files.
+- Ignored directories include `AgentLogs/`, `Example/`, `target/`, and `xtask/upstream-report/target/`.
+
+Verdict:
+- Dirty worktree is expected at this review stage.
+- No commit/push was performed by this reviewer.
+- Remaining commit/push item is a non-blocking pre-commit step because the task explicitly instructs not to fail if only commit/push remains.
+
+## Cross-Review Evidence
+
+- `.omo/evidence/review-wave5-quality-final2.txt`: PASS, including `scripts/verify-local.sh`, package generation, zip entry inspection, forbidden entry scan, cleanup residue checks, and local config checks.
+- `.omo/evidence/review-wave5-scope-final.txt`: PASS, including forbidden token context classification, zip forbidden entry scan, `Example/` boundary, and local git config.
+- `.omo/evidence/review-wave5-qa-final.txt`: PASS, including local verification, package zip entries, Android QA dry-run, upstream report-only, README boundary, and final status caveat.
+- `.omo/evidence/global-review-context.txt`: historical FAIL evidence reviewed and superseded by the specific final blocker evidence above, except for commit/push now classified as non-blocking for this gate.
+
+## Final Assessment
+
+PASS:
+- Zip fallback blocker is fixed and evidenced.
+- Empty module profile restore blocker is fixed and evidenced.
+- `/tmp/puread-*` residue blocker is fixed and freshly rechecked.
+- Remote URL is correct.
+- `Example/` is ignored, untracked, and has no diff.
+- Local git identity config is unset.
+- Plan todos and final review items are checked.
+- AgentLogs were used for history/context.
+- No new missed requirement was found in the final context search.
+- Only remaining item is commit/push after review gate passes; this is non-blocking for the requested pre-commit review.
+
+final_verdict=PASS

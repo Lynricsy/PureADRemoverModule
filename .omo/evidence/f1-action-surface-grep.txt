@@ -1,0 +1,31 @@
+28:    puread_print "  apply-profile-dry-run <profile>"
+29:    puread_print "  apply-profile-execute <profile>"
+30:    puread_print "  profile-restore-dry-run"
+31:    puread_print "  profile-restore-execute"
+33:    puread_print "  PUREAD_PROFILE=<profile> may replace the apply-profile profile argument"
+35:    puread_print "  PUREAD_PROFILE_ROOT=<path> overrides profile target root"
+44:    if [ -n "${PUREAD_PROFILE:-}" ]; then
+45:        PUREAD_REQUESTED_PROFILE="$PUREAD_PROFILE"
+49:    puread_print "PureAD profile is required: pass it as the second argument or set PUREAD_PROFILE."
+63:    PUREAD_PROFILE_NAME="$2"
+71:    PUREAD_PROFILE_ROOT="${PUREAD_PROFILE_ROOT:-/}"
+72:    "$PUREAD_CLI" apply-profile "$PUREAD_PROFILE_NAME" "--$PUREAD_APPLY_MODE" --rules "$PUREAD_RULES_DIR" --root "$PUREAD_PROFILE_ROOT" --module-root "$PUREAD_MODDIR"
+83:    puread_prepare_profile_ledger || return $?
+87:puread_prepare_profile_ledger() {
+88:    PUREAD_PROFILE_LEDGER_DIR="$PUREAD_MODDIR/state"
+89:    PUREAD_PROFILE_LEDGER_FILE="$PUREAD_PROFILE_LEDGER_DIR/profile-actions.jsonl"
+90:    if [ -L "$PUREAD_PROFILE_LEDGER_DIR" ] || [ -L "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+94:    if [ -e "$PUREAD_PROFILE_LEDGER_DIR" ] && [ ! -d "$PUREAD_PROFILE_LEDGER_DIR" ]; then
+95:        puread_print "PureAD profile ledger parent is not a directory: $PUREAD_PROFILE_LEDGER_DIR"
+98:    if [ -e "$PUREAD_PROFILE_LEDGER_FILE" ] && [ ! -f "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+99:        puread_print "PureAD profile ledger is not a file: $PUREAD_PROFILE_LEDGER_FILE"
+103:    mkdir -p "$PUREAD_PROFILE_LEDGER_DIR" 2>/dev/null || return 1
+104:    chmod 700 "$PUREAD_PROFILE_LEDGER_DIR" 2>/dev/null || true
+105:    if [ ! -f "$PUREAD_PROFILE_LEDGER_FILE" ]; then
+106:        : >"$PUREAD_PROFILE_LEDGER_FILE" || return 1
+107:        chmod 600 "$PUREAD_PROFILE_LEDGER_FILE" 2>/dev/null || true
+131:    apply-profile-dry-run|profile-apply-dry-run)
+136:    apply-profile-execute|profile-apply-execute)
+141:    profile-restore-dry-run)
+145:    profile-restore-execute)
+exit=0
