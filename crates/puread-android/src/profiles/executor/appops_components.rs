@@ -1,3 +1,5 @@
+mod skip;
+
 use crate::command_runner::{
     AndroidCommandAdapter, AndroidCommandRunner, AppOpsAdapter, CommandOutput, PmComponentAdapter,
     PmPackageAdapter,
@@ -6,10 +8,12 @@ use crate::profiles::error::ProfileError;
 use crate::profiles::executor::shared::{parse_record, run_required};
 use crate::profiles::executor::{AndroidProfileExecutor, ProfileLedgerSink};
 use crate::profiles::record::{
-    AppOpRecord, ComponentRecord, HideApplyStatus, PackageEnabledState, PackageHiddenState,
-    ProfileOperation, ProfileRecord,
+    AppOpRecord, AppSkippedRecord, ComponentRecord, HideApplyStatus, PackageEnabledState,
+    PackageHiddenState, ProfileOperation, ProfileRecord,
 };
 use crate::profiles::rules::{AppOpProfileRule, ComponentProfileRule, PmHidePolicy};
+
+use self::skip::package_probe_missing;
 
 impl<R, L> AndroidProfileExecutor<'_, R, L>
 where
@@ -18,8 +22,19 @@ where
 {
     /// 应用 `AppOps` 规则并记录原 mode。
     pub fn apply_appop(&self, rule: &AppOpProfileRule) -> Result<ProfileOperation, ProfileError> {
-        let probe = AppOpsAdapter::new(&rule.package, &rule.op, &rule.mode, "default")?
-            .probe(self.runner)?;
+        let package = PmPackageAdapter::new(&rule.package)?;
+        match run_required(self.runner, &package.path_probe()) {
+            Ok(output) if !output.stdout().trim().is_empty() => {}
+            Ok(_output) => {
+                return self.skipped_app(&rule.id, &rule.package, "package_not_installed");
+            }
+            Err(error) if package_probe_missing(&error) => {
+                return self.skipped_app(&rule.id, &rule.package, "package_not_installed");
+            }
+            Err(error) => return Err(error),
+        }
+        let adapter = AppOpsAdapter::new(&rule.package, &rule.op, &rule.mode, "default")?;
+        let probe = adapter.probe(self.runner).map_err(ProfileError::Command)?;
         let original_mode = parse_appop_mode(probe.output(), &rule.op);
         let record = ProfileRecord::AppOp(AppOpRecord {
             rule_id: rule.id.clone(),
@@ -55,7 +70,16 @@ where
         rule: &ComponentProfileRule,
     ) -> Result<ProfileOperation, ProfileError> {
         let package = PmPackageAdapter::new(&rule.package)?;
-        run_required(self.runner, &package.path_probe())?;
+        match run_required(self.runner, &package.path_probe()) {
+            Ok(output) if !output.stdout().trim().is_empty() => {}
+            Ok(_output) => {
+                return self.skipped_app(&rule.id, &rule.package, "package_not_installed");
+            }
+            Err(error) if package_probe_missing(&error) => {
+                return self.skipped_app(&rule.id, &rule.package, "package_not_installed");
+            }
+            Err(error) => return Err(error),
+        }
         let disabled_probe = run_required(self.runner, &package.disabled_probe())?;
         let hidden_probe = run_required(self.runner, &package.hidden_probe())?;
         let original_enabled = enabled_state(&disabled_probe);
@@ -84,6 +108,19 @@ where
             status: operation.status,
             record,
         })
+    }
+
+    fn skipped_app(
+        &self,
+        rule_id: &str,
+        package: &str,
+        reason: &str,
+    ) -> Result<ProfileOperation, ProfileError> {
+        self.skipped(&ProfileRecord::AppSkipped(AppSkippedRecord {
+            rule_id: rule_id.to_owned(),
+            package: package.to_owned(),
+            reason: reason.to_owned(),
+        }))
     }
 
     /// 恢复组件状态。

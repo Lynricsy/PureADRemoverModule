@@ -24,11 +24,19 @@ pub struct ProfileOperation {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub(super) enum ProfileRecord {
+    AppSkipped(AppSkippedRecord),
     AppOp(AppOpRecord),
     Component(ComponentRecord),
     RomSetting(RomSettingRecord),
     SharedPrefsBool(SharedPrefsBoolRecord),
     RomSkipped(RomSkippedRecord),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(super) struct AppSkippedRecord {
+    pub rule_id: String,
+    pub package: String,
+    pub reason: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

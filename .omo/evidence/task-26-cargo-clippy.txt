@@ -1,4 +1,5 @@
 gate=cargo-clippy
 command=cargo clippy --workspace --all-targets --all-features -- -D warnings
-[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+[1m[92m    Checking[0m puread-android v0.1.0 (/root/Projects/Ling/PureADRemoverModule/crates/puread-android)
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.20s
 result=pass

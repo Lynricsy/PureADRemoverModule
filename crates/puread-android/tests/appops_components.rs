@@ -17,6 +17,7 @@ fn appops_profile_records_original_mode_and_restores_default_when_missing()
 -> Result<(), Box<dyn std::error::Error>> {
     // Given: an AppOps rule whose current mode output omits the target op.
     let runner = ScriptedRunner::with_outputs(vec![
+        CommandOutput::success("package:/data/app/base.apk\n", ""),
         CommandOutput::success("No operations.\n", ""),
         CommandOutput::success("", ""),
         CommandOutput::success("", ""),
@@ -39,6 +40,7 @@ fn appops_profile_records_original_mode_and_restores_default_when_missing()
     assert_eq!(
         runner.call_lines(),
         [
+            "/system/bin/pm path com.luna.music",
             "/system/bin/cmd appops get com.luna.music MONITOR_LOCATION",
             "/system/bin/cmd appops set com.luna.music MONITOR_LOCATION ignore",
             "/system/bin/cmd appops set com.luna.music MONITOR_LOCATION default",

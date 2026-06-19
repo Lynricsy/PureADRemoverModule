@@ -48,6 +48,73 @@ fn rom_profile_skips_miui_settings_when_getprop_does_not_match()
 }
 
 #[test]
+fn rom_profile_skips_missing_shared_prefs_file_when_miui_matches()
+-> Result<(), Box<dyn std::error::Error>> {
+    // Given: a MIUI-only shared_prefs rule whose target app file is absent.
+    let root = unique_temp_dir();
+    let prefs = root.join("data/user/0/com.miui.weather2/shared_prefs/prefs.xml");
+    let backup_dir = root.join("backups");
+    let runner = ScriptedRunner::with_outputs(vec![CommandOutput::success("V14\n", "")]);
+    let ledger = MemoryLedger::default();
+    let executor = AndroidProfileExecutor::new(&runner, &ledger);
+    let rule = RomProfileRule::shared_prefs_bool(
+        "miui-weather-content-promotion",
+        RomMatcher::miui(),
+        SharedPrefsBoolRule::new(&prefs, "key_content_promotion", false, &backup_dir)?,
+    )?;
+
+    // When: the ROM profile is applied.
+    let outcome = executor.apply_rom(&rule)?;
+
+    // Then: the absent optional XML target is skipped instead of failed.
+    assert_eq!(outcome.status, ProfileOperationStatus::Skipped);
+    assert_eq!(
+        runner.call_lines(),
+        ["/system/bin/getprop ro.miui.ui.version.name"]
+    );
+    assert!(!backup_dir.exists());
+    assert!(outcome.record.contains("\"kind\":\"rom_skipped\""));
+    Ok(())
+}
+
+#[test]
+fn rom_profile_skips_missing_shared_prefs_key_when_miui_matches()
+-> Result<(), Box<dyn std::error::Error>> {
+    // Given: a MIUI-only shared_prefs rule whose XML file lacks the target key.
+    let root = unique_temp_dir();
+    let prefs = root.join("data/user/0/com.miui.weather2/shared_prefs/prefs.xml");
+    fs::create_dir_all(prefs.parent().ok_or_else(|| {
+        io::Error::new(io::ErrorKind::InvalidInput, "fixture path has no parent")
+    })?)?;
+    fs::write(
+        &prefs,
+        r#"<map><boolean name="other_key" value="true" /></map>"#,
+    )?;
+    let backup_dir = root.join("backups");
+    let runner = ScriptedRunner::with_outputs(vec![CommandOutput::success("V14\n", "")]);
+    let ledger = MemoryLedger::default();
+    let executor = AndroidProfileExecutor::new(&runner, &ledger);
+    let rule = RomProfileRule::shared_prefs_bool(
+        "miui-weather-content-promotion",
+        RomMatcher::miui(),
+        SharedPrefsBoolRule::new(&prefs, "key_content_promotion", false, &backup_dir)?,
+    )?;
+
+    // When: the ROM profile is applied.
+    let outcome = executor.apply_rom(&rule)?;
+
+    // Then: the version-specific missing key is skipped instead of failed.
+    assert_eq!(outcome.status, ProfileOperationStatus::Skipped);
+    assert_eq!(
+        fs::read_to_string(&prefs)?,
+        r#"<map><boolean name="other_key" value="true" /></map>"#
+    );
+    assert!(!backup_dir.exists());
+    assert!(outcome.record.contains("target_key_not_found"));
+    Ok(())
+}
+
+#[test]
 fn rom_profile_modifies_and_restores_shared_prefs_xml_with_backup_and_hash()
 -> Result<(), Box<dyn std::error::Error>> {
     // Given: a MIUI XML profile fixture with one enabled ad preference.

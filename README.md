@@ -21,7 +21,7 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 
 模块模板位于 [`module/`](module/)，其中包含 Magisk、KernelSU、APatch 通用的 `module.prop`、`customize.sh`、`service.sh`、`action.sh`、`uninstall.sh` 和模块辅助脚本。安装用 zip 应从 GitHub Release 下载；Release 产物由 tag workflow 使用 Android NDK 构建真实 Android ABI 二进制。本地直接运行 [`scripts/package-module.sh`](scripts/package-module.sh) 且未设置 `PUREAD_ANDROID_ABIS` 时，只生成当前宿主机 fixture 包，用于结构校验，不作为 Android 安装包。
 
-安装后不需要额外手动操作。Android 启动 `service.sh` 时默认会先执行一次 bundled 本地治理 profile：`conservative sdk_cache sqlite appops component rom`，随后以 apply 模式启动 `puread-daemon`，用 inotify 继续处理后续新落地的文件/SDK 缓存。每个模块版本在全部自动 profile 成功后只会写入一次 `state/auto-apply-<version>.done`，避免每次开机重复改写 AppOps、component 或 ROM 状态；若部分 profile 失败，则不写完成 marker，下一次启动会重试。
+安装后不需要额外手动操作。Android 启动 `service.sh` 时默认会先执行一次 bundled 本地治理 profile：`conservative sdk_cache sqlite appops component rom`，随后以 apply 模式启动 `puread-daemon`，用 inotify 继续处理后续新落地的文件/SDK 缓存。每个模块版本在全部自动 profile 成功后只会写入一次 `state/auto-apply-<version>.done`，避免每次开机重复改写 AppOps、component 或 ROM 状态；若部分 profile 真实失败，则不写完成 marker，下一次启动会重试。面向特定应用或 ROM 的可选目标不存在时会记录为 skipped，不会单独触发 Root 管理器里的 profile errors 状态。
 
 模块会把当前运行态同步到 `module.prop` 的 `description=` 字段，因此 Root 管理器的模块列表可以直接看到短状态，例如 `installed; reboot to activate`、`active; daemon running`、`profile errors; daemon disabled`、`missing native binary` 或 `uninstall needs attention`。不同管理器可能会缓存模块列表；安装、重启或重新打开管理器后通常会刷新显示。
 
@@ -40,8 +40,8 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 仓库包含 GitHub Actions release workflow。推送 `v*` tag 时会自动安装 Rust 与 Android NDK，构建 release profile 的 Android ABI 模块包，并把 `dist/*.zip` 与对应 SHA256 上传到 GitHub Release。
 
 ```sh
-git tag v0.1.0-t28
-git push origin v0.1.0-t28
+git tag v0.1.0-t29
+git push origin v0.1.0-t29
 ```
 
 Release workflow 只做自动构建、结构校验和发布，不做真实 Android 设备安装验证；实机验证仍需在目标 Root 环境中单独执行。
@@ -51,7 +51,7 @@ Release workflow 只做自动构建、结构校验和发布，不做真实 Andro
 - `puread-core` 提供类型化规则模型、路径边界模型和恢复账本。
 - `puread-rules` 解析 TOML 规则，并拒绝 hosts、DNS、domain、proxy、iptables、ad_reward、IFW 清空和 Root 隐藏等禁止类别。
 - `puread-android` 执行可回滚的文件动作、SQLite 动作、可选 `chattr` 封装和可注入 Android 命令适配层。命令适配层覆盖 `pm`、`cmd appops`、`settings`、`getprop`、`chcon`、`chattr`、`lsattr`，支持 fake runner 与 dry-run，并拒绝 DNS、hosts、proxy、private DNS 相关 settings。
-- `puread-android` 支持显式 profile 下的可逆 AppOps、component 和 ROM profile。AppOps 通过 `cmd appops get/set` 记录原 mode 或 default 后再设置目标 mode；component 记录原 enabled/hidden 状态并通过 `pm disable-user` / `pm enable` 恢复；`pm hide` 是 runner-backed capability attempt，不可用或失败时跳过并写入 skipped 记录，成功时写入 durable confirmed record，恢复时才执行 `pm unhide`。ROM profile 仅限定广告相关 `settings` 与 `shared_prefs` XML 布尔项，执行前检测 ROM，记录原值、原文件哈希和备份路径；不包含 DNS、private DNS、proxy 或 network 修改。
+- `puread-android` 支持显式 profile 下的可逆 AppOps、component 和 ROM profile。AppOps 通过 `cmd appops get/set` 记录原 mode 或 default 后再设置目标 mode；component 记录原 enabled/hidden 状态并通过 `pm disable-user` / `pm enable` 恢复；`pm hide` 是 runner-backed capability attempt，不可用或失败时跳过并写入 skipped 记录，成功时写入 durable confirmed record，恢复时才执行 `pm unhide`。可选应用包不存在、`pm path` 无安装路径、MIUI shared_prefs 文件或目标键不存在时会记录 skipped，不计入自动 profile failed。ROM profile 仅限定广告相关 `settings` 与 `shared_prefs` XML 布尔项，执行前检测 ROM，记录原值、原文件哈希和备份路径；不包含 DNS、private DNS、proxy 或 network 修改。
 - `puread-daemon` 提供事件驱动的文件规则守护能力、低频调度策略和文件规则 dry-run/apply 集成；在模块生命周期中默认由 `service.sh` 以 apply 模式启动。
 - `puread-cli` 支持 `status`、`scan`、`apply-profile`、`profile-report`、`profile-restore`、`restore`、`dump-report` 和 `rules validate`。手工执行 CLI 时，`scan` 与 `apply-profile` 默认 dry-run，真实执行必须显式传入 `--execute`；模块 `service.sh` 会在 Android 启动时显式调用 `apply-profile --execute`。修改动作会获取模块全局锁，profile 执行会写入 `profile-actions.jsonl` JSONL ledger，用于 `profile-report` 查看和 `profile-restore` 恢复。普通文件恢复继续走 `restore --ledger ...` 和文件恢复账本。
 - `module/` 提供 Magisk、KernelSU、APatch 通用模块模板和生命周期脚本。宿主 dry-run 不写入模块运行态目录；Android 实机启动会自动应用 bundled profiles 并启动 daemon。

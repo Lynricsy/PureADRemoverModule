@@ -105,7 +105,10 @@ impl ProfileLedgerSink for MemoryLedger {
 
 pub(super) fn appops_ledger_sink_failure_does_not_mutate() -> Result<(), Box<dyn std::error::Error>>
 {
-    let runner = ScriptedRunner::with_outputs(vec![CommandOutput::success("No operations.\n", "")]);
+    let runner = ScriptedRunner::with_outputs(vec![
+        CommandOutput::success("package:/data/app/base.apk\n", ""),
+        CommandOutput::success("No operations.\n", ""),
+    ]);
     let ledger = MemoryLedger::failing();
     let executor = AndroidProfileExecutor::new(&runner, &ledger);
     let rule = AppOpProfileRule::new(
@@ -122,7 +125,10 @@ pub(super) fn appops_ledger_sink_failure_does_not_mutate() -> Result<(), Box<dyn
     assert!(error.to_string().contains("ledger sink failed"));
     assert_eq!(
         runner.call_lines(),
-        ["/system/bin/cmd appops get com.luna.music MONITOR_LOCATION"]
+        [
+            "/system/bin/pm path com.luna.music",
+            "/system/bin/cmd appops get com.luna.music MONITOR_LOCATION",
+        ]
     );
     assert!(ledger.records().is_empty());
     Ok(())

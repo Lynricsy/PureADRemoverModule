@@ -29,7 +29,29 @@ where
         match &rule.action {
             RomProfileAction::Settings(settings) => self.apply_rom_settings(rule, settings),
             RomProfileAction::SharedPrefsBool(xml) => {
-                let plan = plan_bool(&xml.path, &xml.key, xml.value, &xml.backup_dir, &rule.id)?;
+                let plan =
+                    match plan_bool(&xml.path, &xml.key, xml.value, &xml.backup_dir, &rule.id) {
+                        Ok(plan) => plan,
+                        Err(ProfileError::Io { source, .. })
+                            if source.kind() == std::io::ErrorKind::NotFound =>
+                        {
+                            return self.skipped(&ProfileRecord::RomSkipped(RomSkippedRecord {
+                                rule_id: rule.id.clone(),
+                                matcher: rule.matcher.name.clone(),
+                                reason: "target_not_found".to_owned(),
+                            }));
+                        }
+                        Err(ProfileError::Xml { reason, .. })
+                            if reason.contains("boolean key not found") =>
+                        {
+                            return self.skipped(&ProfileRecord::RomSkipped(RomSkippedRecord {
+                                rule_id: rule.id.clone(),
+                                matcher: rule.matcher.name.clone(),
+                                reason: "target_key_not_found".to_owned(),
+                            }));
+                        }
+                        Err(error) => return Err(error),
+                    };
                 preflight_bool_commit(&xml.path, &xml.backup_dir, &plan)?;
                 let record = ProfileRecord::SharedPrefsBool(SharedPrefsBoolRecord {
                     rule_id: rule.id.clone(),
@@ -64,6 +86,7 @@ where
                 restore_from_backup(Path::new(&record.path), Path::new(&record.backup_path))?;
             }
             ProfileRecord::RomSkipped(_)
+            | ProfileRecord::AppSkipped(_)
             | ProfileRecord::AppOp(_)
             | ProfileRecord::Component(_) => {}
         }
