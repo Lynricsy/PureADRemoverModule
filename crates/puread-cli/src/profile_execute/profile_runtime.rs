@@ -57,6 +57,7 @@ impl JsonlProfileLedger {
         }
     }
 
+    #[cfg(debug_assertions)]
     pub(super) fn failing_for_test(module_root: &Path) -> Self {
         Self {
             module_root: module_root.to_path_buf(),
