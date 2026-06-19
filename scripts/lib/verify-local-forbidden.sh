@@ -131,6 +131,11 @@ scan_forbidden_path() {
 }
 
 write_forbidden_scan() {
+    if ! command -v rg >/dev/null 2>&1; then
+        fail "forbidden scan requires ripgrep (rg)"
+        return
+    fi
+
     {
         printf '%s\n' "gate=forbidden-scan"
         printf '%s\n' "policy=production execution paths must not implement DNS/hosts/proxy/iptables/private-DNS/IFW/root-hiding capabilities"
