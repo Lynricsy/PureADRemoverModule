@@ -44,6 +44,11 @@ pub enum CliError {
         #[from]
         source: puread_android::file_actions::FileActionError,
     },
+    #[error("sqlite action failed: {source}")]
+    SqliteAction {
+        #[from]
+        source: puread_android::sqlite_actions::SqliteActionError,
+    },
     #[error("android command profile failed: {source}")]
     AndroidCommand {
         #[from]
@@ -70,6 +75,8 @@ pub enum CliError {
     },
     #[error("filesystem error at {path}: {source}")]
     Filesystem { path: String, source: io::Error },
+    #[error("JSON field {field} in {path} is not zero")]
+    JsonFieldNotZero { path: String, field: String },
     #[error("failed to write JSON output: {source}")]
     JsonWrite { source: serde_json::Error },
     #[error("failed to write CLI output: {source}")]

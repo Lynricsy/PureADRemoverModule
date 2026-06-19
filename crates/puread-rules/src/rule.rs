@@ -52,6 +52,7 @@ pub struct RuleDefinition {
     category: RuleCategory,
     package: PackageName,
     action: RuleAction,
+    schedule: Option<String>,
     target: RuleTarget,
     risk_level: RiskLevel,
     default_enabled: bool,
@@ -88,6 +89,7 @@ impl RuleDefinition {
             category,
             package,
             action,
+            schedule: raw.schedule,
             target,
             risk_level,
             default_enabled: raw.default_enabled,
@@ -119,6 +121,11 @@ impl RuleDefinition {
     /// 返回规则动作。
     pub const fn action(&self) -> RuleAction {
         self.action
+    }
+
+    /// 返回可选调度名。
+    pub fn schedule(&self) -> Option<&str> {
+        self.schedule.as_deref()
     }
 
     /// 返回规则目标。

@@ -1,7 +1,10 @@
 #![doc = "规则 CLI 行为测试。"]
 
 use std::error::Error;
+use std::fs;
+use std::path::PathBuf;
 use std::process::{Command, Output};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use serde_json::Value;
 
@@ -12,6 +15,7 @@ const MISSING_RULES: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../tests/fixtures/missing-rules"
 );
+static TEMP_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
 #[test]
 fn rules_validate_reports_summary_when_file_rules_are_valid() -> Result<(), Box<dyn Error>> {
@@ -110,6 +114,59 @@ fn rules_validate_fails_cleanly_when_rules_path_is_missing() -> Result<(), Box<d
     Ok(())
 }
 
+#[test]
+fn json_field_is_zero_accepts_zero_integer_field() -> Result<(), Box<dyn Error>> {
+    // Given: an auto-apply summary JSON file whose failed count is zero.
+    let path = temp_json_path("zero-field")?;
+    fs::write(&path, r#"{"failed":0,"applied":3}"#)?;
+
+    // When: the field guard is executed through the real CLI surface.
+    let output = run_puread([
+        "json-field-is-zero",
+        "--file",
+        path.to_string_lossy().as_ref(),
+        "--field",
+        "failed",
+    ])?;
+
+    // Then: the guard exits successfully for service.sh to mark auto-apply complete.
+    assert_success(&output)?;
+    fs::remove_file(path)?;
+    Ok(())
+}
+
+#[test]
+fn json_field_is_zero_rejects_nonzero_or_missing_field() -> Result<(), Box<dyn Error>> {
+    // Given: one summary has failures and another summary lacks the expected field.
+    let nonzero = temp_json_path("nonzero-field")?;
+    let missing = temp_json_path("missing-field")?;
+    fs::write(&nonzero, r#"{"failed":1}"#)?;
+    fs::write(&missing, r#"{"applied":1}"#)?;
+
+    // When: each file is checked through the real CLI guard.
+    let nonzero_output = run_puread([
+        "json-field-is-zero",
+        "--file",
+        nonzero.to_string_lossy().as_ref(),
+        "--field",
+        "failed",
+    ])?;
+    let missing_output = run_puread([
+        "json-field-is-zero",
+        "--file",
+        missing.to_string_lossy().as_ref(),
+        "--field",
+        "failed",
+    ])?;
+
+    // Then: service.sh receives a non-zero exit code and does not mark success.
+    assert!(!nonzero_output.status.success(), "{nonzero_output:?}");
+    assert!(!missing_output.status.success(), "{missing_output:?}");
+    fs::remove_file(nonzero)?;
+    fs::remove_file(missing)?;
+    Ok(())
+}
+
 fn run_puread<const N: usize>(args: [&str; N]) -> Result<Output, Box<dyn Error>> {
     Ok(Command::new(env!("CARGO_BIN_EXE_puread-cli"))
         .args(args)
@@ -153,4 +210,16 @@ fn rules_array(document: &Value) -> Result<&[Value], Box<dyn Error>> {
         return Err("rules must be a JSON array".into());
     };
     Ok(rules)
+}
+
+fn temp_json_path(name: &str) -> Result<PathBuf, Box<dyn Error>> {
+    let id = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
+    let path = std::env::temp_dir().join(format!(
+        "puread-cli-{name}-{}-{id}.json",
+        std::process::id()
+    ));
+    if path.exists() {
+        fs::remove_file(&path)?;
+    }
+    Ok(path)
 }

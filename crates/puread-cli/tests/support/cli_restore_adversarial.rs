@@ -120,7 +120,7 @@ pub(crate) fn backup_parent_symlink_is_not_followed() -> Result<(), Box<dyn Erro
     let fixture = TempFixture::new("restore-backup-parent-symlink")?;
     let root = fixture.minimal_android_fs()?;
     let ledger = ledger_path(&root);
-    let backup_root = root.join("data/adb/modules/puread/state/backups");
+    let backup_root = super::support::module_root_path(&root).join("state/backups");
     fs::remove_dir_all(&backup_root)?;
     unix_fs::symlink(fixture.root.as_path(), &backup_root)?;
     let backup = backup_root.join("parent-symlink.bak");
@@ -139,7 +139,7 @@ pub(crate) fn backup_path_escape_is_rejected() -> Result<(), Box<dyn Error>> {
     let fixture = TempFixture::new("restore-backup-escape")?;
     let root = fixture.minimal_android_fs()?;
     let ledger = ledger_path(&root);
-    let escaped = root.join("data/adb/modules/puread/state/escape.bak");
+    let escaped = super::support::module_root_path(&root).join("state/escape.bak");
     fs::write(&escaped, "secret")?;
     let step = restore_content_step(&escaped);
     let before = write_restore_ledger(&ledger, "/data/data/com.demo/cache/ad.bin", &[&step])?;

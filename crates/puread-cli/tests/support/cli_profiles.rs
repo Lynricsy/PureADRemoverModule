@@ -142,6 +142,10 @@ impl TempFixture {
         PathBuf::from(&self.module_root_arg).join("state/profile-actions.jsonl")
     }
 
+    pub(crate) fn actions_ledger_path(&self) -> PathBuf {
+        PathBuf::from(&self.module_root_arg).join("state/actions.jsonl")
+    }
+
     pub(crate) fn profile_runner_log(&self) -> PathBuf {
         self.root.join("profile-runner.log")
     }

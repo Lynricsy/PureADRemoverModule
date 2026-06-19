@@ -1,6 +1,7 @@
 gate=shell-parse
 PASS	module/action.sh
 PASS	module/customize.sh
+PASS	module/scripts/puread-action-lib.sh
 PASS	module/scripts/puread-module-lib.sh
 PASS	module/service.sh
 PASS	module/uninstall.sh
@@ -15,7 +16,9 @@ PASS	scripts/lib/verify-local-quality.sh
 PASS	scripts/lib/verify-local-zip.sh
 PASS	scripts/package-module.sh
 PASS	scripts/qa-android.sh
+PASS	scripts/test-service-lifecycle.sh
+PASS	scripts/test-uninstall-lifecycle.sh
 PASS	scripts/update-upstream.sh
 PASS	scripts/verify-local.sh
-shell_file_count=18
+shell_file_count=21
 result=pass

@@ -9,7 +9,7 @@
 
 PureADRemoverModule 是一个 Android Root 环境下的非域名本地层去广告模块。它面向 Clash、代理和 DNS 无法覆盖的本地广告落地物，例如应用私有目录中的广告缓存、广告 SDK 文件、已知广告 SQLite 数据库，以及显式 profile 下的组件、AppOps 和 ROM 配置治理。
 
-本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品。域名、网络连接和代理路由应继续由用户已有网络层工具处理；本仓库只做可 dry-run、可审计、可回滚的本地文件和系统状态治理。
+本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品。域名、网络连接和代理路由应继续由用户已有网络层工具处理；本仓库只做可审计、可回滚的本地文件和系统状态治理。
 
 ## 用途与分工
 
@@ -19,7 +19,17 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 
 ## 安装与打包
 
-模块模板位于 [`module/`](module/)，其中包含 Magisk、KernelSU、APatch 通用的 `module.prop`、`customize.sh`、`service.sh`、`action.sh`、`uninstall.sh` 和模块辅助脚本。打包入口约定为 [`scripts/package-module.sh`](scripts/package-module.sh)，产物应以模块 zip 形式安装到支持 Root 模块的 Android 环境。
+模块模板位于 [`module/`](module/)，其中包含 Magisk、KernelSU、APatch 通用的 `module.prop`、`customize.sh`、`service.sh`、`action.sh`、`uninstall.sh` 和模块辅助脚本。安装用 zip 应从 GitHub Release 下载；Release 产物由 tag workflow 使用 Android NDK 构建真实 Android ABI 二进制。本地直接运行 [`scripts/package-module.sh`](scripts/package-module.sh) 且未设置 `PUREAD_ANDROID_ABIS` 时，只生成当前宿主机 fixture 包，用于结构校验，不作为 Android 安装包。
+
+安装后不需要额外手动操作。Android 启动 `service.sh` 时默认会先执行一次 bundled 本地治理 profile：`conservative sdk_cache sqlite appops component rom`，随后以 apply 模式启动 `puread-daemon`，用 inotify 继续处理后续新落地的文件/SDK 缓存。每个模块版本在全部自动 profile 成功后只会写入一次 `state/auto-apply-<version>.done`，避免每次开机重复改写 AppOps、component 或 ROM 状态；若部分 profile 失败，则不写完成 marker，下一次启动会重试。
+
+可选调试开关：
+
+- `PUREAD_AUTO_APPLY=0`：跳过安装/开机自动 profile 执行。
+- `PUREAD_AUTO_APPLY_FORCE=1`：强制当前版本重新执行自动 profile。
+- `PUREAD_AUTO_PROFILES="conservative sdk_cache"`：覆盖自动执行的 profile 列表。
+- `PUREAD_DRY_RUN=1`：daemon 只输出计划，不执行后续文件规则动作。
+- `PUREAD_DAEMON_DISABLE=1`：执行自动 profile 后不启动 daemon。
 
 不要把当前本地构建、fixture 测试或脚本静态校验理解为实机通过。真实安装仍需要在目标 Root 管理器、目标 ABI、目标 ROM 和目标应用版本上单独验证；README 只说明仓库入口和使用边界，不声明已经覆盖所有设备组合。
 
@@ -28,8 +38,8 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 仓库包含 GitHub Actions release workflow。推送 `v*` tag 时会自动安装 Rust 与 Android NDK，构建 release profile 的 Android ABI 模块包，并把 `dist/*.zip` 与对应 SHA256 上传到 GitHub Release。
 
 ```sh
-git tag v0.1.0-t25
-git push origin v0.1.0-t25
+git tag v0.1.0-t26
+git push origin v0.1.0-t26
 ```
 
 Release workflow 只做自动构建、结构校验和发布，不做真实 Android 设备安装验证；实机验证仍需在目标 Root 环境中单独执行。
@@ -40,15 +50,15 @@ Release workflow 只做自动构建、结构校验和发布，不做真实 Andro
 - `puread-rules` 解析 TOML 规则，并拒绝 hosts、DNS、domain、proxy、iptables、ad_reward、IFW 清空和 Root 隐藏等禁止类别。
 - `puread-android` 执行可回滚的文件动作、SQLite 动作、可选 `chattr` 封装和可注入 Android 命令适配层。命令适配层覆盖 `pm`、`cmd appops`、`settings`、`getprop`、`chcon`、`chattr`、`lsattr`，支持 fake runner 与 dry-run，并拒绝 DNS、hosts、proxy、private DNS 相关 settings。
 - `puread-android` 支持显式 profile 下的可逆 AppOps、component 和 ROM profile。AppOps 通过 `cmd appops get/set` 记录原 mode 或 default 后再设置目标 mode；component 记录原 enabled/hidden 状态并通过 `pm disable-user` / `pm enable` 恢复；`pm hide` 是 runner-backed capability attempt，不可用或失败时跳过并写入 skipped 记录，成功时写入 durable confirmed record，恢复时才执行 `pm unhide`。ROM profile 仅限定广告相关 `settings` 与 `shared_prefs` XML 布尔项，执行前检测 ROM，记录原值、原文件哈希和备份路径；不包含 DNS、private DNS、proxy 或 network 修改。
-- `puread-daemon` 提供事件驱动的文件规则守护能力、低频调度策略和文件规则 dry-run/apply 集成。
-- `puread-cli` 支持 `status`、`scan`、`apply-profile`、`profile-report`、`profile-restore`、`restore`、`dump-report` 和 `rules validate`。`scan` 与 `apply-profile` 默认 dry-run，真实执行必须显式传入 `--execute`；修改动作会获取模块全局锁，profile 执行会写入 `profile-actions.jsonl` JSONL ledger，用于 `profile-report` 查看和 `profile-restore` 恢复。普通文件恢复继续走 `restore --ledger ...` 和文件恢复账本。
-- `module/` 提供 Magisk、KernelSU、APatch 通用模块模板和生命周期脚本。宿主 dry-run 不写入模块运行态目录；Android 实机启动仍需后续二进制产物。
+- `puread-daemon` 提供事件驱动的文件规则守护能力、低频调度策略和文件规则 dry-run/apply 集成；在模块生命周期中默认由 `service.sh` 以 apply 模式启动。
+- `puread-cli` 支持 `status`、`scan`、`apply-profile`、`profile-report`、`profile-restore`、`restore`、`dump-report` 和 `rules validate`。手工执行 CLI 时，`scan` 与 `apply-profile` 默认 dry-run，真实执行必须显式传入 `--execute`；模块 `service.sh` 会在 Android 启动时显式调用 `apply-profile --execute`。修改动作会获取模块全局锁，profile 执行会写入 `profile-actions.jsonl` JSONL ledger，用于 `profile-report` 查看和 `profile-restore` 恢复。普通文件恢复继续走 `restore --ledger ...` 和文件恢复账本。
+- `module/` 提供 Magisk、KernelSU、APatch 通用模块模板和生命周期脚本。宿主 dry-run 不写入模块运行态目录；Android 实机启动会自动应用 bundled profiles 并启动 daemon。
 
-## 配置与默认安全策略
+## 配置与默认执行策略
 
-默认策略是保守执行：先生成计划，再由用户决定是否真实执行；真实修改必须写入恢复账本，失败时保留可追踪状态。CLI 的 `scan` 和 `apply-profile` 默认是 dry-run，真实执行必须显式传入 `--execute`。
+模块生命周期默认是真实执行：安装后首次 Android 启动会自动应用 bundled profiles，并启动 apply 模式 daemon。手工 CLI 仍默认 dry-run，方便调试、审计和恢复前检查；真实执行必须显式传入 `--execute`。所有真实修改必须写入恢复账本，失败时保留可追踪状态。
 
-默认 profile 只应包含低风险、可解释、可恢复的本地规则。危险能力必须显式启用，例如 AppOps、component、ROM profile、强力模式或应用专项 profile；这些能力不得在默认流程里大范围启用。
+自动 profile 会执行仓库内已审查的本地规则，不包含 hosts、DNS、代理、iptables 或域名类能力。新增高风险规则仍必须放在明确 profile 下，具备来源、恢复策略和账本记录；是否加入自动 profile 列表必须单独审查。
 
 强力模式的风险来自系统状态变更，不来自网络层改写：
 
@@ -59,13 +69,13 @@ Release workflow 只做自动构建、结构校验和发布，不做真实 Andro
 
 ## 低功耗行为
 
-`puread-daemon` 面向低功耗运行：文件规则由事件驱动触发，维护任务使用低频调度，不做固定 5 秒轮询，也不默认申请 wake lock。SQLite、AppOps、component 和 ROM profile 不进入高频 watcher；这些高风险或较重动作应通过手动命令、boot_once 或明确 profile 触发。
+`puread-daemon` 面向低功耗运行：文件规则由 inotify 事件驱动触发，维护任务使用低频调度，不做固定 5 秒轮询，也不默认申请 wake lock。SQLite、AppOps、component 和 ROM profile 不进入高频 watcher；这些动作由安装/开机的一次性自动 profile 或手工 profile 命令触发。若当前设备没有可监控的目标目录，daemon 会记录 `no_watch_roots=true` 后退出，不会空转。
 
 ## 恢复与卸载
 
 恢复依赖 ledger，而不是猜测当前设备状态。普通文件动作使用 `restore --ledger ...` 查看或执行恢复计划；profile 动作写入 `profile-actions.jsonl`，可通过 `profile-report` 查看历史动作，再用 `profile-restore` 按记录恢复。
 
-模块卸载脚本会优先检查 ledger，并把 restore dry-run 计划写入日志和状态文件；真实恢复建议在移除模块前由用户显式执行 CLI 恢复命令。这样可以避免卸载阶段缺少二进制、权限或运行态目录时误判恢复成功。
+模块卸载脚本会尝试停止本模块 daemon，并把普通文件 ledger 与 profile ledger 的 restore dry-run 计划写入日志和状态文件；真实恢复建议在移除模块前由用户显式执行 CLI 恢复命令。这样可以避免卸载阶段缺少二进制、权限或运行态目录时误判恢复成功。
 
 ## 安全边界
 
@@ -120,6 +130,13 @@ cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite r
 ```
 
 当前这些验证覆盖 fake runner、fixtures 和 Cargo tests：CLI profile dry-run/`--execute`、全局锁、profile JSONL ledger、profile restore/report、AppOps/component runner 参数、`pm hide` 成功/不可用分支，以及 ROM settings/shared_prefs 修改和恢复。它们不等同于真实 Android 设备验证；实机验证仍需在 Root 环境、目标 ROM 和目标应用版本上单独执行。
+
+当前自动执行链路还应覆盖：
+
+```sh
+sh -n module/service.sh module/uninstall.sh module/scripts/puread-module-lib.sh module/action.sh
+target/debug/puread-daemon --apply --root /tmp/puread-daemon-smoke/root --rules rules --state-dir /tmp/puread-daemon-smoke/state --ledger /tmp/puread-daemon-smoke/state/actions.jsonl --log-file /tmp/puread-daemon-smoke/daemon.log
+```
 
 ## 开发约定
 

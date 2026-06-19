@@ -121,12 +121,35 @@ fn restore_module_root(ledger_path: &Path) -> Result<PathBuf, CliError> {
             path: display_path(ledger_path),
         });
     };
-    if !module_dir.ends_with(Path::new("data/adb/modules/puread")) {
+    if !is_puread_module_root(module_dir) {
         return Err(CliError::RestorePathOutOfRoot {
             path: display_path(ledger_path),
         });
     }
     Ok(module_dir.to_path_buf())
+}
+
+fn is_puread_module_root(path: &Path) -> bool {
+    let mut components = path
+        .components()
+        .rev()
+        .map(|component| component.as_os_str().to_string_lossy());
+    let Some(module_id) = components.next() else {
+        return false;
+    };
+    let Some(modules) = components.next() else {
+        return false;
+    };
+    let Some(adb) = components.next() else {
+        return false;
+    };
+    let Some(data) = components.next() else {
+        return false;
+    };
+    matches!(module_id.as_ref(), "PureAD" | "puread")
+        && modules == "modules"
+        && adb == "adb"
+        && data == "data"
 }
 
 fn restore_root_from_module(module_dir: &Path, ledger_path: &Path) -> Result<PathBuf, CliError> {

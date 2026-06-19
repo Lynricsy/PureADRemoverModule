@@ -77,6 +77,13 @@ impl EventLoop {
         config: &FileRuleDaemonConfig,
     ) -> Result<(Self, EventLoopHandle), DaemonError> {
         let runtime = config.prepare()?;
+        Self::from_file_rule_runtime(runtime)
+    }
+
+    /// 从已准备好的文件规则运行态创建事件循环。
+    pub fn from_file_rule_runtime(
+        runtime: FileRuleDaemonRuntime,
+    ) -> Result<(Self, EventLoopHandle), DaemonError> {
         let (mut event_loop, handle) = Self::new(EventLoopConfig::new(
             runtime.watch_roots().to_vec(),
             runtime.debounce(),

@@ -180,6 +180,7 @@ require_file "uninstall.sh"
 require_file "action.sh"
 require_file "customize.sh"
 require_file "scripts/puread-module-lib.sh"
+require_file "scripts/puread-action-lib.sh"
 require_native_pairs
 require_rules
 

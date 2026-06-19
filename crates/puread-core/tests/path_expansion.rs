@@ -50,7 +50,7 @@ impl TestRoot {
     }
 
     fn expander(&self) -> Result<PathExpander, PathExpansionError> {
-        PathExpander::new(&self.path, "/data/adb/modules/puread")
+        PathExpander::new(&self.path, "/data/adb/modules/PureAD")
     }
 }
 
@@ -115,6 +115,81 @@ fn path_expansion_expands_data_user_numeric_package_glob_when_users_exist()
             PathBuf::from("/data/user/10/com.example.app/cache"),
         ]
     );
+    Ok(())
+}
+
+#[test]
+fn path_expansion_expands_last_segment_glob_only_inside_package_scope() -> Result<(), Box<dyn Error>>
+{
+    // Given: matching SQLite files exist inside and outside the requested app directory.
+    let root = TestRoot::new()?;
+    root.touch("/data/user/0/com.example.app/databases/pangle_main.db")?;
+    root.touch("/data/user/0/com.example.app/databases/pangle_log.db")?;
+    root.touch("/data/user/0/com.example.app/databases/keep.db")?;
+    root.touch("/data/user/0/com.other.app/databases/pangle_main.db")?;
+    let expander = root.expander()?;
+
+    // When: the template uses a wildcard only in the final file-name segment.
+    let resolved = expander.expand_template(
+        "/data/user/[0-9]*/<pkg>/databases/pangle*.db",
+        "com.example.app",
+    )?;
+
+    // Then: only existing files in the requested package scope are returned.
+    assert_eq!(
+        android_paths(&resolved),
+        vec![
+            PathBuf::from("/data/user/0/com.example.app/databases/pangle_log.db"),
+            PathBuf::from("/data/user/0/com.example.app/databases/pangle_main.db"),
+        ]
+    );
+    Ok(())
+}
+
+#[test]
+fn path_expansion_expands_sqlite_any_package_final_glob_inside_data_user_apps()
+-> Result<(), Box<dyn Error>> {
+    // Given: common SDK SQLite databases exist under multiple app-private data directories.
+    let root = TestRoot::new()?;
+    root.touch("/data/user/0/com.real.app/databases/beizi_ad.db")?;
+    root.touch("/data/user/10/com.other.real/databases/beizi_ad.db")?;
+    root.touch("/data/user/de/com.fake.app/databases/beizi_ad.db")?;
+    root.touch("/data/user/0/notapackage/databases/beizi_ad.db")?;
+    let expander = root.expander()?;
+
+    // When: the sqlite-any package marker expands a controlled app-private wildcard.
+    let resolved = expander.expand_template(
+        "/data/user/[0-9]*/*/databases/beizi_ad.db",
+        "puread.sqlite.any",
+    )?;
+
+    // Then: only numeric users and plausible package directories are returned.
+    assert_eq!(
+        android_paths(&resolved),
+        vec![
+            PathBuf::from("/data/user/0/com.real.app/databases/beizi_ad.db"),
+            PathBuf::from("/data/user/10/com.other.real/databases/beizi_ad.db"),
+        ]
+    );
+    Ok(())
+}
+
+#[test]
+fn path_expansion_rejects_last_segment_glob_for_other_package_scope() -> Result<(), Box<dyn Error>>
+{
+    // Given: the requested package differs from the template package.
+    let root = TestRoot::new()?;
+    root.touch("/data/user/0/com.other.app/databases/pangle_main.db")?;
+    let expander = root.expander()?;
+
+    // When: a final-segment wildcard is placed under another package directory.
+    let result = expander.expand_template(
+        "/data/user/[0-9]*/com.other.app/databases/pangle*.db",
+        "com.example.app",
+    );
+
+    // Then: expansion rejects the cross-package template before listing files.
+    assert!(result.is_err(), "{result:?}");
     Ok(())
 }
 

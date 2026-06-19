@@ -13,6 +13,7 @@ pub struct Cli {
 pub enum Command {
     ApplyProfile(ApplyProfileArgs),
     DumpReport(DumpReportArgs),
+    JsonFieldIsZero(JsonFieldIsZeroArgs),
     Ledger(LedgerCommand),
     ProfileReport(ProfileReportArgs),
     ProfileRestore(ProfileRestoreArgs),
@@ -28,7 +29,7 @@ pub struct CommonPathArgs {
     pub rules: PathBuf,
     #[arg(long, default_value = "/")]
     pub root: PathBuf,
-    #[arg(long, default_value = "/data/adb/modules/puread")]
+    #[arg(long, default_value = "/data/adb/modules/PureAD")]
     pub module_root: PathBuf,
     #[arg(long)]
     pub lock_path: Option<PathBuf>,
@@ -72,6 +73,14 @@ pub struct DumpReportArgs {
 }
 
 #[derive(Debug, Args)]
+pub struct JsonFieldIsZeroArgs {
+    #[arg(long)]
+    pub file: PathBuf,
+    #[arg(long)]
+    pub field: String,
+}
+
+#[derive(Debug, Args)]
 pub struct LedgerCommand {
     #[command(subcommand)]
     pub command: LedgerSubcommand,
@@ -100,7 +109,7 @@ pub struct RestoreArgs {
 
 #[derive(Debug, Args)]
 pub struct ProfilePathArgs {
-    #[arg(long, default_value = "/data/adb/modules/puread")]
+    #[arg(long, default_value = "/data/adb/modules/PureAD")]
     pub module_root: PathBuf,
     #[arg(long)]
     pub lock_path: Option<PathBuf>,

@@ -72,7 +72,6 @@ pub(crate) fn assert_restore_failed_without_clearing(
 #[derive(Debug)]
 pub(crate) struct TempFixture {
     pub(crate) root: PathBuf,
-    module_root_arg: String,
 }
 
 impl TempFixture {
@@ -80,17 +79,7 @@ impl TempFixture {
         let nanos = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
         let root = std::env::temp_dir().join(format!("puread-cli-{name}-{nanos}"));
         fs::create_dir_all(&root)?;
-        let module_root = root.join("module");
-        fs::create_dir_all(module_root.join("run"))?;
-        let module_root_arg = module_root.to_string_lossy().into_owned();
-        Ok(Self {
-            root,
-            module_root_arg,
-        })
-    }
-
-    pub(crate) fn module_root_str(&self) -> &str {
-        &self.module_root_arg
+        Ok(Self { root })
     }
 
     pub(crate) fn copy_android_fs(&self) -> Result<PathBuf, Box<dyn Error>> {
@@ -101,8 +90,8 @@ impl TempFixture {
 
     pub(crate) fn minimal_android_fs(&self) -> Result<PathBuf, Box<dyn Error>> {
         let root = self.root.join("android-fs");
-        fs::create_dir_all(root.join("data/adb/modules/puread/state/backups"))?;
-        fs::create_dir_all(root.join("data/adb/modules/puread/run"))?;
+        fs::create_dir_all(root.join("data/adb/modules/PureAD/state/backups"))?;
+        fs::create_dir_all(root.join("data/adb/modules/PureAD/run"))?;
         Ok(root)
     }
 }
@@ -130,12 +119,47 @@ fn copy_dir(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
 }
 
 pub(crate) fn ledger_path(root: &Path) -> PathBuf {
-    root.join("data/adb/modules/puread/state/actions.jsonl")
+    module_root_path(root).join("state/actions.jsonl")
 }
 
 pub(crate) fn backup_path(root: &Path, name: &str) -> PathBuf {
-    root.join("data/adb/modules/puread/state/backups")
-        .join(name)
+    module_root_path(root).join("state/backups").join(name)
+}
+
+pub(crate) fn module_root_path(root: &Path) -> PathBuf {
+    root.join("data/adb/modules/PureAD")
+}
+
+pub(crate) fn other_module_ledger_is_rejected() -> Result<(), Box<dyn Error>> {
+    let fixture = TempFixture::new("restore-other-module")?;
+    let root = fixture.minimal_android_fs()?;
+    let target = root.join("data/data/com.demo/cache/ad.bin");
+    fs::create_dir_all(target.parent().ok_or("target path has no parent")?)?;
+    fs::write(&target, "keep")?;
+    let ledger = root.join("data/adb/modules/OtherModule/state/actions.jsonl");
+    write_restore_ledger(
+        &ledger,
+        "/data/data/com.demo/cache/ad.bin",
+        &[remove_placeholder_step()],
+    )?;
+    let before = fs::read_to_string(&ledger)?;
+
+    let output = run_puread([
+        "restore",
+        "--execute",
+        "--ledger",
+        ledger.to_string_lossy().as_ref(),
+    ])?;
+
+    assert!(!output.status.success(), "{output:?}");
+    let stderr = String::from_utf8(output.stderr)?;
+    assert!(
+        stderr.contains("restore ledger path cannot be mapped"),
+        "{stderr}"
+    );
+    assert_eq!(fs::read_to_string(&target)?, "keep");
+    assert_eq!(fs::read_to_string(&ledger)?, before);
+    Ok(())
 }
 
 pub(crate) fn write_restore_ledger(

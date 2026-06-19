@@ -7,6 +7,8 @@ use crate::lock::{GlobalLock, lock_path};
 use crate::profile_execute::{ApplyActionReport, ExecutionSummary};
 use crate::rule_plan::{ActionPlan, PlannedAction, ensure_root_dir};
 
+const DEFAULT_SCAN_MODULE_ROOT: &str = "data/adb/modules/PureAD";
+
 #[derive(Debug, Serialize)]
 struct ScanDryRunDocument {
     schema_version: u8,
@@ -39,15 +41,20 @@ pub fn run_scan(args: &ScanArgs) -> Result<(), CliError> {
         return Err(CliError::ConflictingExecutionMode);
     }
     ensure_root_dir(args.root.as_path())?;
-    let plan = ActionPlan::new(args.root.as_path(), args.rules.as_path(), None)?;
+    let module_root = args.root.join(DEFAULT_SCAN_MODULE_ROOT);
+    let plan = ActionPlan::new(
+        args.root.as_path(),
+        args.rules.as_path(),
+        Some(module_root.as_path()),
+        None,
+    )?;
     if args.execute {
-        let module_root = args.root.join("data/adb/modules/puread");
         let lock = lock_path(module_root.as_path(), None)?;
         let _lock = GlobalLock::acquire(lock.as_path())?;
         return write_execute_document(
             args,
             &plan,
-            ExecutionSummary::execute(&plan, args.root.as_path()),
+            ExecutionSummary::execute(&plan, args.root.as_path(), module_root.as_path()),
         );
     }
     let summary = ExecutionSummary::dry_run(&plan);

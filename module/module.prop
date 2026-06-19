@@ -1,6 +1,6 @@
 id=PureAD
 name=PureAD Remover
-version=0.1.0-t25
-versionCode=25
+version=0.1.0-t26
+versionCode=26
 author=Wine Fox and contributors
 description=Local Android root ad-artifact cleanup module with PureAD daemon, CLI, lifecycle scripts, and bundled rules.

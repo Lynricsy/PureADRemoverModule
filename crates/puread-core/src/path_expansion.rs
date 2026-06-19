@@ -2,6 +2,7 @@
 
 mod error;
 mod expander;
+mod glob;
 mod resolved;
 mod template;
 mod validation;

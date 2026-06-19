@@ -4,3 +4,5 @@ target/
 module/logs/
 module/run/
 module/state/
+dist/*.zip
+dist/*.sha256

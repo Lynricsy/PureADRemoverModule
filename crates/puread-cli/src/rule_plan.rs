@@ -1,6 +1,6 @@
 use std::fs;
 use std::io;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use serde::Serialize;
 
@@ -10,7 +10,7 @@ use crate::json::display_path;
 mod discovery;
 mod targets;
 
-const MODULE_ANDROID_DIR: &str = "/data/adb/modules/puread";
+const DEFAULT_MODULE_ANDROID_DIR: &str = "/data/adb/modules/PureAD";
 
 #[derive(Debug, Clone, Serialize)]
 pub struct PlannedAction {
@@ -18,6 +18,7 @@ pub struct PlannedAction {
     pub category: String,
     pub package: String,
     pub action: String,
+    pub schedule: Option<String>,
     pub profile: String,
     pub risk_level: String,
     pub default_enabled: bool,
@@ -39,10 +40,17 @@ pub struct ActionPlan {
 }
 
 impl ActionPlan {
-    pub fn new(root: &Path, rules_path: &Path, profile: Option<&str>) -> Result<Self, CliError> {
+    pub fn new(
+        root: &Path,
+        rules_path: &Path,
+        module_root: Option<&Path>,
+        profile: Option<&str>,
+    ) -> Result<Self, CliError> {
         let rule_files = discovery::resolve_rule_files(rules_path)?;
         let documents = discovery::load_rule_documents(&rule_files)?;
-        let actions = targets::plan_actions(root, &documents, profile)?;
+        let module_android_dir = module_android_dir(root, module_root);
+        let actions =
+            targets::plan_actions(root, &documents, module_android_dir.as_path(), profile)?;
         Ok(Self {
             rule_file_count: rule_files.len(),
             actions,
@@ -56,6 +64,24 @@ impl ActionPlan {
     pub fn actions(&self) -> &[PlannedAction] {
         &self.actions
     }
+}
+
+fn module_android_dir(root: &Path, module_root: Option<&Path>) -> PathBuf {
+    let Some(module_root) = module_root else {
+        return PathBuf::from(DEFAULT_MODULE_ANDROID_DIR);
+    };
+    let relative = match module_root.strip_prefix(root) {
+        Ok(relative) => relative,
+        Err(_source) => {
+            if module_root.is_absolute() {
+                return module_root.to_path_buf();
+            }
+            return PathBuf::from(DEFAULT_MODULE_ANDROID_DIR);
+        }
+    };
+    let mut android_path = PathBuf::from("/");
+    android_path.push(relative);
+    android_path
 }
 
 pub fn ensure_root_dir(path: &Path) -> Result<(), CliError> {

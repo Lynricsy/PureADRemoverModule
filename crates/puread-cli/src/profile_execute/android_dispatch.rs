@@ -31,7 +31,7 @@ pub(super) fn execute_android_profile_surface(
         #[cfg(debug_assertions)]
         ledger_fail,
     );
-    execute_android_profile_surface_with(plan, &runner, &ledger)
+    execute_android_profile_surface_with(plan, module_root, &runner, &ledger)
 }
 
 fn select_runner(
@@ -58,6 +58,7 @@ fn select_ledger(
 
 fn execute_android_profile_surface_with<R, L>(
     plan: &ActionPlan,
+    module_root: &Path,
     runner: &R,
     ledger: &L,
 ) -> Vec<ApplyActionReport>
@@ -69,19 +70,20 @@ where
     plan.actions()
         .iter()
         .filter(|action| action.target_kind != "path")
-        .map(|action| execute_android_action(action, &executor))
+        .map(|action| execute_android_action(action, module_root, &executor))
         .collect()
 }
 
 fn execute_android_action<R, L>(
     action: &PlannedAction,
+    module_root: &Path,
     executor: &AndroidProfileExecutor<'_, R, L>,
 ) -> ApplyActionReport
 where
     R: AndroidCommandRunner,
     L: ProfileLedgerSink,
 {
-    match dispatch_android_action(action, executor) {
+    match dispatch_android_action(action, module_root, executor) {
         Ok((status, record)) => android_report(action, status, Some(record), None),
         Err(error) => android_report(action, "failed", None, Some(error.to_string())),
     }
@@ -89,6 +91,7 @@ where
 
 fn dispatch_android_action<R, L>(
     action: &PlannedAction,
+    module_root: &Path,
     executor: &AndroidProfileExecutor<'_, R, L>,
 ) -> Result<(&'static str, String), CliError>
 where
@@ -98,7 +101,7 @@ where
     let operation = match action.target_kind.as_str() {
         "appop" => dispatch_appop(action, executor)?,
         "component" => dispatch_component(action, executor)?,
-        "rom" => dispatch_rom(action, executor)?,
+        "rom" => dispatch_rom(action, module_root, executor)?,
         _ => {
             return Err(CliError::InvalidActionTarget {
                 path: action.android_path.clone(),
@@ -162,13 +165,14 @@ where
 
 fn dispatch_rom<R, L>(
     action: &PlannedAction,
+    module_root: &Path,
     executor: &AndroidProfileExecutor<'_, R, L>,
 ) -> Result<puread_android::profiles::ProfileOperation, CliError>
 where
     R: AndroidCommandRunner,
     L: ProfileLedgerSink,
 {
-    let rule = rom_rule_for_action(action)?;
+    let rule = rom_rule_for_action(action, module_root)?;
     executor
         .apply_rom(&rule)
         .map_err(|source| CliError::AndroidProfile { source })
@@ -181,7 +185,10 @@ fn component_hide_policy(rule_id: &str) -> PmHidePolicy {
     PmHidePolicy::DoNotHide
 }
 
-fn rom_rule_for_action(action: &PlannedAction) -> Result<RomProfileRule, CliError> {
+fn rom_rule_for_action(
+    action: &PlannedAction,
+    module_root: &Path,
+) -> Result<RomProfileRule, CliError> {
     match action.rule_id.as_str() {
         "miui-personalized-ad-enabled" => {
             rom_settings_rule(action, "miui_personalized_ad_enabled", "0")
@@ -194,7 +201,7 @@ fn rom_rule_for_action(action: &PlannedAction) -> Result<RomProfileRule, CliErro
                 Path::new(action.android_path.as_str()),
                 "key_content_promotion",
                 false,
-                Path::new("/data/adb/modules/puread/state/profile-backups"),
+                &module_root.join("state/profile-backups"),
             )
             .map_err(|source| CliError::AndroidProfile { source })?;
             RomProfileRule::shared_prefs_bool(&action.rule_id, RomMatcher::miui(), rule)

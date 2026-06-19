@@ -125,6 +125,13 @@ fn cli_profiles_apply_profile_execute_uses_global_lock_under_fixture() -> Result
     let target = root.join("sdcard/Android/data/com.ss.android.ugc.aweme/splashCache");
     assert!(target.is_dir());
     assert!(fs::read_dir(target)?.next().is_none());
+    let ledger = fs::read_to_string(fixture.actions_ledger_path())?;
+    assert!(ledger.contains("aweme-internal-splash-commerce-card"));
+    assert!(
+        !root
+            .join("data/adb/modules/puread/state/actions.jsonl")
+            .exists()
+    );
     Ok(())
 }
 

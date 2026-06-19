@@ -50,7 +50,10 @@ fn normalize_sqlite_template(template: &str, package: &str) -> Result<String, Ru
     let Some((package_segment, suffix)) = after_user_id.split_once('/') else {
         return sqlite_target_error("sqlite target must include package segment");
     };
-    if package_segment != package && !(package_segment == "*" && package == "puread.sqlite.any") {
+    if package_segment == "*" && package == "puread.sqlite.any" {
+        return Ok(template.to_owned());
+    }
+    if package_segment != package {
         return sqlite_target_error("sqlite package segment mismatch");
     }
     Ok(format!("/data/user/{user_segment}/<pkg>/{suffix}"))

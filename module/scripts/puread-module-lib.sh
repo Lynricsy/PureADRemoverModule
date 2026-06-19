@@ -38,6 +38,7 @@ puread_runtime_name() {
 }
 
 puread_is_android() {
+    [ "${PUREAD_FORCE_ANDROID:-0}" = "1" ] && return 0
     [ -d /system ] && [ -d /data/adb ]
 }
 
@@ -131,6 +132,22 @@ puread_ledger_path() {
     printf '%s/actions.jsonl' "$(puread_state_dir)"
 }
 
+puread_profile_ledger_path() {
+    printf '%s/profile-actions.jsonl' "$(puread_state_dir)"
+}
+
+puread_module_version() {
+    sed -n 's/^version=//p' "$PUREAD_MODDIR/module.prop" 2>/dev/null | head -n 1
+}
+
+puread_auto_apply_marker() {
+    PUREAD_VERSION="$(puread_module_version)"
+    if [ -z "$PUREAD_VERSION" ]; then
+        PUREAD_VERSION="unknown"
+    fi
+    printf '%s/auto-apply-%s.done' "$(puread_state_dir)" "$PUREAD_VERSION"
+}
+
 puread_prepare_runtime_dirs() {
     puread_prepare_state_dir
     puread_prepare_run_dir
@@ -149,7 +166,7 @@ puread_prepare_run_dir() {
 
 puread_prepare_log_dir() {
     mkdir -p "$(puread_log_dir)" 2>/dev/null || true
-    chmod 755 "$(puread_log_dir)" 2>/dev/null || true
+    chmod 700 "$(puread_log_dir)" 2>/dev/null || true
 }
 
 puread_apply_module_permissions() {
@@ -170,6 +187,7 @@ puread_apply_module_permissions() {
 puread_log() {
     puread_prepare_log_dir
     printf '%s %s\n' "$(puread_now)" "$*" >>"$(puread_log_path)" 2>/dev/null || true
+    chmod 600 "$(puread_log_path)" 2>/dev/null || true
 }
 
 puread_write_status() {
@@ -207,55 +225,21 @@ puread_pid_running() {
     kill -0 "$PUREAD_PID_VALUE" 2>/dev/null
 }
 
-puread_action_status() {
-    puread_print "PureAD status"
-    puread_print "runtime=$(puread_runtime_name)"
-    puread_print "abi=$(puread_select_abi)"
-    puread_print "module_dir=$PUREAD_MODDIR"
-    puread_print "state=$(puread_status_path)"
-    puread_print "log=$(puread_log_path)"
-    puread_print "daemon=$(puread_binary_path puread-daemon)"
-    puread_print "cli=$(puread_binary_path puread-cli)"
-
-    if [ -f "$(puread_status_path)" ]; then
-        puread_print "--- status file ---"
-        sed -n '1,80p' "$(puread_status_path)" 2>/dev/null || true
-    else
-        puread_print "status_file=missing"
-    fi
-
-    if [ ! -x "$(puread_binary_path puread-cli)" ] || [ ! -x "$(puread_binary_path puread-daemon)" ]; then
-        puread_print "native_binary=missing_until_T25"
-    fi
-}
-
-puread_action_diagnostics() {
-    puread_action_status
-    puread_print "--- diagnostics ---"
-    puread_print "android=$(puread_is_android && printf '%s' yes || printf '%s' no)"
-    puread_print "ledger=$(puread_ledger_path)"
-    puread_print "pid=$(puread_pid_path)"
-    puread_print "lock=$(puread_lock_path)"
-}
-
-puread_action_scan_dry_run() {
-    PUREAD_CLI="$(puread_binary_path puread-cli)"
-    if [ ! -x "$PUREAD_CLI" ]; then
-        puread_print "PureAD CLI missing: $PUREAD_CLI"
+puread_pid_matches_daemon() {
+    PUREAD_PID_FILE="$1"
+    if ! puread_pid_running "$PUREAD_PID_FILE"; then
         return 1
     fi
-
-    PUREAD_RULES_DIR="${PUREAD_RULES_DIR:-$PUREAD_MODDIR/rules}"
-    PUREAD_SCAN_ROOT="${PUREAD_SCAN_ROOT:-/data}"
-    "$PUREAD_CLI" scan --dry-run --rules "$PUREAD_RULES_DIR" --root "$PUREAD_SCAN_ROOT"
-}
-
-puread_action_restore_dry_run() {
-    PUREAD_CLI="$(puread_binary_path puread-cli)"
-    if [ ! -x "$PUREAD_CLI" ]; then
-        puread_print "PureAD CLI missing: $PUREAD_CLI"
+    PUREAD_PID_VALUE="$(cat "$PUREAD_PID_FILE" 2>/dev/null || printf '%s' "")"
+    PUREAD_CMDLINE="/proc/$PUREAD_PID_VALUE/cmdline"
+    if [ ! -r "$PUREAD_CMDLINE" ]; then
         return 1
     fi
-
-    "$PUREAD_CLI" restore --dry-run --ledger "$(puread_ledger_path)"
+    PUREAD_EXPECTED_DAEMON="${PUREAD_DAEMON_BIN:-$(puread_binary_path puread-daemon)}"
+    PUREAD_CMD_LINES="$(tr '\000' '\n' <"$PUREAD_CMDLINE" 2>/dev/null || printf '%s' "")"
+    PUREAD_CMD_ARG0="$(printf '%s\n' "$PUREAD_CMD_LINES" | sed -n '1p' 2>/dev/null || printf '%s' "")"
+    [ "$PUREAD_CMD_ARG0" = "$PUREAD_EXPECTED_DAEMON" ] || return 1
+    printf '%s\n' "$PUREAD_CMD_LINES" | grep -Fx "$PUREAD_MODDIR/rules" >/dev/null 2>&1 || return 1
+    printf '%s\n' "$PUREAD_CMD_LINES" | grep -Fx "$(puread_state_dir)" >/dev/null 2>&1 || return 1
+    printf '%s\n' "$PUREAD_CMD_LINES" | grep -Fx "$(puread_log_path)" >/dev/null 2>&1 || return 1
 }

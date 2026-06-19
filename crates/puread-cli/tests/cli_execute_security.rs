@@ -9,10 +9,15 @@ use std::path::Path;
 #[path = "support/cli_restore_adversarial.rs"]
 #[cfg(unix)]
 pub(crate) mod restore_adversarial;
+#[path = "cli_execute_security/restore_adversarial_tests.rs"]
+#[cfg(unix)]
+mod restore_adversarial_tests;
 #[path = "support/cli_execute_security.rs"]
 pub(crate) mod support;
 
-use support::{TempFixture, assert_success, field, parse_stdout_json, run_puread};
+use support::{
+    TempFixture, assert_success, field, module_root_path, parse_stdout_json, run_puread,
+};
 
 #[test]
 fn cli_execute_restore_recovers_directory_from_ledger() -> Result<(), Box<dyn Error>> {
@@ -27,13 +32,13 @@ fn cli_execute_restore_recovers_directory_from_ledger() -> Result<(), Box<dyn Er
         "--root",
         root_arg.as_str(),
         "--module-root",
-        fixture.module_root_str(),
+        module_root_path(&root).to_string_lossy().as_ref(),
     ])?)?;
     let target = root.join("sdcard/Android/data/com.ss.android.ugc.aweme/splashCache");
     assert!(fs::read_dir(&target)?.next().is_none());
 
     // When: restore --execute is driven through the real CLI surface.
-    let ledger = root.join("data/adb/modules/puread/state/actions.jsonl");
+    let ledger = module_root_path(&root).join("state/actions.jsonl");
     let output = run_puread([
         "restore",
         "--execute",
@@ -65,13 +70,13 @@ fn cli_execute_restore_fails_when_global_lock_is_held_without_restoring_or_clear
         "--root",
         root_arg.as_str(),
         "--module-root",
-        fixture.module_root_str(),
+        module_root_path(&root).to_string_lossy().as_ref(),
     ])?)?;
     let target = root.join("sdcard/Android/data/com.ss.android.ugc.aweme/splashCache");
     assert!(fs::read_dir(&target)?.next().is_none());
-    let ledger = root.join("data/adb/modules/puread/state/actions.jsonl");
+    let ledger = module_root_path(&root).join("state/actions.jsonl");
     let before = fs::read_to_string(&ledger)?;
-    let restore_lock = root.join("data/adb/modules/puread/run/puread.lock");
+    let restore_lock = module_root_path(&root).join("run/puread.lock");
     fs::create_dir_all(restore_lock.parent().ok_or("restore lock has no parent")?)?;
     let lock_file = fs::OpenOptions::new()
         .read(true)
@@ -98,6 +103,12 @@ fn cli_execute_restore_fails_when_global_lock_is_held_without_restoring_or_clear
     Ok(())
 }
 
+#[test]
+fn cli_execute_restore_rejects_other_module_ledger_without_mutating_target()
+-> Result<(), Box<dyn Error>> {
+    support::other_module_ledger_is_rejected()
+}
+
 #[cfg(unix)]
 #[test]
 fn cli_execute_rejects_target_symlink_without_mutating_escape() -> Result<(), Box<dyn Error>> {
@@ -111,7 +122,7 @@ fn cli_execute_rejects_target_symlink_without_mutating_escape() -> Result<(), Bo
     unix_fs::symlink(&escape, &target)?;
 
     // When: apply-profile --execute validates the planned target.
-    let output = run_apply_execute(&fixture, &root)?;
+    let output = run_apply_execute(&root)?;
 
     // Then: planning or execution rejects the symlink and the escape file is untouched.
     assert!(!output.status.success(), "{output:?}");
@@ -132,7 +143,7 @@ fn cli_execute_rejects_parent_symlink() -> Result<(), Box<dyn Error>> {
     unix_fs::symlink(fixture.root.as_path(), &data_dir)?;
 
     // When: apply-profile --execute validates the parent chain.
-    let output = run_apply_execute(&fixture, &root)?;
+    let output = run_apply_execute(&root)?;
 
     // Then: the command does not follow the symlinked parent into the escape root.
     assert_success(&output)?;
@@ -145,7 +156,7 @@ fn cli_execute_rejects_backup_symlink_and_keeps_prior_ledger() -> Result<(), Box
     // Given: backup dir contains a symlink at the deterministic backup path for one rule.
     let fixture = TempFixture::new("backup-collision")?;
     let root = fixture.copy_android_fs()?;
-    let backup = root.join("data/adb/modules/puread/state/backups");
+    let backup = module_root_path(&root).join("state/backups");
     fs::create_dir_all(&backup)?;
     let occupied = backup.join(
         "aweme-external-splash-cache-empty_dir-_sdcard_Android_data_com_ss_android_ugc_aweme_splashCache.bak",
@@ -156,13 +167,13 @@ fn cli_execute_rejects_backup_symlink_and_keeps_prior_ledger() -> Result<(), Box
     fs::write(&occupied, "occupied")?;
 
     // When: apply-profile --execute runs.
-    let output = run_apply_execute(&fixture, &root)?;
+    let output = run_apply_execute(&root)?;
 
     // Then: failure is visible and the ledger still contains the other successful mutation record.
     assert_success(&output)?;
     let document = parse_stdout_json(&output)?;
     assert!(field(&document, "failed")?.as_u64().unwrap_or(0) > 0);
-    let ledger = root.join("data/adb/modules/puread/state/actions.jsonl");
+    let ledger = module_root_path(&root).join("state/actions.jsonl");
     assert!(fs::read_to_string(ledger)?.contains("aweme-internal-splash-commerce-card"));
     Ok(())
 }
@@ -172,7 +183,7 @@ fn cli_execute_scan_reports_applied_and_failed_actions() -> Result<(), Box<dyn E
     // Given: one target can be emptied and another target is forced to fail by backup collision.
     let fixture = TempFixture::new("scan-partial-report")?;
     let root = fixture.copy_android_fs()?;
-    let backup = root.join("data/adb/modules/puread/state/backups");
+    let backup = module_root_path(&root).join("state/backups");
     fs::create_dir_all(&backup)?;
     let occupied = backup.join(
         "aweme-external-splash-cache-empty_dir-_sdcard_Android_data_com_ss_android_ugc_aweme_splashCache.bak",
@@ -212,64 +223,7 @@ fn cli_execute_scan_reports_applied_and_failed_actions() -> Result<(), Box<dyn E
     Ok(())
 }
 
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_rejects_target_symlink() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::target_symlink_is_not_followed()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_rejects_target_parent_symlink() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::target_parent_symlink_is_not_followed()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_rejects_directory_restore_parent_symlink() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::directory_restore_parent_symlink_is_not_followed()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_rejects_remove_placeholder_parent_symlink() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::remove_placeholder_parent_symlink_is_not_followed()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_rejects_backup_symlink() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::backup_symlink_is_not_read()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_rejects_backup_parent_symlink() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::backup_parent_symlink_is_not_followed()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_rejects_backup_path_escape() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::backup_path_escape_is_rejected()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_recreates_missing_parent_directory_safely() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::missing_parent_directory_restore_uses_safe_path()
-}
-
-#[cfg(unix)]
-#[test]
-fn cli_restore_execute_restores_permissions_safely() -> Result<(), Box<dyn Error>> {
-    restore_adversarial::permission_restore_uses_safe_path()
-}
-
-fn run_apply_execute(
-    fixture: &TempFixture,
-    root: &Path,
-) -> Result<std::process::Output, Box<dyn Error>> {
+fn run_apply_execute(root: &Path) -> Result<std::process::Output, Box<dyn Error>> {
     let root_arg = root.to_string_lossy();
     run_puread([
         "apply-profile",
@@ -278,6 +232,6 @@ fn run_apply_execute(
         "--root",
         root_arg.as_ref(),
         "--module-root",
-        fixture.module_root_str(),
+        module_root_path(root).to_string_lossy().as_ref(),
     ])
 }

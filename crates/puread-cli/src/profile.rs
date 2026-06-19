@@ -3,7 +3,8 @@ use puread_core::restore_ledger::RestoreLedger;
 use serde::Serialize;
 
 use crate::cli::{
-    ApplyProfileArgs, DumpReportArgs, ProfileReportArgs, ProfileRestoreArgs, StatusArgs,
+    ApplyProfileArgs, DumpReportArgs, JsonFieldIsZeroArgs, ProfileReportArgs, ProfileRestoreArgs,
+    StatusArgs,
 };
 use crate::error::CliError;
 use crate::json::{SCHEMA_VERSION, display_path, write_json};
@@ -74,13 +75,18 @@ pub fn run_apply_profile(args: &ApplyProfileArgs) -> Result<(), CliError> {
     let plan = ActionPlan::new(
         args.paths.root.as_path(),
         args.paths.rules.as_path(),
+        Some(args.paths.module_root.as_path()),
         Some(profile.as_str()),
     )?;
     let lock_path = lock_path(&args.paths.module_root, args.paths.lock_path.as_deref())?;
     if args.execute {
         let _lock = GlobalLock::acquire(lock_path.as_path())?;
         preflight_profile_ledger_if_needed(&plan, args.paths.module_root.as_path())?;
-        let file_summary = ExecutionSummary::execute(&plan, args.paths.root.as_path());
+        let file_summary = ExecutionSummary::execute(
+            &plan,
+            args.paths.root.as_path(),
+            args.paths.module_root.as_path(),
+        );
         let mut reports = file_summary.reports();
         reports.extend(execute_android_profile_surface(
             &plan,
@@ -138,6 +144,26 @@ pub fn run_dump_report(args: &DumpReportArgs) -> Result<(), CliError> {
         pending_restore_count: pending.len(),
     };
     write_json(&document)
+}
+
+pub fn run_json_field_is_zero(args: &JsonFieldIsZeroArgs) -> Result<(), CliError> {
+    let bytes = std::fs::read(args.file.as_path()).map_err(|source| CliError::Filesystem {
+        path: display_path(args.file.as_path()),
+        source,
+    })?;
+    let value = serde_json::from_slice::<serde_json::Value>(&bytes).map_err(|source| {
+        CliError::ProfileLedgerJson {
+            path: display_path(args.file.as_path()),
+            source,
+        }
+    })?;
+    if value.get(&args.field).and_then(serde_json::Value::as_u64) == Some(0) {
+        return Ok(());
+    }
+    Err(CliError::JsonFieldNotZero {
+        path: display_path(args.file.as_path()),
+        field: args.field.clone(),
+    })
 }
 
 fn preflight_profile_ledger_if_needed(

@@ -1,0 +1,4 @@
+gate=uninstall-lifecycle
+command=scripts/test-uninstall-lifecycle.sh
+uninstall_lifecycle=pass
+result=pass

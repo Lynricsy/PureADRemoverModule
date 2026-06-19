@@ -40,6 +40,7 @@ fn run(cli: Cli) -> Result<(), CliError> {
     match cli.command {
         Command::ApplyProfile(args) => profile::run_apply_profile(&args),
         Command::DumpReport(args) => profile::run_dump_report(&args),
+        Command::JsonFieldIsZero(args) => profile::run_json_field_is_zero(&args),
         Command::Ledger(command) => ledger::run_ledger(command),
         Command::ProfileReport(args) => profile::run_profile_report(&args),
         Command::ProfileRestore(args) => profile::run_profile_restore(&args),

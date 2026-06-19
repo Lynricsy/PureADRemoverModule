@@ -82,6 +82,21 @@ jobs:
           printf 'version_code=%s\n' "$version_code" >>"$GITHUB_OUTPUT"
           sha256sum "$zip_path" >"$zip_path.sha256"
 
+      - name: Verify release ABI entries
+        env:
+          RELEASE_ZIP: ${{ steps.meta.outputs.zip_path }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf '%s\n' $PUREAD_RELEASE_ABIS | sort | paste -sd, -)"
+          daemon_abis="$(unzip -Z1 "$RELEASE_ZIP" | sed -n 's#^bin/\([^/][^/]*\)/puread-daemon$#\1#p' | sort -u | paste -sd, -)"
+          cli_abis="$(unzip -Z1 "$RELEASE_ZIP" | sed -n 's#^bin/\([^/][^/]*\)/puread-cli$#\1#p' | sort -u | paste -sd, -)"
+          printf 'expected_abis=%s\n' "$expected"
+          printf 'daemon_abis=%s\n' "$daemon_abis"
+          printf 'cli_abis=%s\n' "$cli_abis"
+          test "$daemon_abis" = "$expected"
+          test "$cli_abis" = "$expected"
+
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}

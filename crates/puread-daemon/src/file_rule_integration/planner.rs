@@ -6,7 +6,7 @@ use puread_rules::{RuleCategory, RuleDefinition};
 
 use crate::DaemonError;
 
-const MODULE_ANDROID_DIR: &str = "/data/adb/modules/puread";
+const MODULE_ANDROID_DIR: &str = "/data/adb/modules/PureAD";
 
 /// dry-run 文件计划动作。
 #[derive(Debug, Clone, Eq, PartialEq)]

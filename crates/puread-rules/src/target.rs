@@ -166,6 +166,9 @@ fn is_package_scoped_template(template: &str, package: &str) -> bool {
     let data_data_placeholder = template.starts_with("/data/data/<pkg>/");
     let data_user_placeholder = template.starts_with("/data/user/[0-9]*/<pkg>/")
         || template.starts_with("/data/user/*/<pkg>/");
+    let sqlite_any_package = package == "puread.sqlite.any"
+        && (template.starts_with("/data/user/[0-9]*/*/")
+            || template.starts_with("/data/user/*/*/"));
     let sdcard_placeholder = template.starts_with("/sdcard/Android/data/<pkg>/")
         || template == "/sdcard/Android/data/<pkg>";
     let data_data_concrete = template.starts_with(&format!("/data/data/{package}/"));
@@ -174,6 +177,7 @@ fn is_package_scoped_template(template: &str, package: &str) -> bool {
         || template == format!("/sdcard/Android/data/{package}");
     data_data_placeholder
         || data_user_placeholder
+        || sqlite_any_package
         || sdcard_placeholder
         || data_data_concrete
         || data_user_concrete

@@ -1,0 +1,4 @@
+gate=service-lifecycle
+command=scripts/test-service-lifecycle.sh
+service_lifecycle=pass
+result=pass

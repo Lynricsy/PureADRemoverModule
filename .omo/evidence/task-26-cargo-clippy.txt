@@ -1,4 +1,4 @@
 gate=cargo-clippy
 command=cargo clippy --workspace --all-targets --all-features -- -D warnings
-[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
 result=pass

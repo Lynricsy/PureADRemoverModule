@@ -81,6 +81,8 @@ run_capture "cargo-fmt" "$TASK_PREFIX-cargo-fmt.txt" cargo fmt --all -- --check
 run_capture "cargo-clippy" "$TASK_PREFIX-cargo-clippy.txt" cargo clippy --workspace --all-targets --all-features -- -D warnings
 run_capture "cargo-test" "$TASK_PREFIX-cargo-test.txt" cargo test --workspace
 run_capture "rules-validate" "$TASK_PREFIX-rules-validate.txt" cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom
+run_capture "service-lifecycle" "$TASK_PREFIX-service-lifecycle.txt" scripts/test-service-lifecycle.sh
+run_capture "uninstall-lifecycle" "$TASK_PREFIX-uninstall-lifecycle.txt" scripts/test-uninstall-lifecycle.sh
 run_capture "package-module" "$TASK_PREFIX-package.txt" scripts/package-module.sh
 
 write_zip_check

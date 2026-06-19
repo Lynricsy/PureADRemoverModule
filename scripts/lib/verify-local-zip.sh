@@ -16,6 +16,7 @@ required_files = {
     "uninstall.sh",
     "action.sh",
     "scripts/puread-module-lib.sh",
+    "scripts/puread-action-lib.sh",
 }
 forbidden_name = re.compile(
     r"(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw",
@@ -94,7 +95,8 @@ zip_check_with_unzip() {
         post-fs-data.sh \
         uninstall.sh \
         action.sh \
-        scripts/puread-module-lib.sh
+        scripts/puread-module-lib.sh \
+        scripts/puread-action-lib.sh
     do
         zip_has_entry "$required" "$entries_file" || {
             printf 'missing entries: %s\n' "$required" >&2

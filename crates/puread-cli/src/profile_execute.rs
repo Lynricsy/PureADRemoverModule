@@ -15,6 +15,7 @@ mod file_actions;
 mod profile_restore;
 mod profile_runtime;
 mod report;
+mod sqlite_actions;
 
 pub use profile_restore::{profile_report, restore_profile};
 pub use report::{ApplyActionReport, ExecutionSummary};
@@ -57,15 +58,22 @@ impl ExecutionSummary {
         Self::from_reports(reports)
     }
 
-    pub fn execute(plan: &ActionPlan, root: &Path) -> Self {
-        let module_root = root.join("data/adb/modules/puread");
+    pub fn execute(plan: &ActionPlan, root: &Path, module_root: &Path) -> Self {
         let ledger = RestoreLedger::at(module_root.join(LEDGER_RELATIVE_PATH));
         let executor = FileActionExecutor::new(ledger, module_root.join(BACKUP_RELATIVE_PATH));
+        let sqlite_runner = puread_android::sqlite_actions::SqliteActionRunner::new(
+            RestoreLedger::at(module_root.join(LEDGER_RELATIVE_PATH)),
+        );
         let reports = plan
             .actions()
             .iter()
             .filter(|action| action.target_kind == "path")
-            .map(|action| file_actions::execute_action(action, &executor, root))
+            .map(|action| {
+                if action.category == "sqlite" {
+                    return sqlite_actions::execute_action(action, &sqlite_runner, root);
+                }
+                file_actions::execute_action(action, &executor, root)
+            })
             .collect::<Vec<_>>();
         Self::from_reports(reports)
     }

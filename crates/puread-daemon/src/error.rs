@@ -207,6 +207,24 @@ pub enum DaemonError {
         #[source]
         source: puread_android::file_actions::FileActionError,
     },
+
+    /// 打开 daemon 日志失败。
+    #[error("failed to open daemon log file: {path}")]
+    LogOpen {
+        /// 日志路径。
+        path: PathBuf,
+        /// 底层 IO 错误。
+        #[source]
+        source: std::io::Error,
+    },
+
+    /// 写入 daemon 日志失败。
+    #[error("failed to write daemon log file")]
+    LogWrite {
+        /// 底层 IO 错误。
+        #[source]
+        source: std::io::Error,
+    },
 }
 
 impl From<mpsc::RecvError> for DaemonError {

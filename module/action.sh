@@ -4,13 +4,19 @@ MODDIR="${0%/*}"
 PUREAD_MODULE_DIR="$MODDIR"
 export PUREAD_MODULE_DIR
 PUREAD_LIB="$MODDIR/scripts/puread-module-lib.sh"
+PUREAD_ACTION_LIB="$MODDIR/scripts/puread-action-lib.sh"
 
 if [ ! -r "$PUREAD_LIB" ]; then
     printf '%s\n' "PureAD: missing helper script: $PUREAD_LIB"
     exit 1
 fi
+if [ ! -r "$PUREAD_ACTION_LIB" ]; then
+    printf '%s\n' "PureAD: missing helper script: $PUREAD_ACTION_LIB"
+    exit 1
+fi
 
 . "$PUREAD_LIB"
+. "$PUREAD_ACTION_LIB"
 
 puread_init_context "$MODDIR"
 

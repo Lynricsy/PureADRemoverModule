@@ -2,6 +2,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use super::PathExpansionError;
+use super::glob::expand_last_segment_glob;
 pub use super::resolved::ExpandedPath;
 use super::resolved::PathResolver;
 use super::template::DataUserWildcard;
@@ -47,6 +48,9 @@ impl PathExpander {
     ) -> Result<Vec<ExpandedPath>, PathExpansionError> {
         let package = validate_package(package)?;
         self.validate_raw_template(template)?;
+        if let Some(paths) = self.expand_last_segment_glob(template, package)? {
+            return Ok(sort_dedup(paths));
+        }
         if let Some(paths) = self.expand_data_user_wildcard(template, package)? {
             return Ok(sort_dedup(paths));
         }
@@ -173,6 +177,15 @@ impl PathExpander {
             }
         }
         Ok(Some(expanded))
+    }
+
+    fn expand_last_segment_glob(
+        &self,
+        template: &str,
+        package: &str,
+    ) -> Result<Option<Vec<ExpandedPath>>, PathExpansionError> {
+        let concrete = template.replace("<pkg>", package);
+        expand_last_segment_glob(&concrete, package, &self.resolver)
     }
 
     fn package_roots(&self, package: &str) -> Result<Vec<ExpandedPath>, PathExpansionError> {

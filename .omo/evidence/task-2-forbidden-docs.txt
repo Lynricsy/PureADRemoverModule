@@ -1,19 +1,19 @@
 7:PureADRemoverModule 是 Android Root 环境下的非域名本地层去广告模块。项目只处理 Clash/代理/DNS 无法覆盖的本地落地物，例如应用私有目录中的广告缓存、广告 SDK 文件、已知广告 SQLite 数据库、显式 profile 下的 AppOps、组件禁用和 ROM profile。
 9:本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品。域名、网络连接和代理路由由用户已有网络层工具处理；本仓库只做本地文件、数据库和系统状态的可回滚治理。
-25:| hosts | 生成、合并、挂载、动态切换 `hosts`、`Host/`、`host.sh`、`mount_hosts*` | 只允许在文档和 grep guard 中作为禁止能力说明 |
-26:| DNS | DNS 重定向、私人 DNS 强制关闭、DNS 劫持、DNS 服务接管 | 只允许在禁止能力说明中出现 |
-28:| 代理 | 改写 Clash、Mihomo、Box、ProxyConfig 或其他代理配置 | 只允许在项目边界说明中出现 |
-29:| AdGuardHome | 打包、启动、配置或接管 AdGuardHome 二进制/服务 | 只允许作为上游示例来源和禁止能力说明 |
-30:| iptables | 域名/IP/字符串/TLS/SNI 阻断、全局 `iptables -F`、网络链路接管 | 只允许在禁止能力说明和验证命令中出现 |
-31:| ad_reward | 广告奖励域名切换、奖励视频域名白名单/黑名单 | 只允许作为拒绝导入项说明 |
-36:同步上游时，看到 `hosts`、`DNS`、`domain`、`iptables`、`Clash`、`AdGuardHome`、`mount_hosts`、`ad_reward` 等词，并不表示可以导入。它们是拒绝信号，必须被分类为 out-of-scope 或 forbidden。
-44:| ads288 zip 快照 | `Example/ads288.zip` | 审查非域名文件/SDK 缓存、SQLite、AppOps、组件禁用、ROM profile 候选 | 只能视为本地 zip 快照；不得声明它是最新上游；不得导入 hosts/DNS/domain/iptables/ad_reward/mount_hosts 能力 |
-45:| AdGuard Home Magisk 示例 | `Example/Adguard-Home-For-Magisk-Mod/` | 审查生命周期脚本和少量本地文件路径补强思路 | 该上游包含 AdGuardHome/DNS 服务语境；不得导入服务接管、DNS、私人 DNS 或代理能力 |
-67:| `forbidden_categories_found` | 审查到的拒绝类别，例如 `hosts`、`DNS`、`iptables_network` |
-89:6. **拒绝禁止能力**：遇到 hosts、DNS、domain/域名名单、代理、iptables、AdGuardHome 服务接管、ad_reward、IFW 清空、Root 隐藏等内容，必须在报告中标记为 rejected，不得转写到生产规则。
-105:| `hosts` | 否 | n/a | n/a | 拒绝导入 hosts、Host、host.sh、mount_hosts |
-106:| `dns` | 否 | n/a | n/a | 拒绝 DNS 重定向、私人 DNS、DNS 服务接管 |
-108:| `proxy` | 否 | n/a | n/a | 拒绝 Clash、Mihomo、Box、代理配置修改 |
-109:| `iptables_network` | 否 | n/a | n/a | 拒绝 IP、域名、字符串、TLS/SNI 阻断 |
-110:| `ad_reward_domain` | 否 | n/a | n/a | 拒绝广告奖励域名切换 |
-144:rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward" AGENTS.md > .omo/evidence/task-2-forbidden-docs.txt
+26:| hosts | 生成、合并、挂载、动态切换 `hosts`、`Host/`、`host.sh`、`mount_hosts*` | 只允许在文档和 grep guard 中作为禁止能力说明 |
+27:| DNS | DNS 重定向、私人 DNS 强制关闭、DNS 劫持、DNS 服务接管 | 只允许在禁止能力说明中出现 |
+29:| 代理 | 改写 Clash、Mihomo、Box、ProxyConfig 或其他代理配置 | 只允许在项目边界说明中出现 |
+30:| AdGuardHome | 打包、启动、配置或接管 AdGuardHome 二进制/服务 | 只允许作为上游示例来源和禁止能力说明 |
+31:| iptables | 域名/IP/字符串/TLS/SNI 阻断、全局 `iptables -F`、网络链路接管 | 只允许在禁止能力说明和验证命令中出现 |
+32:| ad_reward | 广告奖励域名切换、奖励视频域名白名单/黑名单 | 只允许作为拒绝导入项说明 |
+37:同步上游时，看到 `hosts`、`DNS`、`domain`、`iptables`、`Clash`、`AdGuardHome`、`mount_hosts`、`ad_reward` 等词，并不表示可以导入。它们是拒绝信号，必须被分类为 out-of-scope 或 forbidden。
+45:| ads288 zip 快照 | `Example/ads288.zip` | 审查非域名文件/SDK 缓存、SQLite、AppOps、组件禁用、ROM profile 候选 | 只能视为本地 zip 快照；不得声明它是最新上游；不得导入 hosts/DNS/domain/iptables/ad_reward/mount_hosts 能力 |
+46:| AdGuard Home Magisk 示例 | `Example/Adguard-Home-For-Magisk-Mod/` | 审查生命周期脚本和少量本地文件路径补强思路 | 该上游包含 AdGuardHome/DNS 服务语境；不得导入服务接管、DNS、私人 DNS 或代理能力 |
+68:| `forbidden_categories_found` | 审查到的拒绝类别，例如 `hosts`、`DNS`、`iptables_network` |
+90:6. **拒绝禁止能力**：遇到 hosts、DNS、domain/域名名单、代理、iptables、AdGuardHome 服务接管、ad_reward、IFW 清空、Root 隐藏等内容，必须在报告中标记为 rejected，不得转写到生产规则。
+106:| `hosts` | 否 | n/a | n/a | 拒绝导入 hosts、Host、host.sh、mount_hosts |
+107:| `dns` | 否 | n/a | n/a | 拒绝 DNS 重定向、私人 DNS、DNS 服务接管 |
+109:| `proxy` | 否 | n/a | n/a | 拒绝 Clash、Mihomo、Box、代理配置修改 |
+110:| `iptables_network` | 否 | n/a | n/a | 拒绝 IP、域名、字符串、TLS/SNI 阻断 |
+111:| `ad_reward_domain` | 否 | n/a | n/a | 拒绝广告奖励域名切换 |
+145:rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward" AGENTS.md > .omo/evidence/task-2-forbidden-docs.txt
