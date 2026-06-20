@@ -71,7 +71,7 @@ puread_auto_apply_once() {
 
     PUREAD_RULES_DIR="${PUREAD_RULES_DIR:-$MODDIR/rules}"
     PUREAD_PROFILE_ROOT="${PUREAD_PROFILE_ROOT:-/}"
-    PUREAD_AUTO_PROFILES="${PUREAD_AUTO_PROFILES:-conservative sdk_cache sqlite appops component rom}"
+    PUREAD_AUTO_PROFILES="${PUREAD_AUTO_PROFILES:-conservative sdk_cache sqlite}"
     PUREAD_AUTO_OUTPUT="$(puread_state_dir)/auto-apply-current.json"
     PUREAD_AUTO_SUMMARY="$(puread_state_dir)/auto-apply-summary.log"
     PUREAD_AUTO_FAILURES=0
