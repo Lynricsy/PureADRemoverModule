@@ -162,6 +162,16 @@ git status --short --ignored
 - 调试和故障恢复必须保留开关：`PUREAD_AUTO_APPLY=0`、`PUREAD_DRY_RUN=1`、`PUREAD_DAEMON_DISABLE=1`。`PUREAD_DAEMON_DISABLE=1` 只能跳过 daemon，不能跳过默认自动 profile；需要跳过 profile 时必须显式设置 `PUREAD_AUTO_APPLY=0`。
 - 卸载脚本必须至少停止本模块 daemon，并为普通文件 ledger 与 profile ledger 写入 restore dry-run 计划；不要在卸载阶段无证据地声称真实恢复完成。
 
+## 模块更新约定
+
+主人要求模块管理器能显示并直接更新本模块。后续 agent 必须保持以下约定：
+
+- `module/module.prop` 必须保留 `updateJson=https://github.com/Lynricsy/PureADRemoverModule/releases/latest/download/update.json`，不要改成固定 tag URL。
+- 推送 `v*` tag 时，`.github/workflows/release.yml` 必须随模块 zip 上传 `update.json` 和 `changelog.md`。
+- `update.json` 必须包含 `version`、整数 `versionCode`、`zipUrl` 和 `changelog`，其中 `zipUrl` 指向当前 tag 的 release zip，`changelog` 指向当前 tag 的 `changelog.md`。
+- 更新 `module/module.prop` 的 `version` 或 `versionCode` 时，必须同步更新 README 发布示例，并通过 `scripts/generate-update-metadata.sh` 或 `scripts/verify-local.sh` 验证更新索引。
+- 打包验证必须确认 zip 内 `module.prop` 包含正确 `updateJson`；不得发布缺少更新入口的模块包。
+
 ## 任务日志要求
 
 执行任务时必须使用 AgentLogs MCP：

@@ -6,6 +6,7 @@ PASS	module/scripts/puread-module-lib.sh
 PASS	module/service.sh
 PASS	module/uninstall.sh
 PASS	scripts/build-module.sh
+PASS	scripts/generate-update-metadata.sh
 PASS	scripts/lib/package-module-zip.sh
 PASS	scripts/lib/qa-android-common.sh
 PASS	scripts/lib/qa-android-device.sh
@@ -20,5 +21,5 @@ PASS	scripts/test-service-lifecycle.sh
 PASS	scripts/test-uninstall-lifecycle.sh
 PASS	scripts/update-upstream.sh
 PASS	scripts/verify-local.sh
-shell_file_count=21
+shell_file_count=22
 result=pass

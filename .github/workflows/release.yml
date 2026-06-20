@@ -77,9 +77,18 @@ jobs:
           zip_path="${packages[0]}"
           version="$(sed -n 's/^version=//p' module/module.prop | head -n 1)"
           version_code="$(sed -n 's/^versionCode=//p' module/module.prop | head -n 1)"
+          metadata_dir="dist/release-metadata"
+          rm -rf "$metadata_dir"
+          PUREAD_RELEASE_ABIS="$PUREAD_RELEASE_ABIS" \
+          scripts/generate-update-metadata.sh \
+            --zip "$zip_path" \
+            --tag "${GITHUB_REF_NAME}" \
+            --output-dir "$metadata_dir"
           printf 'zip_path=%s\n' "$zip_path" >>"$GITHUB_OUTPUT"
           printf 'version=%s\n' "$version" >>"$GITHUB_OUTPUT"
           printf 'version_code=%s\n' "$version_code" >>"$GITHUB_OUTPUT"
+          printf 'update_json=%s/update.json\n' "$metadata_dir" >>"$GITHUB_OUTPUT"
+          printf 'changelog=%s/changelog.md\n' "$metadata_dir" >>"$GITHUB_OUTPUT"
           sha256sum "$zip_path" >"$zip_path.sha256"
 
       - name: Verify release ABI entries
@@ -103,6 +112,8 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
           RELEASE_NAME: PureAD ${{ steps.meta.outputs.version }}
           RELEASE_ZIP: ${{ steps.meta.outputs.zip_path }}
+          RELEASE_UPDATE_JSON: ${{ steps.meta.outputs.update_json }}
+          RELEASE_CHANGELOG: ${{ steps.meta.outputs.changelog }}
           RELEASE_VERSION: ${{ steps.meta.outputs.version }}
           RELEASE_VERSION_CODE: ${{ steps.meta.outputs.version_code }}
         shell: bash
@@ -115,13 +126,14 @@ jobs:
             printf -- '- Trigger tag: `%s`\n' "$RELEASE_TAG"
             printf -- '- Built Android ABIs: `%s`\n' "$PUREAD_RELEASE_ABIS"
             printf -- '- The zip is built by `scripts/package-module.sh` in release mode.\n'
+            printf -- '- Module managers can read `update.json` from the release assets through `module.prop` `updateJson`.\n'
             printf -- '- Android real-device verification is not performed by this workflow.\n'
           } >"$notes"
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" "$RELEASE_ZIP" "$RELEASE_ZIP.sha256" --clobber
+            gh release upload "$RELEASE_TAG" "$RELEASE_ZIP" "$RELEASE_ZIP.sha256" "$RELEASE_UPDATE_JSON" "$RELEASE_CHANGELOG" --clobber
             gh release edit "$RELEASE_TAG" --title "$RELEASE_NAME" --notes-file "$notes"
           else
-            gh release create "$RELEASE_TAG" "$RELEASE_ZIP" "$RELEASE_ZIP.sha256" \
+            gh release create "$RELEASE_TAG" "$RELEASE_ZIP" "$RELEASE_ZIP.sha256" "$RELEASE_UPDATE_JSON" "$RELEASE_CHANGELOG" \
               --title "$RELEASE_NAME" \
               --notes-file "$notes"
           fi

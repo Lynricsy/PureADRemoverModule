@@ -23,7 +23,9 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 
 安装后不需要额外手动操作。Android 启动 `service.sh` 时默认会先执行一次 bundled 本地治理 profile：`conservative sdk_cache sqlite`，随后以 apply 模式启动 `puread-daemon`，用 inotify 继续处理后续新落地的文件/SDK 缓存。每个模块版本在全部自动 profile 成功后只会写入一次 `state/auto-apply-<version>.done`，避免每次开机重复执行同一批本地治理。AppOps、component 和 ROM profile 仍可通过显式 profile 手工执行；默认不自动运行它们，避免设备、ROM 或应用差异把可选系统状态治理误报成 Root 管理器里的 profile errors。
 
-模块会把当前运行态同步到 `module.prop` 的 `description=` 字段，因此 Root 管理器的模块列表可以直接看到带 emoji 的短状态，例如 `🔵 installed · reboot to activate`、`🟢 active · daemon running · profiles 6/6 · pid 1234`、`🟠 profile errors · daemon disabled · profiles 5/6`、`🔴 missing native binary` 或 `🔴 uninstall needs attention`。这些运行统计只在已有生命周期写状态时读取现有 `auto-apply-summary.log`、ledger 和 pid 文件，不新增轮询、定时器或常驻任务。不同管理器可能会缓存模块列表；安装、重启或重新打开管理器后通常会刷新显示。
+模块会把当前运行态同步到 `module.prop` 的 `description=` 字段，因此 Root 管理器的模块列表可以直接看到带 emoji 的短状态，例如 `🔵 installed · reboot to activate`、`🟢 active · daemon running · profiles 3/3 · pid 1234`、`🟠 profile errors · daemon disabled · profiles 2/3`、`🔴 missing native binary` 或 `🔴 uninstall needs attention`。这些运行统计只在已有生命周期写状态时读取现有 `auto-apply-summary.log`、ledger 和 pid 文件，不新增轮询、定时器或常驻任务。不同管理器可能会缓存模块列表；安装、重启或重新打开管理器后通常会刷新显示。
+
+模块内置 `updateJson=https://github.com/Lynricsy/PureADRemoverModule/releases/latest/download/update.json`。支持 Magisk 模块更新格式的 Root 管理器可以通过该配置读取最新版本、变更记录和安装包下载地址，并在模块列表中直接提示更新。
 
 可选调试开关：
 
@@ -37,11 +39,11 @@ Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；
 
 ## 发布
 
-仓库包含 GitHub Actions release workflow。推送 `v*` tag 时会自动安装 Rust 与 Android NDK，构建 release profile 的 Android ABI 模块包，并把 `dist/*.zip` 与对应 SHA256 上传到 GitHub Release。
+仓库包含 GitHub Actions release workflow。推送 `v*` tag 时会自动安装 Rust 与 Android NDK，构建 release profile 的 Android ABI 模块包，并把 `dist/*.zip`、对应 SHA256、`update.json` 和 `changelog.md` 上传到 GitHub Release。`module.prop` 指向 `releases/latest/download/update.json`，因此后续发布会自动成为模块管理器可见的更新源。
 
 ```sh
-git tag v0.1.0-t31
-git push origin v0.1.0-t31
+git tag v0.1.0-t32
+git push origin v0.1.0-t32
 ```
 
 Release workflow 只做自动构建、结构校验和发布，不做真实 Android 设备安装验证；实机验证仍需在目标 Root 环境中单独执行。

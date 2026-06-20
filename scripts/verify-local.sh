@@ -86,6 +86,7 @@ run_capture "uninstall-lifecycle" "$TASK_PREFIX-uninstall-lifecycle.txt" scripts
 run_capture "package-module" "$TASK_PREFIX-package.txt" scripts/package-module.sh
 
 write_zip_check
+write_update_metadata_check
 write_forbidden_scan
 write_loc_check
 write_shell_parse_check

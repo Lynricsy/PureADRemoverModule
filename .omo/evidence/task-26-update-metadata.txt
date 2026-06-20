@@ -1,0 +1,9 @@
+gate=update-metadata
+update_json=/tmp/puread-verify-local.u9zX68/update-metadata/update.json
+changelog=/tmp/puread-verify-local.u9zX68/update-metadata/changelog.md
+version=0.1.0-t32
+version_code=32
+zip_url=https://github.com/Lynricsy/PureADRemoverModule/releases/download/v0.1.0-t32/PureAD-0.1.0-t32.zip
+changelog_url=https://github.com/Lynricsy/PureADRemoverModule/releases/download/v0.1.0-t32/changelog.md
+metadata=valid
+result=pass

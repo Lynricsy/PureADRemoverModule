@@ -28,22 +28,22 @@ ALLOWED	allowed:documentation	AGENTS.md:110:| `iptables_network` | 否 | n/a | n
 ALLOWED	allowed:documentation	AGENTS.md:111:| `ad_reward_domain` | 否 | n/a | n/a | 拒绝广告奖励域名切换 |
 ALLOWED	allowed:documentation	AGENTS.md:112:| `ifw_clear` | 否 | n/a | n/a | 拒绝 IFW 清空和无恢复证据的批量导入 |
 ALLOWED	allowed:documentation	AGENTS.md:145:rg -n "hosts|DNS|iptables|Clash|AdGuardHome|mount_hosts|ad_reward" AGENTS.md > .omo/evidence/task-2-forbidden-docs.txt
-ALLOWED	allowed:documentation	AGENTS.md:207:git -C Example/Adguard-Home-For-Magisk-Mod rev-parse HEAD
-ALLOWED	allowed:documentation	AGENTS.md:208:sed -n '1,120p' Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh
+ALLOWED	allowed:documentation	AGENTS.md:217:git -C Example/Adguard-Home-For-Magisk-Mod rev-parse HEAD
+ALLOWED	allowed:documentation	AGENTS.md:218:sed -n '1,120p' Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh
 ALLOWED	allowed:documentation	README.md:10:PureADRemoverModule 是一个 Android Root 环境下的非域名本地层去广告模块。它面向 Clash、代理和 DNS 无法覆盖的本地广告落地物，例如应用私有目录中的广告缓存、广告 SDK 文件、已知广告 SQLite 数据库，以及显式 profile 下的组件、AppOps 和 ROM 配置治理。
 ALLOWED	allowed:documentation	README.md:12:本项目不是 DNS、hosts、Clash、Mihomo、Box、AdGuardHome 或任何代理方案的替代品。域名、网络连接和代理路由应继续由用户已有网络层工具处理；本仓库只做可审计、可回滚的本地文件和系统状态治理。
 ALLOWED	allowed:documentation	README.md:18:Clash、Mihomo、Box、DNS、代理路由和域名规则属于网络层职责；本项目不生成网络规则、不改代理配置，也不接管解析或转发链路。推荐分工是：网络层继续处理域名和连接路由，PureAD 只处理已经落到本机文件、数据库或系统状态里的广告痕迹。
-ALLOWED	allowed:documentation	README.md:52:- `puread-rules` 解析 TOML 规则，并拒绝 hosts、DNS、domain、proxy、iptables、ad_reward、IFW 清空和 Root 隐藏等禁止类别。
-ALLOWED	allowed:documentation	README.md:53:- `puread-android` 执行可回滚的文件动作、SQLite 动作、可选 `chattr` 封装和可注入 Android 命令适配层。命令适配层覆盖 `pm`、`cmd appops`、`settings`、`getprop`、`chcon`、`chattr`、`lsattr`，支持 fake runner 与 dry-run，并拒绝 DNS、hosts、proxy、private DNS 相关 settings。
-ALLOWED	allowed:documentation	README.md:54:- `puread-android` 支持显式 profile 下的可逆 AppOps、component 和 ROM profile。AppOps 通过 `cmd appops get/set` 记录原 mode 或 default 后再设置目标 mode；component 记录原 enabled/hidden 状态并通过 `pm disable-user` / `pm enable` 恢复；`pm hide` 是 runner-backed capability attempt，不可用或失败时跳过并写入 skipped 记录，成功时写入 durable confirmed record，恢复时才执行 `pm unhide`。可选应用包不存在、`pm path` 无安装路径、MIUI shared_prefs 文件或目标键不存在时会记录 skipped，不计入 profile failed。ROM profile 仅限定广告相关 `settings` 与 `shared_prefs` XML 布尔项，执行前检测 ROM，记录原值、原文件哈希和备份路径；不包含 DNS、private DNS、proxy 或 network 修改。
-ALLOWED	allowed:documentation	README.md:63:自动 profile 默认只执行仓库内已审查的本地文件、SDK 缓存和 SQLite 规则，不包含 hosts、DNS、代理、iptables 或域名类能力。新增高风险规则仍必须放在明确 profile 下，具备来源、恢复策略和账本记录；是否加入自动 profile 列表必须单独审查。
-ALLOWED	allowed:documentation	README.md:86:- hosts 生成、合并、系统映射改写或动态切换。
-ALLOWED	allowed:documentation	README.md:87:- DNS 接管、私人 DNS 强制关闭、解析劫持或解析服务托管。
-ALLOWED	allowed:documentation	README.md:88:- Clash、Mihomo、Box、ProxyConfig 或其他代理配置改写。
-ALLOWED	allowed:documentation	README.md:89:- iptables 域名、字符串、IP、TLS/SNI 阻断。
-ALLOWED	allowed:documentation	README.md:90:- 广告奖励域名切换、IFW 清空、Root 隐藏或反检测规避。
-ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-zip.sh:22:    r"(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw",
-ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-zip.sh:124:    grep -Ei '(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw' "$entries_file" >"$forbidden_entries" || true
+ALLOWED	allowed:documentation	README.md:54:- `puread-rules` 解析 TOML 规则，并拒绝 hosts、DNS、domain、proxy、iptables、ad_reward、IFW 清空和 Root 隐藏等禁止类别。
+ALLOWED	allowed:documentation	README.md:55:- `puread-android` 执行可回滚的文件动作、SQLite 动作、可选 `chattr` 封装和可注入 Android 命令适配层。命令适配层覆盖 `pm`、`cmd appops`、`settings`、`getprop`、`chcon`、`chattr`、`lsattr`，支持 fake runner 与 dry-run，并拒绝 DNS、hosts、proxy、private DNS 相关 settings。
+ALLOWED	allowed:documentation	README.md:56:- `puread-android` 支持显式 profile 下的可逆 AppOps、component 和 ROM profile。AppOps 通过 `cmd appops get/set` 记录原 mode 或 default 后再设置目标 mode；component 记录原 enabled/hidden 状态并通过 `pm disable-user` / `pm enable` 恢复；`pm hide` 是 runner-backed capability attempt，不可用或失败时跳过并写入 skipped 记录，成功时写入 durable confirmed record，恢复时才执行 `pm unhide`。可选应用包不存在、`pm path` 无安装路径、MIUI shared_prefs 文件或目标键不存在时会记录 skipped，不计入 profile failed。ROM profile 仅限定广告相关 `settings` 与 `shared_prefs` XML 布尔项，执行前检测 ROM，记录原值、原文件哈希和备份路径；不包含 DNS、private DNS、proxy 或 network 修改。
+ALLOWED	allowed:documentation	README.md:65:自动 profile 默认只执行仓库内已审查的本地文件、SDK 缓存和 SQLite 规则，不包含 hosts、DNS、代理、iptables 或域名类能力。新增高风险规则仍必须放在明确 profile 下，具备来源、恢复策略和账本记录；是否加入自动 profile 列表必须单独审查。
+ALLOWED	allowed:documentation	README.md:88:- hosts 生成、合并、系统映射改写或动态切换。
+ALLOWED	allowed:documentation	README.md:89:- DNS 接管、私人 DNS 强制关闭、解析劫持或解析服务托管。
+ALLOWED	allowed:documentation	README.md:90:- Clash、Mihomo、Box、ProxyConfig 或其他代理配置改写。
+ALLOWED	allowed:documentation	README.md:91:- iptables 域名、字符串、IP、TLS/SNI 阻断。
+ALLOWED	allowed:documentation	README.md:92:- 广告奖励域名切换、IFW 清空、Root 隐藏或反检测规避。
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-zip.sh:26:    r"(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw",
+ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-zip.sh:143:    grep -Ei '(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw' "$entries_file" >"$forbidden_entries" || true
 ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:1:FORBIDDEN_PATTERN='hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|domain|ad_reward|ifw|zygisk|root_hide|root[-_ ]?hiding|denylist|shamiko'
 ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:39:is_sdk_component_proxy_class_match() {
 ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:45:            printf '%s\n' "$text" | grep -Eiq '^[[:space:]]*target_component[[:space:]]=.*[.]proxy[.]'
@@ -52,6 +52,9 @@ ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:67
 ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:113:    if is_sdk_component_proxy_class_match "$path" "$text"; then
 ALLOWED	allowed:verification_grep_guard	scripts/lib/verify-local-forbidden.sh:141:        printf '%s\n' "policy=production execution paths must not implement DNS/hosts/proxy/iptables/private-DNS/IFW/root-hiding capabilities"
 ALLOWED	allowed:rule_notes_or_provenance	rules/rom/miui-ad-settings.toml:35:notes = "Uses the command_runner settings allowlist and ROM detection; no private DNS, network, notification, cloud backup, or privacy-protection keys are included."
+ALLOWED	allowed:sdk_component_class_name	rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
+ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
+ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:17:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:17:source = "Adguard-Home-For-Magisk-Mod"
@@ -60,6 +63,8 @@ ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:37:s
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:17:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:17:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:37:source = "Adguard-Home-For-Magisk-Mod"
@@ -68,24 +73,24 @@ ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:17
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:37:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:17:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:17:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:37:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:sdk_component_class_name	rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
-ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
-ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
 ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:101:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:102:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:package_metadata_boundary	crates/puread-cli/Cargo.toml:8:description = "CLI entrypoint scaffold for the PureAD non-domain ad remover module."
-ALLOWED	allowed:package_metadata_boundary	crates/puread-rules/Cargo.toml:8:description = "Rule loading boundary for the PureAD non-domain Android ad remover module."
-ALLOWED	allowed:package_metadata_boundary	crates/puread-core/Cargo.toml:8:description = "Core typed model for the PureAD non-domain Android ad remover module."
-ALLOWED	allowed:test_or_fixture	crates/puread-core/tests/rule_model.rs:69:    let bad_actions = ["", "rm_rf", "iptables", "disable_dns"];
 ALLOWED	allowed:test_or_fixture	crates/puread-rules/tests/rule_parsing.rs:122:        Err(RuleParseError::ForbiddenCategory { category }) if category == "hosts"
 ALLOWED	allowed:test_or_fixture	crates/puread-rules/tests/rule_parsing.rs:126:        Err(RuleParseError::ForbiddenField { field }) if field == "domains"
 ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_field.toml:14:domains = ["ad.example.invalid"]
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:2:id = "forbidden-hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:3:category = "hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:17:zip_entry = "mod/hosts.sh"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:18:source_line_or_pattern = "hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:241:        "private_dns_mode",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:242:        "private_dns_specifier",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:243:        "http_proxy",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:244:        "hosts_file_override",
+ALLOWED	allowed:package_metadata_boundary	crates/puread-cli/Cargo.toml:8:description = "CLI entrypoint scaffold for the PureAD non-domain ad remover module."
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:6:    "hosts",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:8:    "dns",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:9:    "private_dns",
@@ -101,11 +106,6 @@ ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:18:    "ad
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:19:    "ifw_clear",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:20:    "zygisk",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:21:    "root_hide",
-ALLOWED	allowed:package_metadata_boundary	crates/puread-daemon/Cargo.toml:8:description = "Daemon entrypoint scaffold for the PureAD non-domain ad remover module."
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:2:id = "forbidden-hosts"
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:3:category = "hosts"
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:17:zip_entry = "mod/hosts.sh"
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:18:source_line_or_pattern = "hosts"
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:6:    "hosts",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:7:    "dns",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:8:    "domain",
@@ -113,16 +113,16 @@ ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:9:    "
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:10:    "iptables_network",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:11:    "ad_reward_domain",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:12:    "ifw_clear",
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:241:        "private_dns_mode",
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:242:        "private_dns_specifier",
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:243:        "http_proxy",
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:244:        "hosts_file_override",
-ALLOWED	allowed:package_metadata_boundary	crates/puread-android/Cargo.toml:8:description = "Android adapter boundary for the PureAD non-domain ad remover module."
+ALLOWED	allowed:package_metadata_boundary	crates/puread-rules/Cargo.toml:8:description = "Rule loading boundary for the PureAD non-domain Android ad remover module."
+ALLOWED	allowed:package_metadata_boundary	crates/puread-daemon/Cargo.toml:8:description = "Daemon entrypoint scaffold for the PureAD non-domain ad remover module."
 ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
 ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
 ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
 ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
 ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+ALLOWED	allowed:package_metadata_boundary	crates/puread-core/Cargo.toml:8:description = "Core typed model for the PureAD non-domain Android ad remover module."
+ALLOWED	allowed:test_or_fixture	crates/puread-core/tests/rule_model.rs:69:    let bad_actions = ["", "rm_rf", "iptables", "disable_dns"];
+ALLOWED	allowed:package_metadata_boundary	crates/puread-android/Cargo.toml:8:description = "Android adapter boundary for the PureAD non-domain ad remover module."
 ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:6:    AdRewardDomain,
 ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:9:    Dns,
 ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:10:    Domain,

@@ -18,6 +18,10 @@ required_files = {
     "scripts/puread-module-lib.sh",
     "scripts/puread-action-lib.sh",
 }
+expected_update_json = (
+    "https://github.com/Lynricsy/PureADRemoverModule/"
+    "releases/latest/download/update.json"
+)
 forbidden_name = re.compile(
     r"(^|/)(Example|Host)(/|$)|\.zip$|hosts|host\.sh|mount_hosts|private[_-]?dns|dns|iptables|clash|mihomo|adguardhome|adguard-home|proxy|proxyconfig|ad_reward|ifw",
     re.IGNORECASE,
@@ -32,6 +36,16 @@ with zipfile.ZipFile(zip_path) as archive:
 missing = sorted(required_files - names)
 if missing:
     raise SystemExit("missing entries: " + ", ".join(missing))
+
+with zipfile.ZipFile(zip_path) as archive:
+    module_prop = archive.read("module.prop").decode("utf-8")
+props = {}
+for line in module_prop.splitlines():
+    if "=" in line:
+        key, value = line.split("=", 1)
+        props[key] = value
+if props.get("updateJson") != expected_update_json:
+    raise SystemExit("module.prop updateJson is missing or incorrect")
 
 rule_files = sorted(name for name in names if name.startswith("rules/") and name.endswith(".toml"))
 if not rule_files:
@@ -61,6 +75,7 @@ print(f"entry_count={len(names)}")
 print(f"rule_file_count={len(rule_files)}")
 print("abis=" + ",".join(sorted(daemon_abis)))
 print("required_entries=present")
+print("update_json=present")
 print("forbidden_path_entries=none")
 PY
 }
@@ -103,6 +118,10 @@ zip_check_with_unzip() {
             return 1
         }
     done
+    if ! unzip -p "$zip_path" module.prop | grep -Fx 'updateJson=https://github.com/Lynricsy/PureADRemoverModule/releases/latest/download/update.json' >/dev/null 2>&1; then
+        printf '%s\n' "module.prop updateJson is missing or incorrect" >&2
+        return 1
+    fi
 
     grep '^rules/.*\.toml$' "$entries_file" >"$rule_files" || {
         printf '%s\n' "missing rules/*.toml entries" >&2
@@ -134,6 +153,7 @@ zip_check_with_unzip() {
     printf 'abis='
     paste -sd, "$daemon_abis"
     printf '%s\n' "required_entries=present"
+    printf '%s\n' "update_json=present"
     printf '%s\n' "forbidden_path_entries=none"
 }
 
@@ -243,4 +263,70 @@ write_zip_check() {
     printf '%s\n' "result=fail" >>"$evidence_tmp"
     mv "$evidence_tmp" "$evidence"
     fail "python3 and unzip are unavailable; cannot verify package zip"
+}
+
+write_update_metadata_check() {
+    evidence="$TASK_PREFIX-update-metadata.txt"
+    package_evidence="$TASK_PREFIX-package.txt"
+    output_dir="$TMP_ROOT/update-metadata"
+    update_json="$output_dir/update.json"
+    changelog="$output_dir/changelog.md"
+
+    : >"$evidence"
+    printf '%s\n' "gate=update-metadata" >>"$evidence"
+
+    zip_path="$(sed -n 's/^zip=//p' "$package_evidence" | tail -n 1)"
+    version="$(sed -n 's/^version=//p' module/module.prop | head -n 1)"
+    version_code="$(sed -n 's/^versionCode=//p' module/module.prop | head -n 1)"
+    release_tag="v$version"
+    zip_name="$(basename "$zip_path")"
+
+    if [ -z "$zip_path" ] || [ ! -f "$zip_path" ]; then
+        printf '%s\n' "result=fail" >>"$evidence"
+        fail "update metadata check could not find package zip; see $package_evidence"
+        return
+    fi
+
+    if scripts/generate-update-metadata.sh --zip "$zip_path" --tag "$release_tag" --output-dir "$output_dir" >>"$evidence" 2>&1; then
+        python3 - "$update_json" "$changelog" "$version" "$version_code" "$release_tag" "$zip_name" >>"$evidence" <<'PY'
+import json
+import sys
+
+update_json, changelog, version, version_code, release_tag, zip_name = sys.argv[1:]
+expected_zip = (
+    "https://github.com/Lynricsy/PureADRemoverModule/"
+    f"releases/download/{release_tag}/{zip_name}"
+)
+expected_changelog = (
+    "https://github.com/Lynricsy/PureADRemoverModule/"
+    f"releases/download/{release_tag}/changelog.md"
+)
+with open(update_json, encoding="utf-8") as handle:
+    payload = json.load(handle)
+if payload.get("version") != version:
+    raise SystemExit("version mismatch")
+if payload.get("versionCode") != int(version_code):
+    raise SystemExit("versionCode mismatch")
+if payload.get("zipUrl") != expected_zip:
+    raise SystemExit("zipUrl mismatch")
+if payload.get("changelog") != expected_changelog:
+    raise SystemExit("changelog mismatch")
+with open(changelog, encoding="utf-8") as handle:
+    text = handle.read()
+if version not in text or release_tag not in text or zip_name not in text:
+    raise SystemExit("changelog missing release identifiers")
+print(f"version={payload['version']}")
+print(f"version_code={payload['versionCode']}")
+print(f"zip_url={payload['zipUrl']}")
+print(f"changelog_url={payload['changelog']}")
+print("metadata=valid")
+PY
+        printf '%s\n' "result=pass" >>"$evidence"
+        info "pass: update metadata"
+    else
+        rc=$?
+        printf 'exit_code=%s\n' "$rc" >>"$evidence"
+        printf '%s\n' "result=fail" >>"$evidence"
+        fail "update metadata check failed; see $evidence"
+    fi
 }
