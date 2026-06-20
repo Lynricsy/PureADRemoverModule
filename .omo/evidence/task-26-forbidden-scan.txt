@@ -55,42 +55,32 @@ ALLOWED	allowed:rule_notes_or_provenance	rules/rom/miui-ad-settings.toml:35:note
 ALLOWED	allowed:sdk_component_class_name	rules/components/sdk-ad-components.toml:6:target_component = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
 ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:14:notes = "Manual component profile. Reward video SDK component is treated as ad surface, not domain or network blocking."
 ALLOWED	allowed:rule_notes_or_provenance	rules/components/sdk-ad-components.toml:20:source_line_or_pattern = "com.mfcloudcalculate.networkdisk/com.kwad.sdk.api.proxy.app.KsRewardVideoActivity"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:17:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:17:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:37:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:17:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:17:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:37:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:17:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:37:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:101:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:102:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:17:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.zhihu.android.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.tencent.mobileqq.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:17:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:37:source = "Adguard-Home-For-Magisk-Mod"
 ALLOWED	allowed:rule_notes_or_provenance	rules/apps/tv.danmaku.bili.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:101:source = "Adguard-Home-For-Magisk-Mod"
-ALLOWED	allowed:rule_notes_or_provenance	rules/common/sdk-cache.toml:102:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
-ALLOWED	allowed:package_metadata_boundary	crates/puread-cli/Cargo.toml:8:description = "CLI entrypoint scaffold for the PureAD non-domain ad remover module."
-ALLOWED	allowed:package_metadata_boundary	crates/puread-daemon/Cargo.toml:8:description = "Daemon entrypoint scaffold for the PureAD non-domain ad remover module."
-ALLOWED	allowed:test_or_fixture	crates/puread-core/tests/rule_model.rs:69:    let bad_actions = ["", "rm_rf", "iptables", "disable_dns"];
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:241:        "private_dns_mode",
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:242:        "private_dns_specifier",
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:243:        "http_proxy",
-ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:244:        "hosts_file_override",
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:37:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/ctrip.android.view.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:37:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.netease.cloudmusic.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.taobao.idlefish.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:17:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:18:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:37:source = "Adguard-Home-For-Magisk-Mod"
+ALLOWED	allowed:rule_notes_or_provenance	rules/apps/com.autonavi.minimap.toml:38:source_file = "Example/Adguard-Home-For-Magisk-Mod/Adguardhome/scripts/NoAdsService.sh"
 ALLOWED	allowed:test_or_fixture	crates/puread-rules/tests/rule_parsing.rs:122:        Err(RuleParseError::ForbiddenCategory { category }) if category == "hosts"
 ALLOWED	allowed:test_or_fixture	crates/puread-rules/tests/rule_parsing.rs:126:        Err(RuleParseError::ForbiddenField { field }) if field == "domains"
-ALLOWED	allowed:package_metadata_boundary	crates/puread-core/Cargo.toml:8:description = "Core typed model for the PureAD non-domain Android ad remover module."
-ALLOWED	allowed:package_metadata_boundary	crates/puread-rules/Cargo.toml:8:description = "Rule loading boundary for the PureAD non-domain Android ad remover module."
-ALLOWED	allowed:package_metadata_boundary	crates/puread-android/Cargo.toml:8:description = "Android adapter boundary for the PureAD non-domain ad remover module."
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:6:    "hosts",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:8:    "dns",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:9:    "private_dns",
@@ -106,16 +96,6 @@ ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:18:    "ad
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:19:    "ifw_clear",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:20:    "zygisk",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/parse.rs:21:    "root_hide",
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:2:id = "forbidden-hosts"
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:3:category = "hosts"
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:17:zip_entry = "mod/hosts.sh"
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:18:source_line_or_pattern = "hosts"
-ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_field.toml:14:domains = ["ad.example.invalid"]
-ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
-ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
-ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
-ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
-ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:6:    "hosts",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:7:    "dns",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:8:    "domain",
@@ -123,6 +103,26 @@ ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:9:    "
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:10:    "iptables_network",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:11:    "ad_reward_domain",
 ALLOWED	allowed:rule_rejection_guard	crates/puread-rules/src/category.rs:12:    "ifw_clear",
+ALLOWED	allowed:test_or_fixture	crates/puread-core/tests/rule_model.rs:69:    let bad_actions = ["", "rm_rf", "iptables", "disable_dns"];
+ALLOWED	allowed:package_metadata_boundary	crates/puread-rules/Cargo.toml:8:description = "Rule loading boundary for the PureAD non-domain Android ad remover module."
+ALLOWED	allowed:package_metadata_boundary	crates/puread-cli/Cargo.toml:8:description = "CLI entrypoint scaffold for the PureAD non-domain ad remover module."
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_field.toml:14:domains = ["ad.example.invalid"]
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:2:id = "forbidden-hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:3:category = "hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:17:zip_entry = "mod/hosts.sh"
+ALLOWED	allowed:test_or_fixture	crates/puread-rules/fixtures/invalid/forbidden_category.toml:18:source_line_or_pattern = "hosts"
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:241:        "private_dns_mode",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:242:        "private_dns_specifier",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:243:        "http_proxy",
+ALLOWED	allowed:test_or_fixture	crates/puread-android/tests/command_runner.rs:244:        "hosts_file_override",
+ALLOWED	allowed:package_metadata_boundary	crates/puread-android/Cargo.toml:8:description = "Android adapter boundary for the PureAD non-domain ad remover module."
+ALLOWED	allowed:package_metadata_boundary	crates/puread-core/Cargo.toml:8:description = "Core typed model for the PureAD non-domain Android ad remover module."
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:105:    if key == "private_dns_mode" || key == "private_dns_specifier" || lower.contains("dns") {
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:108:            "DNS settings are out of scope",
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:114:            "hosts settings are out of scope",
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:117:    if lower.contains("proxy") {
+ALLOWED	allowed:settings_rejection_guard	crates/puread-android/src/command_runner/settings.rs:120:            "proxy settings are out of scope",
+ALLOWED	allowed:package_metadata_boundary	crates/puread-daemon/Cargo.toml:8:description = "Daemon entrypoint scaffold for the PureAD non-domain ad remover module."
 ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:6:    AdRewardDomain,
 ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:9:    Dns,
 ALLOWED	allowed:upstream_audit_classifier	xtask/upstream-report/src/manifest.rs:10:    Domain,

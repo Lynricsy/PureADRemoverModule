@@ -1,15 +1,6 @@
 gate=pure-rust-loc
 limit=250
 touched_rust_files:
-crates/puread-android/src/profiles/executor/appops_components.rs
-crates/puread-android/src/profiles/executor/rom.rs
-crates/puread-android/src/profiles/record.rs
-crates/puread-android/tests/appops_components.rs
-crates/puread-android/tests/appops_components/support.rs
-crates/puread-android/tests/rom_profiles.rs
-crates/puread-android/src/profiles/executor/appops_components/skip.rs
-crates/puread-android/tests/component_profile_skips.rs
-crates/puread-android/tests/profile_skips.rs
 rust_file_count=221
 loc_rows:
   248	./crates/puread-cli/tests/cli_profiles.rs

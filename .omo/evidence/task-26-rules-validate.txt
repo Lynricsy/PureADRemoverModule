@@ -1,6 +1,6 @@
 gate=rules-validate
 command=cargo run -p puread-cli -- rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom
-[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
 [1m[92m     Running[0m `target/debug/puread-cli rules validate rules/common rules/apps rules/sqlite rules/appops rules/components rules/rom`
 {
   "schema_version": 1,

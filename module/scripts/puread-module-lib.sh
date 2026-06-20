@@ -136,6 +136,10 @@ puread_profile_ledger_path() {
     printf '%s/profile-actions.jsonl' "$(puread_state_dir)"
 }
 
+puread_auto_apply_summary_path() {
+    printf '%s/auto-apply-summary.log' "$(puread_state_dir)"
+}
+
 puread_module_version() {
     sed -n 's/^version=//p' "$PUREAD_MODDIR/module.prop" 2>/dev/null | head -n 1
 }
@@ -197,46 +201,136 @@ puread_log() {
     chmod 600 "$(puread_log_path)" 2>/dev/null || true
 }
 
+puread_count_file_lines() {
+    PUREAD_COUNT_FILE="$1"
+    if [ ! -f "$PUREAD_COUNT_FILE" ]; then
+        printf '%s' "0"
+        return
+    fi
+
+    PUREAD_COUNT="$(wc -l <"$PUREAD_COUNT_FILE" 2>/dev/null | tr -d ' ')"
+    case "$PUREAD_COUNT" in
+        ''|*[!0-9]*)
+            PUREAD_COUNT=0
+            ;;
+    esac
+    printf '%s' "$PUREAD_COUNT"
+}
+
+puread_count_matching_lines() {
+    PUREAD_COUNT_FILE="$1"
+    PUREAD_COUNT_PATTERN="$2"
+    if [ ! -f "$PUREAD_COUNT_FILE" ]; then
+        printf '%s' "0"
+        return
+    fi
+
+    PUREAD_COUNT="$(grep "$PUREAD_COUNT_PATTERN" "$PUREAD_COUNT_FILE" 2>/dev/null | wc -l | tr -d ' ')"
+    case "$PUREAD_COUNT" in
+        ''|*[!0-9]*)
+            PUREAD_COUNT=0
+            ;;
+    esac
+    printf '%s' "$PUREAD_COUNT"
+}
+
+puread_status_profile_stats() {
+    PUREAD_SUMMARY_PATH="$(puread_auto_apply_summary_path)"
+    if [ ! -f "$PUREAD_SUMMARY_PATH" ]; then
+        return
+    fi
+
+    PUREAD_DONE_COUNT="$(puread_count_matching_lines "$PUREAD_SUMMARY_PATH" '^profile=.* status=done')"
+    PUREAD_FAILED_COUNT="$(puread_count_matching_lines "$PUREAD_SUMMARY_PATH" '^profile=.* status=failed')"
+    PUREAD_TOTAL_COUNT=$((PUREAD_DONE_COUNT + PUREAD_FAILED_COUNT))
+    if [ "$PUREAD_TOTAL_COUNT" -gt 0 ]; then
+        printf ' · profiles %s/%s' "$PUREAD_DONE_COUNT" "$PUREAD_TOTAL_COUNT"
+    fi
+}
+
+puread_status_rollback_stats() {
+    PUREAD_FILE_RECORDS="$(puread_count_file_lines "$(puread_ledger_path)")"
+    PUREAD_PROFILE_RECORDS="$(puread_count_file_lines "$(puread_profile_ledger_path)")"
+    PUREAD_ROLLBACK_RECORDS=$((PUREAD_FILE_RECORDS + PUREAD_PROFILE_RECORDS))
+    if [ "$PUREAD_ROLLBACK_RECORDS" -gt 0 ]; then
+        printf ' · rollback %s' "$PUREAD_ROLLBACK_RECORDS"
+    fi
+}
+
+puread_status_pid_stats() {
+    PUREAD_STATUS_VALUE="$1"
+    PUREAD_PID_FILE="$(puread_pid_path)"
+    case "$PUREAD_STATUS_VALUE" in
+        daemon_started|daemon_started_with_profile_errors)
+            if puread_pid_running "$PUREAD_PID_FILE"; then
+                PUREAD_STATUS_PID="$(cat "$PUREAD_PID_FILE" 2>/dev/null || printf '%s' "")"
+                printf ' · pid %s' "$PUREAD_STATUS_PID"
+            fi
+            ;;
+        daemon_already_running|uninstall_daemon_stop_failed)
+            if puread_pid_matches_daemon "$PUREAD_PID_FILE"; then
+                PUREAD_STATUS_PID="$(cat "$PUREAD_PID_FILE" 2>/dev/null || printf '%s' "")"
+                printf ' · pid %s' "$PUREAD_STATUS_PID"
+            fi
+            ;;
+    esac
+}
+
+puread_status_stats() {
+    PUREAD_STATUS_VALUE="$1"
+    case "$PUREAD_STATUS_VALUE" in
+        auto_apply_complete|auto_apply_partial|daemon_*|missing_binary)
+            puread_status_profile_stats
+            ;;
+    esac
+    case "$PUREAD_STATUS_VALUE" in
+        daemon_*|uninstall_*)
+            puread_status_rollback_stats
+            ;;
+    esac
+    puread_status_pid_stats "$PUREAD_STATUS_VALUE"
+}
+
 puread_status_summary() {
     case "$1" in
         installed)
-            printf '%s' "installed; reboot to activate"
+            printf '%s' "🔵 installed · reboot to activate"
             ;;
         host_dry_run)
-            printf '%s' "host dry-run"
+            printf '%s' "⚪ host dry-run"
             ;;
         auto_apply_complete)
-            printf '%s' "profiles applied"
+            printf '%s' "🟢 profiles applied"
             ;;
         auto_apply_partial)
-            printf '%s' "profile errors; retry next boot"
+            printf '%s' "🟠 profile errors · retry next boot"
             ;;
         daemon_started|daemon_already_running)
-            printf '%s' "active; daemon running"
+            printf '%s' "🟢 active · daemon running"
             ;;
         daemon_started_with_profile_errors)
-            printf '%s' "active; profile errors"
+            printf '%s' "🟠 active · profile errors"
             ;;
         daemon_disabled)
-            printf '%s' "profiles applied; daemon disabled"
+            printf '%s' "🟡 profiles applied · daemon disabled"
             ;;
         daemon_disabled_with_profile_errors)
-            printf '%s' "profile errors; daemon disabled"
+            printf '%s' "🟠 profile errors · daemon disabled"
             ;;
         missing_binary)
-            printf '%s' "missing native binary"
+            printf '%s' "🔴 missing native binary"
             ;;
         uninstall_restore_planned)
-            printf '%s' "uninstall restore planned"
+            printf '%s' "🟣 uninstall restore planned"
             ;;
         uninstall_missing_cli)
-            printf '%s' "uninstall missing CLI"
+            printf '%s' "🔴 uninstall missing CLI"
             ;;
         uninstall_daemon_stop_failed|uninstall_restore_plan_failed)
-            printf '%s' "uninstall needs attention"
+            printf '%s' "🔴 uninstall needs attention"
             ;;
         *)
-            printf 'state %s' "$1"
+            printf '⚪ state %s' "$1"
             ;;
     esac
 }
@@ -246,7 +340,7 @@ puread_update_module_description() {
     [ -f "$PUREAD_PROP_PATH" ] || return 0
     puread_is_android || return 0
 
-    PUREAD_DESCRIPTION="PureAD status: $(puread_status_summary "$1") ($(puread_select_abi))"
+    PUREAD_DESCRIPTION="PureAD status: $(puread_status_summary "$1")$(puread_status_stats "$1") ($(puread_select_abi))"
     PUREAD_PROP_TMP="$PUREAD_PROP_PATH.tmp.$$"
     PUREAD_DESCRIPTION_WRITTEN=0
 
